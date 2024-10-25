@@ -111,7 +111,7 @@ export class CreateEventController {
         );
       }
 
-      await this.usecase.execute({
+      const event = await this.usecase.execute({
         name,
         description,
         address,
@@ -145,7 +145,8 @@ export class CreateEventController {
         ticketUrl: typeof ticketUrl === "string" ? ticketUrl : undefined,
       });
 
-      const viewmodel = new CreateEventViewModel("Evento criado com sucesso");
+      const eventId = event.getEventId || "defaultEventId"; // Replace 'defaultEventId' with an appropriate default value
+      const viewmodel = new CreateEventViewModel("Evento criado com sucesso", eventId);
 
       return new Created(viewmodel.toJSON());
     } catch (error: any) {
