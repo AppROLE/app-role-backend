@@ -110,16 +110,20 @@ export class EventMongoDTO {
       ageRange: eventMongoDTO.age_range,
       eventDate: eventMongoDTO.event_date,
       districtId: eventMongoDTO.district_id,
-      features: (eventMongoDTO.features || []).filter((feature) => feature !== null).map((feature) => feature as FEATURE),
+      features: (eventMongoDTO.features || [])
+        .filter((feature) => feature !== null)
+        .map((feature) => feature as FEATURE),
       eventStatus: eventMongoDTO.eventStatus as STATUS,
-      musicType: (eventMongoDTO.music_type || []).map((type) => type as MUSIC_TYPE
+      musicType: (eventMongoDTO.music_type || []).map(
+        (type) => type as MUSIC_TYPE
       ),
       menuLink: eventMongoDTO.menu_link,
       eventPhotoLink: eventMongoDTO.event_photo_link,
       galeryLink: eventMongoDTO.galery_link || [],
       instituteId: eventMongoDTO.institute_id,
       bannerUrl: eventMongoDTO.banner_url,
-      packageType: (eventMongoDTO.package_type || []).map((type) => type as PACKAGE_TYPE
+      packageType: (eventMongoDTO.package_type || []).map(
+        (type) => type as PACKAGE_TYPE
       ),
       category: eventMongoDTO.category as CATEGORY,
       ticketUrl: eventMongoDTO.ticketUrl,
@@ -187,8 +191,8 @@ export class EventMongoDTO {
       galery_link: eventMongoDTO.galery_link,
       package_type: eventMongoDTO.package_type,
       category: eventMongoDTO.category,
-      created_at: new Date(),
       ticket_url: eventMongoDTO.ticketUrl,
+      created_at: new Date(),
       reviews: eventMongoDTO.reviews.map((review) => ({
         username: review.username,
         star: review.star,
