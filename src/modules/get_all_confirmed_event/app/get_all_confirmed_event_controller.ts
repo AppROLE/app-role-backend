@@ -15,7 +15,13 @@ export class GetAllConfirmedEventsController {
             const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
             if (!parsedUserApiGateway) throw new ForbiddenAction("usuário")
 
-            const events = await this.usecase.execute(parsedUserApiGateway.username);
+            const { personUsername } = req.data;
+
+            if (personUsername && typeof personUsername !== "string") throw new WrongTypeParameters("personUsername", "string", typeof personUsername);
+
+            let usernameToSearch = personUsername && personUsername !== "" && typeof personUsername === 'string' ? personUsername : parsedUserApiGateway.username;
+
+            const events = await this.usecase.execute(usernameToSearch);
 
             const viewmodel = new GetAllConfirmedEventsViewModel(events);
             return new OK(viewmodel.toJSON());
