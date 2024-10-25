@@ -49,7 +49,7 @@ export class EventMongoDTO {
   private galery_link: string[];
   private package_type: string[];
   private category?: string;
-  private ticket_url?: string;
+  private ticketUrl?: string;
   private reviews: ReviewProps[];
 
   constructor(props: EventMongoDTOProps) {
@@ -71,7 +71,7 @@ export class EventMongoDTO {
     this.galery_link = props.galery_link;
     this.package_type = props.package_type || [];
     this.category = props.category;
-    this.ticket_url = props.ticket_url || "";
+    this.ticketUrl = props.ticket_url || "";
     this.reviews = props.reviews;
   }
 
@@ -122,7 +122,7 @@ export class EventMongoDTO {
       packageType: (eventMongoDTO.package_type || []).map((type) => type as PACKAGE_TYPE
       ),
       category: eventMongoDTO.category as CATEGORY,
-      ticketUrl: eventMongoDTO.ticket_url,
+      ticketUrl: eventMongoDTO.ticketUrl,
       reviews: (eventMongoDTO.reviews || []).map((review) => ({
         username: review.username,
         name: review.name,
@@ -188,7 +188,7 @@ export class EventMongoDTO {
       package_type: eventMongoDTO.package_type,
       category: eventMongoDTO.category,
       created_at: new Date(),
-      ticket_url: eventMongoDTO.ticket_url,
+      ticket_url: eventMongoDTO.ticketUrl,
       reviews: eventMongoDTO.reviews.map((review) => ({
         username: review.username,
         star: review.star,
