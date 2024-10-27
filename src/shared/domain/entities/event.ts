@@ -16,7 +16,7 @@ export interface ReviewProps {
 }
 
 interface EventProps {
-  eventId?: string;
+  eventId: string;
   name: string;
   description: string;
   address: string;
@@ -39,7 +39,7 @@ interface EventProps {
 }
 
 export class Event {
-  private eventId?: string;
+  private eventId: string;
   private name: string;
   private description: string;
   private bannerUrl?: string;
@@ -63,9 +63,7 @@ export class Event {
   constructor(props: EventProps) {
     this.validate(props);
 
-    if (props.eventId != undefined) {
       this.eventId = props.eventId;
-    }
     this.name = props.name;
     this.description = props.description;
     this.address = props.address;
@@ -87,7 +85,7 @@ export class Event {
     this.reviews = props.reviews || [];
   }
 
-  get getEventId(): string | undefined {
+  get getEventId(): string {
     return this.eventId;
   }
 
