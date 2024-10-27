@@ -145,7 +145,7 @@ export class CreateEventController {
         ticketUrl: typeof ticketUrl === "string" ? ticketUrl : undefined,
       });
 
-      const eventId = event.getEventId || "defaultEventId"; // Replace 'defaultEventId' with an appropriate default value
+      const eventId = event.getEventId; // Replace 'defaultEventId' with an appropriate default value
       const viewmodel = new CreateEventViewModel("Evento criado com sucesso", eventId);
 
       return new Created(viewmodel.toJSON());
