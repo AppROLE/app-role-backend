@@ -47,7 +47,6 @@ export class CreateEventUseCase {
       bannerUrl: params.bannerUrl,
       features: params.features,
       packageType: params.packageType,
-      category: params.category,
       ticketUrl: params.ticketUrl,
     });
 
