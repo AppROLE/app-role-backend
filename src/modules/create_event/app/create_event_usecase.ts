@@ -30,7 +30,7 @@ interface CreateEventParams {
 export class CreateEventUseCase {
   constructor(private repo: IEventRepository) {}
 
-  async execute(params: CreateEventParams): Promise<Event> {
+  async execute(params: CreateEventParams): Promise<string> {
     const event = new Event({
       name: params.name,
       description: params.description,
