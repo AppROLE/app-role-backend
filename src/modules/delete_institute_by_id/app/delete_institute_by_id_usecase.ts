@@ -18,16 +18,24 @@ export class DeleteInstituteByIdUseCase {
       throw new NoItemsFound("institute");
     }
 
-    console.log('INSTITUTO: ', institute);
-    console.log('ARRAY: ', institute.instituteEventsId);
+    console.log("INSTITUTO: ", institute);
+    console.log("ARRAY: ", institute.instituteEventsId);
 
     if (institute.instituteEventsId) {
       for (const eventId of institute.instituteEventsId) {
-        console.log("AQUI CACETEEEEEEEEEEE PORRA ", eventId);
+        const event = await this.eventRepository.getEventById(eventId);
+
+        if (event?.getEventPhotoLink) {
+          await this.fileRepository.deleteEventPhotoByEventId(eventId);
+        }
+        if ((event?.getGaleryLink?.length ?? 0) > 0) {
+          await this.fileRepository.deleteGallery(eventId);
+        }
+
         await this.eventRepository.deleteEventById(eventId);
       }
     }
-    if(institute.instituteLogoPhoto){
+    if (institute.instituteLogoPhoto) {
       await this.fileRepository.deleteInstitutePhoto(institute.instituteName);
     }
 
