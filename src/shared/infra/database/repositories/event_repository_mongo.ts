@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { IPresence } from "../models/presence.model";
 
 export class EventRepositoryMongo implements IEventRepository {
-  async createEvent(event: Event): Promise<Event> {
+  async createEvent(event: Event): Promise<string> {
     try {
       const db = await connectDB();
       db.connections[0].on("error", () => {
@@ -32,7 +32,10 @@ export class EventRepositoryMongo implements IEventRepository {
       const respMongo = await eventMongoClient?.insertOne(eventDoc);
       console.log("MONGO REPO EVENT RESPMONGO: ", respMongo);
 
-      return event;
+      if (!respMongo) {
+        throw new Error("Failed to insert event into MongoDB");
+      }
+      return respMongo.insertedId;
     } catch (error) {
       throw new Error(`Error creating event on MongoDB: ${error}`);
     }
@@ -331,7 +334,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
       if (!events || events.length === 0) {
         console.warn("No events found for the provided dates.");
-        return []; 
+        return [];
       }
 
       const mappedEvents = events.map((eventDoc) => {
