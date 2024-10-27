@@ -16,7 +16,7 @@ export interface ReviewProps {
 }
 
 interface EventProps {
-  eventId: string;
+  eventId?: string;
   name: string;
   description: string;
   address: string;
@@ -63,7 +63,7 @@ export class Event {
   constructor(props: EventProps) {
     this.validate(props);
 
-      this.eventId = props.eventId;
+    this.eventId = props.eventId || '';
     this.name = props.name;
     this.description = props.description;
     this.address = props.address;
