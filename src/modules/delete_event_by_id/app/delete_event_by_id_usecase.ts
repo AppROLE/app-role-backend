@@ -16,7 +16,7 @@ export class DeleteEventByIdUseCase {
     if (event?.getEventPhotoLink) {
       await this.fileRepository.deleteEventPhotoByEventId(eventId);
     }
-    if (event?.getGaleryLink) {
+    if ((event?.getGaleryLink?.length ?? 0) > 0) {
       await this.fileRepository.deleteGallery(eventId);
     }
     await this.eventRepository.deleteEventById(eventId);
