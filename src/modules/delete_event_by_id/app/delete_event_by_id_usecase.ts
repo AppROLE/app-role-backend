@@ -13,11 +13,12 @@ export class DeleteEventByIdUseCase {
     if (!event) {
       throw new NoItemsFound("event");
     }
-
-    await this.fileRepository.deleteEventPhotoByEventId(eventId);
-
+    if (event?.getEventPhotoLink) {
+      await this.fileRepository.deleteEventPhotoByEventId(eventId);
+    }
+    if (event?.getGaleryLink) {
+      await this.fileRepository.deleteGallery(eventId);
+    }
     await this.eventRepository.deleteEventById(eventId);
-
-    await this.fileRepository.deleteGallery(eventId);
   }
 }
