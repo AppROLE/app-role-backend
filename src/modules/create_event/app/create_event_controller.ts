@@ -111,7 +111,7 @@ export class CreateEventController {
         );
       }
 
-      const event = await this.usecase.execute({
+      const eventId = await this.usecase.execute({
         name,
         description,
         address,
@@ -144,8 +144,7 @@ export class CreateEventController {
           : undefined,
         ticketUrl: typeof ticketUrl === "string" ? ticketUrl : undefined,
       });
-
-      const eventId = event.getEventId; // Replace 'defaultEventId' with an appropriate default value
+    
       const viewmodel = new CreateEventViewModel("Evento criado com sucesso", eventId);
 
       return new Created(viewmodel.toJSON());
