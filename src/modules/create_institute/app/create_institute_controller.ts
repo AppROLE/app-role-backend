@@ -19,6 +19,7 @@ import {
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
+import { DuplicatedItem } from "src/shared/helpers/errors/usecase_errors";
 
 export class CreateInstituteController {
   constructor(private readonly usecase: CreateInstituteUseCase) {}
@@ -123,6 +124,9 @@ export class CreateInstituteController {
         return new BadRequest(error.message);
       }
       if (error instanceof EntityError) {
+        return new BadRequest(error.message);
+      }
+      if (error instanceof DuplicatedItem) {
         return new BadRequest(error.message);
       }
       if (error instanceof Error) {
