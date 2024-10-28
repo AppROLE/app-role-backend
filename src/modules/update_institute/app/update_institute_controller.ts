@@ -21,7 +21,6 @@ export class UpdateInstituteController {
                 name,
                 address,
                 district_id,
-                price,
                 phone,
             } = req.data;
 
@@ -80,16 +79,12 @@ export class UpdateInstituteController {
                     );
                 }
             }
-            if (price !== undefined) {
-                if (typeof price !== "number") {
-                    throw new WrongTypeParameters("price", "number", typeof price);
-                }
-            }
             if (phone !== undefined) {
                 if (typeof phone !== "string") {
                     throw new WrongTypeParameters("phone", "string", typeof phone);
                 }
             }
+
 
             await this.usecase.execute(
                 institute_id,
@@ -99,7 +94,6 @@ export class UpdateInstituteController {
                 name,
                 address,
                 district_id,
-                price,
                 phone
             );
 
