@@ -14,12 +14,20 @@ export class UpdateInstituteUseCase {
         name?: string,
         address?: string,
         district_id?: string,
-        price?: number,
         phone?: string
     ) {
-        const institute = {} as Partial<Institute>;
-        if (institute_id) {
-            institute.instituteId = institute_id;
+        const institute: {
+            instituteId: string;
+            instituteDescription?: string;
+            instituteInstituteType?: INSTITUTE_TYPE;
+            institutePartnerType?: PARTNER_TYPE;
+            instituteName?: string;
+            instituteAddress?: string;
+            instituteDistrictId?: string;
+            institutePrice?: number;
+            institutePhone?: string;
+        } = {
+            instituteId: institute_id,
         }
         if (description) {
             institute.instituteDescription = description;
@@ -39,14 +47,20 @@ export class UpdateInstituteUseCase {
         if (district_id) {
             institute.instituteDistrictId = district_id;
         }
-        if (price) {
-            institute.institutePrice = price;
-        }
         if (phone) {
             institute.institutePhone = phone;
         }
 
-        await this.repo.updateInstitute(institute as Institute);
+        await this.repo.updateInstitute(
+            institute.instituteId,
+            institute.instituteDescription,
+            institute.instituteInstituteType,
+            institute.institutePartnerType,
+            institute.instituteName,
+            institute.instituteAddress,
+            institute.instituteDistrictId,
+            institute.institutePhone
+        );
 
     }
 }
