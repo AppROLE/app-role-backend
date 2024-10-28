@@ -3,6 +3,7 @@ import { Institute } from "../../domain/entities/institute";
 import { IInstituteRepository } from "../../domain/irepositories/institute_repository_interface";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
+import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 
 export class InstituteRepositoryMock implements IInstituteRepository {
   private institutes: Institute[];
@@ -51,14 +52,43 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     return Promise.resolve(); 
   }
 
-  async updateInstitute(institute: Institute): Promise<void> {
-    const instituteIndex = this.institutes.findIndex(
-      (institute) => institute.instituteId === institute.instituteId
-    );
-    if (instituteIndex === -1) {
+  async updateInstitute(
+    institute_id: string,
+    description?: string,
+    institute_type?: INSTITUTE_TYPE,
+    partner_type?: PARTNER_TYPE,
+    name?: string,
+    address?: string,
+    district_id?: string,
+    phone?: string
+  ): Promise<Institute> {
+    const institute = this.institutes.find((institute) => institute.instituteId === institute_id);
+    if (!institute) {
       throw new NoItemsFound("institute");
     }
-    this.institutes[instituteIndex] = institute;
-    return Promise.resolve();
+
+    if (description) {
+      institute.instituteDescription = description;
+    }
+    if (institute_type) {
+      institute.instituteInstituteType = institute_type;
+    }
+    if (partner_type) {
+      institute.institutePartnerType = partner_type;
+    }
+    if (name) {
+      institute.instituteName = name;
+    }
+    if (address) {
+      institute.instituteAddress = address;
+    }
+    if (district_id) {
+      institute.instituteDistrictId = district_id;
+    }
+    if (phone) {
+      institute.institutePhone = phone;
+    }
+
+    return Promise.resolve(institute);
   }
 }
