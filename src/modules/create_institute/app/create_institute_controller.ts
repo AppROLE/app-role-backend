@@ -41,6 +41,7 @@ export class CreateInstituteController {
         "institute_type",
         "partner_type",
         "name",
+        "district_id",
       ];
 
       for (const param of requiredParams) {
@@ -79,15 +80,14 @@ export class CreateInstituteController {
           throw new WrongTypeParameters("address", "string", typeof address);
         }
       }
-      if (district_id !== undefined) {
-        if (typeof district_id !== "string") {
-          throw new WrongTypeParameters(
-            "district_id",
-            "string",
-            typeof district_id
-          );
-        }
+      if (typeof district_id !== "string") {
+        throw new WrongTypeParameters(
+          "district_id",
+          "string",
+          typeof district_id
+        );
       }
+      
       if (price !== undefined) {
         if (typeof price !== "number") {
           throw new WrongTypeParameters("price", "number", typeof price);
