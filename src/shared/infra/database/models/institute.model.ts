@@ -65,7 +65,7 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   description: { type: String },
   institute_type: { type: String },
   partner_type: { type: String },
-  address: { type: String, required: true },
+  address: { type: String },
   price: { type: Number },
   phone: { type: String },
   district_id: { type: String, required: true },
