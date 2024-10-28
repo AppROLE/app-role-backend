@@ -6,6 +6,7 @@ import { connectDB } from "../models";
 import { IInstituteRepository } from "../../../domain/irepositories/institute_repository_interface";
 import { DuplicatedItem, NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
+import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
   async createInstitute(institute: Institute): Promise<Institute> {
@@ -190,7 +191,16 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     }
   }
 
-  async updateInstitute(institute: Institute): Promise<void> {
+  async updateInstitute(
+    institute_id: string,
+    description?: string,
+    institute_type?: INSTITUTE_TYPE,
+    partner_type?: PARTNER_TYPE,
+    name?: string,
+    address?: string,
+    district_id?: string,
+    phone?: string
+  ): Promise<Institute> {
     try {
       const db = await connectDB();
       db.connections[0].on('error', () => {
@@ -201,49 +211,52 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       const instituteMongoClient = db.connections[0].db?.collection<IInstitute>('Institute');
   
       // Verificar se o documento do instituto existe
-      const instituteDoc = await instituteMongoClient?.findOne({ _id: institute.instituteId });
+      const instituteDoc = await instituteMongoClient?.findOne({ _id: institute_id });
+
+      // verificar se o nome eh passado, se for verificar se ja existe um instituto com esse nome
+      if (name) {
+        const instituteWithSameName = await instituteMongoClient?.findOne({ name });
+        if (instituteWithSameName) {
+          throw new DuplicatedItem('name');
+        }
+      }
   
       if (!instituteDoc) {
         throw new NoItemsFound('institute');
       }
-  
-      // Criação do objeto de atualizações, apenas com os campos que foram enviados
-      const updateData: Partial<Institute> = {};
-  
-      if (institute.instituteDescription) {
-        updateData.instituteDescription = institute.instituteDescription;
+
+      // Atualizar os campos do documento do instituto
+      if (description) {
+        instituteDoc.description = description;
       }
-      if (institute.instituteInstituteType) {
-        updateData.instituteInstituteType = institute.instituteInstituteType;
+      if (institute_type) {
+        instituteDoc.institute_type = institute_type;
       }
-      if (institute.institutePartnerType) {
-        updateData.institutePartnerType = institute.institutePartnerType;
+      if (partner_type) {
+        instituteDoc.partner_type = partner_type;
       }
-      if (institute.instituteName) {
-        updateData.instituteName = institute.instituteName;
+      if (name) {
+        instituteDoc.name = name;
       }
-      if (institute.instituteAddress) {
-        updateData.instituteAddress = institute.instituteAddress;
+      if (address) {
+        instituteDoc.address = address;
       }
-      if (institute.instituteDistrictId) {
-        updateData.instituteDistrictId = institute.instituteDistrictId;
+      if (district_id) {
+        instituteDoc.district_id = district_id;
       }
-      if (institute.institutePrice) {
-        updateData.institutePrice = institute.institutePrice;
+      if (phone) {
+        instituteDoc.phone = phone;
       }
-      if (institute.institutePhone) {
-        updateData.institutePhone = institute.institutePhone;
-      }
-  
-      // Atualizando o documento no MongoDB
-      const result = await instituteMongoClient?.updateOne(
-        { _id: institute.instituteId },
-        { $set: updateData }
-      );
-  
-      if (result?.modifiedCount === 0) {
-        throw new Error('No institute was updated');
-      }
+
+      // Atualizar o documento do instituto no MongoDB
+      const respMongo = await instituteMongoClient?.updateOne({ _id: institute_id }, { $set: instituteDoc });
+
+      console.log('MONGO REPO INSTITUTE RESPMONGO: ', respMongo);
+
+      const institute = InstituteMongoDTO.toEntity(InstituteMongoDTO.fromMongo(instituteDoc));
+
+      return institute;
+
     } catch (error: any) {
       throw new Error(`Error updating institute on MongoDB: ${error.message}`);
     }
