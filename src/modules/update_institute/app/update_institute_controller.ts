@@ -25,14 +25,8 @@ export class UpdateInstituteController {
                 phone,
             } = req.data;
 
-            const requiredParams = [
-                "institute_id"
-            ];
-
-            for (const param of requiredParams) {
-                if (req.data[param] === undefined) {
-                    throw new MissingParameters(param);
-                }
+            if (institute_id === undefined) {
+                throw new MissingParameters("institute_id");
             }
 
             if (typeof institute_id !== "string") {
