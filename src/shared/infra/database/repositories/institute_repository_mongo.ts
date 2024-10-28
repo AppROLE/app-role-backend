@@ -4,7 +4,7 @@ import { InstituteMongoDTO } from "../dtos/institute_mongo_dto";
 import { v4 as uuidv4 } from "uuid";
 import { connectDB } from "../models";
 import { IInstituteRepository } from "../../../domain/irepositories/institute_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { DuplicatedItem, NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
@@ -23,6 +23,13 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       const instituteDoc = InstituteMongoDTO.toMongo(dto);
 
       instituteDoc._id = uuidv4();
+
+      // search for institutes with the same name
+      const instituteWithSameName = await instituteMongoClient?.findOne({ name: instituteDoc.name });
+
+      if (instituteWithSameName) {
+        throw new DuplicatedItem("name");
+      }
 
       const respMongo = await instituteMongoClient?.insertOne(instituteDoc);
       console.log("MONGO REPO INSTITUTE RESPMONGO: ", respMongo);
