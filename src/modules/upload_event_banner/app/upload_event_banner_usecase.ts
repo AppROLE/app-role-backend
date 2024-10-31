@@ -34,7 +34,7 @@ export class UploadEventBannerUseCase {
 
     await this.fileRepo.uploadEventPhoto(imageKey, eventPhoto, mimetype);
 
-    await this.mongoRepo.updateEventPhoto(
+    await this.mongoRepo.updateEventBanner(
       eventId,
       `${Environments.getEnvs().cloudFrontUrl}/${imageKey}`
     );
