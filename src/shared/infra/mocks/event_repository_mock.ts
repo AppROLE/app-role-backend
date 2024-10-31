@@ -10,6 +10,9 @@ export class EventRepositoryMock implements IEventRepository {
     const eventMock = new EventMock();
     this.events = eventMock.events;
   }
+  updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
   updateEvent(eventId: string, updatedFields: any): Promise<Event> {
     throw new Error("Method not implemented.");
   }
