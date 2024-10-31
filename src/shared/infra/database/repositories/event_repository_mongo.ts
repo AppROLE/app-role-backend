@@ -470,4 +470,32 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new Error(`Error updating event in MongoDB: ${error}`);
     }
   }
+
+  async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
+    try {
+      const db = await connectDB();
+      const eventMongoClient =
+        db.connections[0].db?.collection<IEvent>("Event");
+
+      const eventDoc = await eventMongoClient?.findOne({ _id: eventId });
+
+      if (!eventDoc) {
+        throw new NoItemsFound("event");
+      }
+
+      const result = await eventMongoClient?.updateOne(
+        { _id: eventId },
+        { $set: { banner_link: bannerUrl } }
+      );
+
+      if (!result?.modifiedCount) {
+        throw new Error("Error updating event banner, no modifications detected.");
+      }
+    } catch (error: any) {
+      if (error instanceof NoItemsFound) {
+        throw new NoItemsFound("event");
+      }
+      throw new Error(`Error updating event banner on MongoDB: ${error}`);
+    }
+  }
 }
