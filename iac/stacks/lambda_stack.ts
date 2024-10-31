@@ -24,6 +24,7 @@ export class LambdaStack extends Construct {
   deleteEventPhotoFunction: lambda.Function
   deleteGalleryEventFunction: lambda.Function
   updateEvent: lambda.Function
+  uploadEventBannerFunction: lambda.Function
 
   createReviewFunction: lambda.Function
 
@@ -104,6 +105,7 @@ export class LambdaStack extends Construct {
     this.deleteEventPhotoFunction = this.createLambdaApiGatewayIntegration('delete_event_photo', 'DELETE', apiGatewayResource, environmentVariables)
     this.updateEvent = this.createLambdaApiGatewayIntegration('update_event', 'PUT', apiGatewayResource, environmentVariables)
     this.deleteGalleryEventFunction = this.createLambdaApiGatewayIntegration('delete_gallery_event', 'DELETE', apiGatewayResource, environmentVariables)
+    this.uploadEventBannerFunction = this.createLambdaApiGatewayIntegration('upload_event_banner', 'POST', apiGatewayResource, environmentVariables)
 
     // review routes
     this.createReviewFunction = this.createLambdaApiGatewayIntegration('create_review', 'POST', apiGatewayResource, environmentVariables, authorizer)
@@ -132,6 +134,7 @@ export class LambdaStack extends Construct {
     this.functionsThatNeedS3Permissions = [
       this.uploadEventPhotoFunction,
       this.uploadInstitutePhotoFunction,
+      this.uploadEventBannerFunction,
       this.deleteEventPhotoFunction,
       this.deleteEventByIdFunction,
       this.deleteInstituteByIdFunction,
