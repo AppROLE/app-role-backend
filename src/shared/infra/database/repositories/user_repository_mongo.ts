@@ -171,7 +171,7 @@ export class UserRepositoryMongo implements IUserRepository {
         throw new NoItemsFound("username");
       }
 
-      const instituteDoc = await instituteMongoClient?.findOne({ institute_id: instituteId });
+      const instituteDoc = await instituteMongoClient?.findOne({ _id: instituteId });
 
       if(!instituteDoc) {
         throw new NoItemsFound("instituteId");
