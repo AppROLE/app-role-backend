@@ -22,6 +22,12 @@ export class GetAllFavoriteInstitutesUseCase {
             )
         );
 
-        return favoriteInstitutes;
+        if (!favoriteInstitutes || favoriteInstitutes.length === 0) {
+            throw new Error("DEU MERDA!!!");
+        }
+
+        console.log("FAVORITE INSTITUTES: ", favoriteInstitutes);
+
+        return favoriteInstitutes; 
     }
 }
