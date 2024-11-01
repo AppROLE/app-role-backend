@@ -88,6 +88,7 @@ export class IacStack extends Stack {
       resources: [
         `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}`,   // O bucket (sem o /*)
         `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}/*`, // Objetos dentro do bucket
+        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}/*/*`, // Objetos dentro do bucket
       ],
     });
     
