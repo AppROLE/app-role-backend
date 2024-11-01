@@ -12,6 +12,8 @@ import { IPresenceRepository } from "./domain/irepositories/presence_repository_
 import { PresenceRepositoryMongo } from "./infra/database/repositories/presence_repository_mongo";
 import { IDistrictRepository } from "./domain/irepositories/district_repository_interface";
 import { DistrictRepositoryMongo } from "./infra/database/repositories/district_repository_mongo";
+import { IUserRepository } from "./domain/irepositories/user_repository_interface";
+import { UserRepositoryMongo } from "./infra/database/repositories/user_repository_mongo";
 
 export class Environments {
   stage: STAGE = STAGE.TEST;
@@ -41,10 +43,28 @@ export class Environments {
       this.s3BucketName = "bucket-test";
       this.region = "sa-east-1";
     } else {
-      this.s3BucketName = envs.S3_BUCKET_NAME.toLowerCase()
+      this.s3BucketName = envs.S3_BUCKET_NAME.toLowerCase();
       this.region = envs.AWS_REGION as string;
       this.mongoUri = envs.MONGO_URI as string;
       this.cloudFrontUrl = envs.CLOUD_FRONT_URL as string;
+    }
+  }
+
+  static getUserRepo(): IUserRepository {
+    console.log(
+      "Environments.getEnvs().stage - [ENVIRONMENTS - { GET USER REPO }] - ",
+      Environments.getEnvs().stage
+    );
+
+    if (Environments.getEnvs().stage === STAGE.TEST) {
+      throw new Error("Invalid STAGE");
+    } else if (
+      Environments.getEnvs().stage === STAGE.DEV ||
+      Environments.getEnvs().stage === STAGE.PROD
+    ) {
+      return new UserRepositoryMongo();
+    } else {
+      throw new Error("Invalid STAGE");
     }
   }
 
@@ -87,7 +107,7 @@ export class Environments {
   }
 
   static getInstituteRepo(): IInstituteRepository {
-    if(Environments.getEnvs().stage === STAGE.TEST){
+    if (Environments.getEnvs().stage === STAGE.TEST) {
       throw new Error("Invalid STAGE");
     } else if (
       Environments.getEnvs().stage === STAGE.DEV ||
@@ -97,26 +117,33 @@ export class Environments {
       return new InstituteRepositoryMongo();
     } else {
       throw new Error("Invalid STAGE");
-    }  
+    }
   }
 
   static getFileRepo(): IFileRepository {
-    console.log('Environments.getEnvs().stage - [ENVIRONMENTS - { GET FILE REPO }] - ', Environments.getEnvs().stage)
+    console.log(
+      "Environments.getEnvs().stage - [ENVIRONMENTS - { GET FILE REPO }] - ",
+      Environments.getEnvs().stage
+    );
 
     if (Environments.getEnvs().stage === STAGE.TEST) {
-      throw new Error('Invalid STAGE')
-    } else if (Environments.getEnvs().stage === STAGE.DEV || Environments.getEnvs().stage === STAGE.PROD) {
-      return new FileRepositoryS3(Environments.getEnvs().s3BucketName.toLowerCase())
+      throw new Error("Invalid STAGE");
+    } else if (
+      Environments.getEnvs().stage === STAGE.DEV ||
+      Environments.getEnvs().stage === STAGE.PROD
+    ) {
+      return new FileRepositoryS3(
+        Environments.getEnvs().s3BucketName.toLowerCase()
+      );
     } else {
-      throw new Error('Invalid STAGE')
+      throw new Error("Invalid STAGE");
     }
   }
 
   static getPresenceRepo(): IPresenceRepository {
     if (Environments.getEnvs().stage === STAGE.TEST) {
       throw new Error("Invalid STAGE");
-    }
-    else if (
+    } else if (
       Environments.getEnvs().stage === STAGE.DEV ||
       Environments.getEnvs().stage === STAGE.DEV ||
       Environments.getEnvs().stage === STAGE.PROD
@@ -130,8 +157,7 @@ export class Environments {
   static getDistrictRepo(): IDistrictRepository {
     if (Environments.getEnvs().stage === STAGE.TEST) {
       throw new Error("Invalid STAGE");
-    }
-    else if (
+    } else if (
       Environments.getEnvs().stage === STAGE.DEV ||
       Environments.getEnvs().stage === STAGE.DEV ||
       Environments.getEnvs().stage === STAGE.PROD
