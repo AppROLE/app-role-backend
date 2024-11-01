@@ -8,6 +8,7 @@ import { UserMongoDTO } from "../../database/dtos/user_mongo_dto";
 import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
 import { IUserRepository } from "src/shared/domain/irepositories/user_repository_interface";
 import { GetProfileReturnType } from "src/shared/domain/types/get_profile_return_type";
+import { IInstitute } from "../models/institute.model";
 
 export class UserRepositoryMongo implements IUserRepository {
   async getProfile(
@@ -147,6 +148,63 @@ export class UserRepositoryMongo implements IUserRepository {
       }
       console.error("Error retrieving favorites from MongoDB:", error);
       throw new Error(`Error retrieving favorites from MongoDB: ${error}`);
+    }
+  }
+
+  async favoriteInstitute(
+    username: string,
+    instituteId: string
+  ): Promise<void> {
+    try {
+      const db = await connectDB();
+      db.connections[0].on("error", () => {
+        console.error.bind(console, "connection error:");
+        throw new Error("Error connecting to MongoDB");
+      });
+
+      const userMongoClient = db.connections[0].db?.collection<IUser>("User");
+      const instituteMongoClient = db.connections[0].db?.collection<IInstitute>("Institute");
+
+      const userDoc = await userMongoClient?.findOne({ username });
+
+      if (!userDoc) {
+        throw new NoItemsFound("username");
+      }
+
+      const instituteDoc = await instituteMongoClient?.findOne({ institute_id: instituteId });
+
+      if(!instituteDoc) {
+        throw new NoItemsFound("instituteId");
+      }
+
+      const instituteIdExists = userDoc.favorites.some(
+        (favorite) => favorite.institute_id === instituteId
+      );
+
+      let updatedFavorites;
+
+      if (instituteIdExists) {
+        // Remove o instituteId existente
+        updatedFavorites = userDoc.favorites.filter(
+          (favorite) => favorite.institute_id !== instituteId
+        );
+      } else {
+        // Adiciona o novo instituteId
+        updatedFavorites = [
+          ...userDoc.favorites,
+          { institute_id: instituteId },
+        ];
+      }
+
+      await userMongoClient?.updateOne(
+        { username },
+        { $set: { favorites: updatedFavorites } }
+      );
+    } catch (error: any) {
+      if(error instanceof NoItemsFound) {
+        throw new NoItemsFound("instituteId");
+      }
+      throw new Error(`Error favorite institute on MongoDB: ${error}`);
     }
   }
 }
