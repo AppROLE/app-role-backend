@@ -34,6 +34,7 @@ export class GetAllFavoriteInstitutesUseCase {
         }
 
         console.log("Favorite institutes retrieved successfully:", favoriteInstitutes);
+        
         return favoriteInstitutes;
     }
 }
