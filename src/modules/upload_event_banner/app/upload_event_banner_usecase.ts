@@ -32,7 +32,7 @@ export class UploadEventBannerUseCase {
 
     const imageKey = `${eventId}-${nameFormat}-banner${extensionName}`;
 
-    await this.fileRepo.uploadEventPhoto(imageKey, eventPhoto, mimetype);
+    await this.fileRepo.uploadEventBanner(eventId, nameFormat, imageKey, eventPhoto, mimetype);
 
     await this.mongoRepo.updateEventBanner(
       eventId,
