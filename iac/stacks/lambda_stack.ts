@@ -111,7 +111,7 @@ export class LambdaStack extends Construct {
     this.deleteGalleryEventFunction = this.createLambdaApiGatewayIntegration('delete_gallery_event', 'DELETE', apiGatewayResource, environmentVariables)
     this.uploadEventBannerFunction = this.createLambdaApiGatewayIntegration('upload_event_banner', 'POST', apiGatewayResource, environmentVariables)
     this.deleteEventBannerFunction = this.createLambdaApiGatewayIntegration('delete_event_banner', 'DELETE', apiGatewayResource, environmentVariables)
-    
+
     // review routes
     this.createReviewFunction = this.createLambdaApiGatewayIntegration('create_review', 'POST', apiGatewayResource, environmentVariables, authorizer)
 
@@ -145,7 +145,8 @@ export class LambdaStack extends Construct {
       this.deleteEventPhotoFunction,
       this.deleteEventByIdFunction,
       this.deleteInstituteByIdFunction,
-      this.deleteGalleryEventFunction
+      this.deleteGalleryEventFunction,
+      this.deleteEventBannerFunction
     ]
 
     this.functionsThatNeedCognitoPermissions = [
