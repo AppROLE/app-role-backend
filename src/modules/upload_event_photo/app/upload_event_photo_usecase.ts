@@ -28,7 +28,7 @@ export class UploadEventPhotoUseCase {
     // teria de criar o erro
     const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-    const nameFormat = event.getEventName.replace(/\s/g, "+");
+    const nameFormat = event.getEventName.trim().replace(/\s+/g, "+").replace(/[^a-zA-Z0-9+]/g, "");
 
     const imageKey = `${eventId}-${nameFormat}${extensionName}`;
 
