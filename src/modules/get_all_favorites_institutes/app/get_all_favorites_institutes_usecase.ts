@@ -10,25 +10,30 @@ export class GetAllFavoriteInstitutesUseCase {
     ) {}
 
     async execute(username: string): Promise<Institute[]> {
+        console.log("Executing use case to get all favorite institutes for user:", username);
+        
         const userFavorites = await this.userRepo.getAllFavoriteInstitutes(username);
-    
+        
         if (!userFavorites || !Array.isArray(userFavorites) || userFavorites.length === 0) {
+            console.log("No favorites found for user in use case.");
             throw new NoItemsFound("favorites");
         }
-    
+
+        console.log("Favorites retrieved in use case, proceeding to fetch institute details:", userFavorites);
+
         const favoriteInstitutes = await Promise.all(
-            userFavorites.map((favorite: { instituteId: string }) => 
-                this.instituteRepo.getInstituteById(favorite.instituteId)
-            )
+            userFavorites.map((favorite: { instituteId: string }) => {
+                console.log("Fetching institute details for institute ID:", favorite.instituteId);
+                return this.instituteRepo.getInstituteById(favorite.instituteId);
+            })
         );
-    
+
         if (!favoriteInstitutes || favoriteInstitutes.length === 0) {
-            throw new Error("DEU MERDA!!!");
+            console.log("No institutes found for the provided favorite IDs.");
+            throw new Error("No institutes found for favorites.");
         }
-    
-        console.log("FAVORITE INSTITUTES: ", favoriteInstitutes);
-    
+
+        console.log("Favorite institutes retrieved successfully:", favoriteInstitutes);
         return favoriteInstitutes;
     }
-    
 }
