@@ -22,9 +22,9 @@ export class GetAllFavoriteInstitutesUseCase {
         console.log("Favorites retrieved in use case, proceeding to fetch institute details:", userFavorites);
 
         const favoriteInstitutes = await Promise.all(
-            userFavorites.map((favorite: { instituteId: string }) => {
-                console.log("Fetching institute details for institute ID:", favorite.instituteId);
-                return this.instituteRepo.getInstituteById(favorite.instituteId);
+            userFavorites.map((favorite: { institute_id: string }) => {
+                console.log("Fetching institute details for institute ID:", favorite.institute_id);
+                return this.instituteRepo.getInstituteById(favorite.institute_id);
             })
         );
 
@@ -34,7 +34,6 @@ export class GetAllFavoriteInstitutesUseCase {
         }
 
         console.log("Favorite institutes retrieved successfully:", favoriteInstitutes);
-        
         return favoriteInstitutes;
     }
 }
