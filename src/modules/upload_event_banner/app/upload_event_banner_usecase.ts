@@ -16,27 +16,39 @@ export class UploadEventBannerUseCase {
     extensionName: string,
     mimetype: string
   ) {
-    console.log("EVENT ID PORRA" + eventId);
-    const event = await this.mongoRepo.getEventById(eventId);
+    console.log(
+      "Executando UploadEventBannerUseCase para o evento ID:",
+      eventId
+    );
 
+    const event = await this.mongoRepo.getEventById(eventId);
     if (!event) {
+      console.log("Evento não encontrado.");
       throw new NoItemsFound("Evento");
     }
 
-    // isso seria legal de implementar, uma validaçao de tamanho de imagem
-    // caso não for da extensão correta, ou do tamanho correto, retornar um erro
-    // teria de criar o erro
     const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!allowedMimeTypes.includes(mimetype)) {
+      throw new EntityError("Tipo de arquivo não permitido para o banner.");
+    }
 
     const nameFormat = event.getEventName.replace(/\s/g, "+");
-
     const imageKey = `${eventId}-${nameFormat}-banner${extensionName}`;
+    console.log("Chave da imagem gerada:", imageKey);
 
-    await this.fileRepo.uploadEventBanner(eventId, nameFormat, imageKey, eventPhoto, mimetype);
+    await this.fileRepo.uploadEventBanner(
+      eventId,
+      nameFormat,
+      imageKey,
+      eventPhoto,
+      mimetype
+    );
+    console.log("Banner do evento enviado para o S3 com sucesso.");
 
     await this.mongoRepo.updateEventBanner(
       eventId,
       `${Environments.getEnvs().cloudFrontUrl}/${imageKey}`
     );
+    console.log("Link do banner atualizado no MongoDB.");
   }
 }
