@@ -11,23 +11,24 @@ export class GetAllFavoriteInstitutesUseCase {
 
     async execute(username: string): Promise<Institute[]> {
         const userFavorites = await this.userRepo.getAllFavoriteInstitutes(username);
-        
-        if (!userFavorites || userFavorites.length === 0) {
+    
+        if (!userFavorites || !Array.isArray(userFavorites) || userFavorites.length === 0) {
             throw new NoItemsFound("favorites");
         }
-
+    
         const favoriteInstitutes = await Promise.all(
             userFavorites.map((favorite: { instituteId: string }) => 
                 this.instituteRepo.getInstituteById(favorite.instituteId)
             )
         );
-
+    
         if (!favoriteInstitutes || favoriteInstitutes.length === 0) {
             throw new Error("DEU MERDA!!!");
         }
-
+    
         console.log("FAVORITE INSTITUTES: ", favoriteInstitutes);
-
-        return favoriteInstitutes; 
+    
+        return favoriteInstitutes;
     }
+    
 }
