@@ -13,6 +13,11 @@ import { v4 as uuidv4 } from "uuid";
 import { IPresence } from "../models/presence.model";
 
 export class EventRepositoryMongo implements IEventRepository {
+  
+  updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
   async createEvent(event: Event): Promise<string> {
     try {
       const db = await connectDB();
@@ -468,34 +473,6 @@ export class EventRepositoryMongo implements IEventRepository {
       return EventMongoDTO.toEntity(EventMongoDTO.fromMongo(updatedEvent));
     } catch (error) {
       throw new Error(`Error updating event in MongoDB: ${error}`);
-    }
-  }
-
-  async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
-    try {
-      const db = await connectDB();
-      const eventMongoClient =
-        db.connections[0].db?.collection<IEvent>("Event");
-
-      const eventDoc = await eventMongoClient?.findOne({ _id: eventId });
-
-      if (!eventDoc) {
-        throw new NoItemsFound("event");
-      }
-
-      const result = await eventMongoClient?.updateOne(
-        { _id: eventId },
-        { $set: { banner_link: bannerUrl } }
-      );
-
-      if (!result?.modifiedCount) {
-        throw new Error("Error updating event banner, no modifications detected.");
-      }
-    } catch (error: any) {
-      if (error instanceof NoItemsFound) {
-        throw new NoItemsFound("event");
-      }
-      throw new Error(`Error updating event banner on MongoDB: ${error}`);
     }
   }
 }
