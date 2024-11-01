@@ -43,7 +43,7 @@ export class UploadEventBannerUseCase {
       eventPhoto,
       mimetype
     );
-    
+
     console.log("Banner do evento enviado para o S3 com sucesso.");
 
     await this.mongoRepo.updateEventBanner(

@@ -13,8 +13,8 @@ import { v4 as uuidv4 } from "uuid";
 import { IPresence } from "../models/presence.model";
 
 export class EventRepositoryMongo implements IEventRepository {
+  
   async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
-    
     try {
       console.log("Conectando ao MongoDB para atualizar o banner do evento...");
       const db = await connectDB();
@@ -36,12 +36,12 @@ export class EventRepositoryMongo implements IEventRepository {
         console.log(
           "O link do banner fornecido é idêntico ao atual. Nenhuma atualização necessária."
         );
-        return;
+        return; // Interrompe a execução sem lançar exceção
       }
 
       const result = await eventMongoClient?.updateOne(
         { _id: eventId },
-        { $set: { banner_link: bannerUrl } }
+        { $set: { banner_url: bannerUrl } } // Corrigido para usar `banner_url` como a chave correta
       );
 
       if (!result?.modifiedCount) {
