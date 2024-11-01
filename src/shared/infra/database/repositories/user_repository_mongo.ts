@@ -98,29 +98,29 @@ export class UserRepositoryMongo implements IUserRepository {
 
   async getAllFavoriteInstitutes(username: string): Promise<any> {
     try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error("connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
+        const db = await connectDB();
+        db.connections[0].on("error", () => {
+            console.error("connection error:");
+            throw new Error("Error connecting to MongoDB");
+        });
 
-      const userMongoClient = db.connections[0].db?.collection<IUser>("User");
+        const userMongoClient = db.connections[0].db?.collection<IUser>("User");
 
-      const userDoc = await userMongoClient?.findOne(
-        { username },
-        { projection: { favorites: 1 } }
-      );
+        const userDoc = await userMongoClient?.findOne(
+            { username },
+            { projection: { favorites: 1 } }
+        );
 
-      if (!userDoc || !userDoc.favorites || userDoc.favorites.length === 0) {
-        throw new NoItemsFound("favorites");
-      }
+        if (!userDoc || !Array.isArray(userDoc.favorites) || userDoc.favorites.length === 0) {
+            throw new NoItemsFound("favorites");
+        }
 
-      return userDoc.favorites;
+        return userDoc.favorites;
     } catch (error) {
-      if (error instanceof NoItemsFound) {
-        throw error;
-      }
-      throw new Error(`Error retrieving favorites from MongoDB: ${error}`);
+        if (error instanceof NoItemsFound) {
+            throw error;
+        }
+        throw new Error(`Error retrieving favorites from MongoDB: ${error}`);
     }
-  }
+}
 }
