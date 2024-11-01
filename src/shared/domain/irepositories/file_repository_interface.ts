@@ -5,4 +5,5 @@ export interface IFileRepository {
   deleteEventPhotoByEventId(eventId: string): Promise<void>;
   deleteGallery(eventId: string): Promise<void>;
   deleteInstitutePhoto(name: string): Promise<void>;
+  deleteEventBanner(eventId: string, eventName: string): Promise<void>
 }
