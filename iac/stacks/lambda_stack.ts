@@ -120,7 +120,7 @@ export class LambdaStack extends Construct {
     this.getAllInstitutesByPartnerTypeFuntion = this.createLambdaApiGatewayIntegration('get_all_institutes_by_partner_type', 'GET', apiGatewayResource, environmentVariables)
     this.uploadInstitutePhotoFunction = this.createLambdaApiGatewayIntegration('upload_institute_photo', 'POST', apiGatewayResource, environmentVariables)
     this.updateInstituteFunction = this.createLambdaApiGatewayIntegration('update_institute', 'PUT', apiGatewayResource, environmentVariables)
-    this.getAllFavoriteInstitutesFunction = this.createLambdaApiGatewayIntegration('get_all_favorite_institutes', 'GET', apiGatewayResource, environmentVariables, authorizer)
+    this.getAllFavoriteInstitutesFunction = this.createLambdaApiGatewayIntegration('get_all_favorites_institutes', 'GET', apiGatewayResource, environmentVariables, authorizer)
 
     this.getPhrase = this.createLambdaApiGatewayIntegration('get_phrase', 'GET', apiGatewayResource, environmentVariables, authorizer)
 

@@ -1,7 +1,7 @@
 import { IInstituteRepository } from "src/shared/domain/irepositories/institute_repository_interface";
 import { IUserRepository } from "src/shared/domain/irepositories/user_repository_interface";
-import { Institute } from "src/shared/domain/entities/institute";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { Institute } from "src/shared/domain/entities/institute";
 
 export class GetAllFavoriteInstitutesUseCase {
     constructor(
