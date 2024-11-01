@@ -46,6 +46,7 @@ export class LambdaStack extends Construct {
   unConfirmEventFunction: lambda.Function
 
   getAllFavoriteInstitutesFunction: lambda.Function
+  favoriteInstituteFunction: lambda.Function
 
   createLambdaApiGatewayIntegration(
     moduleName: string, 
@@ -121,6 +122,7 @@ export class LambdaStack extends Construct {
     this.uploadInstitutePhotoFunction = this.createLambdaApiGatewayIntegration('upload_institute_photo', 'POST', apiGatewayResource, environmentVariables)
     this.updateInstituteFunction = this.createLambdaApiGatewayIntegration('update_institute', 'PUT', apiGatewayResource, environmentVariables)
     this.getAllFavoriteInstitutesFunction = this.createLambdaApiGatewayIntegration('get_all_favorites_institutes', 'GET', apiGatewayResource, environmentVariables, authorizer)
+    this.favoriteInstituteFunction = this.createLambdaApiGatewayIntegration('favorite_institute', 'PUT', apiGatewayResource, environmentVariables, authorizer)
 
     this.getPhrase = this.createLambdaApiGatewayIntegration('get_phrase', 'GET', apiGatewayResource, environmentVariables, authorizer)
 
@@ -146,7 +148,8 @@ export class LambdaStack extends Construct {
 
     this.functionsThatNeedCognitoPermissions = [
       this.createReviewFunction,
-      this.getAllConfirmedEventsFunction
+      this.getAllConfirmedEventsFunction,
+      this.favoriteInstituteFunction
     ]
   }
 }
