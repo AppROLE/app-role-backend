@@ -32,7 +32,7 @@ export class UploadEventBannerUseCase {
       throw new EntityError("Tipo de arquivo não permitido para o banner.");
     }
 
-    const nameFormat = event.getEventName.replace(/\s/g, "+");
+    const nameFormat = event.getEventName.trim().replace(/\s+/g, "+").replace(/[^a-zA-Z0-9+]/g, "");
     const imageKey = `${eventId}-${nameFormat}-banner.${extensionName}`;
     console.log("Chave da imagem gerada:", imageKey);
 
