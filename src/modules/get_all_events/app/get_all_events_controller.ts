@@ -13,6 +13,14 @@ export class GetAllEventsController {
 
   async handle(req: IRequest): Promise<any> {
     try {
+      const { query } = req.data;
+
+      if (query === "today") {
+        const events = await this.usecase.executeFromToday();
+        const viewModel = new GetAllEventsViewModel(events);
+        return new OK(viewModel.toJSON());
+      }
+
       const events = await this.usecase.execute();
       const viewModel = new GetAllEventsViewModel(events);
       return new OK(viewModel.toJSON());
