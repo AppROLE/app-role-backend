@@ -13,9 +13,9 @@ export class GetAllEventsController {
 
   async handle(req: IRequest): Promise<any> {
     try {
-      const { query } = req.data;
+      const { fromtoday } = req.data;
 
-      if (query === "today") {
+      if (fromtoday === "true") {
         const events = await this.usecase.executeFromToday();
         const viewModel = new GetAllEventsViewModel(events);
         return new OK(viewModel.toJSON());
