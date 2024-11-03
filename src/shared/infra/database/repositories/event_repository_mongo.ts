@@ -151,7 +151,7 @@ export class EventRepositoryMongo implements IEventRepository {
     try {
       const db = await connectDB();
       db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
+        console.error("connection error:");
         throw new Error("Erro ao conectar ao MongoDB");
       });
 
@@ -165,6 +165,7 @@ export class EventRepositoryMongo implements IEventRepository {
       }
       if (filter.price) query.price = Number(filter.price);
       if (filter.age_range) query.age_range = filter.age_range;
+
       if (filter.event_date) {
         const startOfDay = new Date(filter.event_date);
         startOfDay.setUTCHours(0, 0, 0, 0);
@@ -176,10 +177,13 @@ export class EventRepositoryMongo implements IEventRepository {
           $gte: startOfDay,
           $lte: endOfDay,
         };
+      } else {
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        query.event_date = { $gte: today };
       }
 
       if (filter.district_id) query.district_id = filter.district_id;
-      // if (filter.institute_id) query.institute_id = filter.institute_id;
 
       if (filter.music_type) {
         const musicTypes = filter.music_type.split(" ");
@@ -189,11 +193,6 @@ export class EventRepositoryMongo implements IEventRepository {
         const features = filter.features.split(" ");
         query.features = { $in: features };
       }
-
-      // if (filter.package_type) {
-      //   const packageTypes = filter.package_type.split(" ");
-      //   query.package_type = { $in: packageTypes };
-      // }
 
       if (filter.category) {
         const category = filter.category.split(" ");
