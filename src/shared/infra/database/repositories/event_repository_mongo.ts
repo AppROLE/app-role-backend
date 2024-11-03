@@ -13,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 import { IPresence } from "../models/presence.model";
 
 export class EventRepositoryMongo implements IEventRepository {
-  
   async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
     try {
       console.log("Conectando ao MongoDB para atualizar o banner do evento...");
@@ -36,12 +35,12 @@ export class EventRepositoryMongo implements IEventRepository {
         console.log(
           "O link do banner fornecido é idêntico ao atual. Nenhuma atualização necessária."
         );
-        return; // Interrompe a execução sem lançar exceção
+        return;
       }
 
       const result = await eventMongoClient?.updateOne(
         { _id: eventId },
-        { $set: { banner_url: bannerUrl } } // Corrigido para usar `banner_url` como a chave correta
+        { $set: { banner_url: bannerUrl } }
       );
 
       if (!result?.modifiedCount) {
@@ -106,6 +105,36 @@ export class EventRepositoryMongo implements IEventRepository {
         db.connections[0].db?.collection<IEvent>("Event");
 
       const events = (await eventMongoClient?.find().toArray()) as IEvent[];
+      if (!events || events.length === 0) {
+        throw new NoItemsFound("events");
+      }
+
+      return events.map((eventDoc) =>
+        EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
+      );
+    } catch (error) {
+      throw new Error(`Error retrieving events from MongoDB: ${error}`);
+    }
+  }
+
+  async getAllEventsFromToday(): Promise<Event[]> {
+    try {
+      const db = await connectDB();
+      db.connections[0].on("error", () => {
+        console.error("connection error:");
+        throw new Error("Error connecting to MongoDB");
+      });
+
+      const eventMongoClient =
+        db.connections[0].db?.collection<IEvent>("Event");
+
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+
+      const events = (await eventMongoClient
+        ?.find({ event_date: { $gte: today } })
+        .toArray()) as IEvent[];
+
       if (!events || events.length === 0) {
         throw new NoItemsFound("events");
       }
