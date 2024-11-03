@@ -10,6 +10,7 @@ export class DeleteEventByIdUseCase {
 
   async execute(eventId: string): Promise<void> {
     const event = await this.eventRepository.getEventById(eventId);
+    const eventName = event?.getEventName;
     if (!event) {
       throw new NoItemsFound("event");
     }
@@ -18,6 +19,9 @@ export class DeleteEventByIdUseCase {
     }
     if ((event?.getGaleryLink?.length ?? 0) > 0) {
       await this.fileRepository.deleteGallery(eventId);
+    }
+    if ((event?.getEventBannerUrl?.length ?? 0) > 0) {
+      await this.fileRepository.deleteEventBanner(eventId, eventName);
     }
     await this.eventRepository.deleteEventById(eventId);
   }
