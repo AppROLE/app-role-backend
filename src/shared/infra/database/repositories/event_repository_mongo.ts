@@ -201,6 +201,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
       const eventDocs = (await eventMongoClient
         ?.find(query)
+        .sort({ event_date: 1 })
         .toArray()) as IEvent[];
 
       if (!eventDocs || eventDocs.length === 0) {
