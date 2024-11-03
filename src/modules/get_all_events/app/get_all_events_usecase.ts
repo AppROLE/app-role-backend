@@ -12,4 +12,12 @@ export class GetAllEventsUseCase {
     }
     return events;
   }
+
+  executeFromToday(): Promise<Event[]> {
+    const events = this.repo.getAllEventsFromToday();
+    if (!events) {
+      throw new NoItemsFound("eventos");
+    }
+    return events;
+  }
 }
