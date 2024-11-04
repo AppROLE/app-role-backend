@@ -54,7 +54,6 @@ export class CreateEventController {
         "districtId",
         "instituteId",
         "eventStatus",
-        "ticketUrl",
       ];
 
       for (const param of requiredParams) {
