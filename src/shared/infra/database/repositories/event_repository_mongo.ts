@@ -489,7 +489,7 @@ export class EventRepositoryMongo implements IEventRepository {
     }
   }
 
-  async getAllConfirmedEvents(username: string): Promise<Event[]> {
+  async getAllConfirmedEvents(username: string, isMyEvents: boolean): Promise<Event[]> {
     try {
       const db = await connectDB();
       const presenceMongoClient =
@@ -501,7 +501,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
       const user = await userMongoClient?.findOne({ username });
 
-      if (user?.privacy === "PRIVATE") {
+      if (user?.privacy === "PRIVATE" && !isMyEvents) {
         return [];
       }
 
