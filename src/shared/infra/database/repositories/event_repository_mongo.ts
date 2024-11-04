@@ -11,6 +11,7 @@ import {
 } from "../../../../../src/shared/helpers/errors/usecase_errors";
 import { v4 as uuidv4 } from "uuid";
 import { IPresence } from "../models/presence.model";
+import { IUser } from "../models/user.model";
 
 export class EventRepositoryMongo implements IEventRepository {
   async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
@@ -495,9 +496,17 @@ export class EventRepositoryMongo implements IEventRepository {
         db.connections[0].db?.collection<IPresence>("Presence");
       const eventMongoClient =
         db.connections[0].db?.collection<IEvent>("Event");
+      const userMongoClient =
+        db.connections[0].db?.collection<IUser>("User");
+
+      const user = await userMongoClient?.findOne({ username });
+
+      if (user?.privacy === "PRIVATE") {
+        return [];
+      }
 
       const presences = await presenceMongoClient?.find({ username }).toArray();
-
+    
       if (!presences || presences.length === 0) {
         throw new NoItemsFound("event");
       }
