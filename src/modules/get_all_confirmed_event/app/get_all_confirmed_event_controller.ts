@@ -22,7 +22,7 @@ export class GetAllConfirmedEventsController {
             let usernameToSearch = personUsername && personUsername !== "" && typeof personUsername === 'string' ? personUsername : parsedUserApiGateway.username;
             let isMyEvents = personUsername && personUsername !== "" && typeof personUsername === 'string' ? false : true;
 
-            const events = await this.usecase.execute(usernameToSearch, isMyEvents);
+            const events = await this.usecase.execute(usernameToSearch, isMyEvents, parsedUserApiGateway.username);
 
             const viewmodel = new GetAllConfirmedEventsViewModel(events);
             return new OK(viewmodel.toJSON());

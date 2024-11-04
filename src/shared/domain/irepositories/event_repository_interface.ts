@@ -20,7 +20,7 @@ export interface IEventRepository {
     photoUrl: string,
     username: string
   ): Promise<void>;
-  getAllConfirmedEvents(username: string, isMyEvents: boolean): Promise<Event[]>;
+  getAllConfirmedEvents(username: string, isMyEvents: boolean, myUsername: string): Promise<Event[]>;
   updateEvent(eventId: string, updatedFields: any): Promise<Event>;
   updateEventBanner(eventId: string, bannerUrl: string): Promise<void>;
 }
