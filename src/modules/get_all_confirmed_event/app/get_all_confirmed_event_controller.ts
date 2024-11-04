@@ -20,8 +20,9 @@ export class GetAllConfirmedEventsController {
             if (personUsername && typeof personUsername !== "string") throw new WrongTypeParameters("personUsername", "string", typeof personUsername);
 
             let usernameToSearch = personUsername && personUsername !== "" && typeof personUsername === 'string' ? personUsername : parsedUserApiGateway.username;
+            let isMyEvents = personUsername && personUsername !== "" && typeof personUsername === 'string' ? false : true;
 
-            const events = await this.usecase.execute(usernameToSearch);
+            const events = await this.usecase.execute(usernameToSearch, isMyEvents);
 
             const viewmodel = new GetAllConfirmedEventsViewModel(events);
             return new OK(viewmodel.toJSON());
