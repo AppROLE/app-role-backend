@@ -150,72 +150,72 @@ export class EventRepositoryMongo implements IEventRepository {
 
   async getEventsByFilter(filter: any): Promise<Event[]> {
     try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error("connection error:");
-        throw new Error("Erro ao conectar ao MongoDB");
-      });
+        const db = await connectDB();
+        db.connections[0].on("error", () => {
+            console.error("Erro de conexão com o MongoDB");
+            throw new Error("Erro ao conectar ao MongoDB");
+        });
 
-      const eventMongoClient =
-        db.connections[0].db?.collection<IEvent>("Event");
+        const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
 
-      const query: any = {};
+        const query: any = {};
 
-      if (filter.name) {
-        query.name = { $regex: new RegExp(filter.name, "i") };
-      }
-      if (filter.price) query.price = Number(filter.price);
-      if (filter.age_range) query.age_range = filter.age_range;
+        if (filter.name) {
+            query.name = { $regex: new RegExp(filter.name, "i") };
+        }
+        if (filter.price) query.price = Number(filter.price);
+        if (filter.age_range) query.age_range = filter.age_range;
 
-      if (filter.event_date) {
-        const startOfDay = new Date(filter.event_date);
-        startOfDay.setUTCHours(0, 0, 0, 0);
+        if (filter.event_date) {
+            const startOfDay = new Date(filter.event_date);
+            startOfDay.setUTCHours(0, 0, 0, 0);
 
-        const endOfDay = new Date(filter.event_date);
-        endOfDay.setUTCHours(23, 59, 59, 999);
+            const endOfDay = new Date(filter.event_date);
+            endOfDay.setUTCHours(23, 59, 59, 999);
 
-        query.event_date = {
-          $gte: startOfDay,
-          $lte: endOfDay,
-        };
-      } else {
-        const today = new Date();
-        today.setUTCHours(0, 0, 0, 0);
-        query.event_date = { $gte: today };
-      }
+            query.event_date = {
+                $gte: startOfDay,
+                $lte: endOfDay,
+            };
+        } else {
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            query.event_date = { $gte: today };
+        }
 
-      if (filter.district_id) query.district_id = filter.district_id;
+        if (filter.district_id) query.district_id = filter.district_id;
+        if (filter.instituteId) query.institute_id = filter.instituteId;
 
-      if (filter.music_type) {
-        const musicTypes = filter.music_type.split(" ");
-        query.music_type = { $in: musicTypes };
-      }
-      if (filter.features) {
-        const features = filter.features.split(" ");
-        query.features = { $in: features };
-      }
+        if (filter.music_type) {
+            const musicTypes = filter.music_type.split(" ");
+            query.music_type = { $in: musicTypes };
+        }
+        if (filter.features) {
+            const features = filter.features.split(" ");
+            query.features = { $in: features };
+        }
+        if (filter.category) {
+            const category = filter.category.split(" ");
+            query.category = { $in: category };
+        }
 
-      if (filter.category) {
-        const category = filter.category.split(" ");
-        query.category = { $in: category };
-      }
+        const eventDocs = await eventMongoClient
+            ?.find(query)
+            .sort({ event_date: 1 })
+            .toArray();
 
-      const eventDocs = (await eventMongoClient
-        ?.find(query)
-        .sort({ event_date: 1 })
-        .toArray()) as IEvent[];
+        if (!eventDocs || eventDocs.length === 0) {
+            return []; 
+        }
 
-      if (!eventDocs || eventDocs.length === 0) {
-        throw new NoItemsFound("evento");
-      }
-
-      return eventDocs.map((eventDoc) =>
-        EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
-      );
+        return eventDocs.map((eventDoc) =>
+            EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
+        );
     } catch (error) {
-      throw new Error(`Erro ao buscar eventos com filtro no MongoDB: ${error}`);
+        throw new Error(`Erro ao buscar eventos com filtro no MongoDB: ${error}`);
     }
-  }
+}
+
 
   async getEventById(eventId: string): Promise<Event> {
     try {
