@@ -184,7 +184,10 @@ export class EventRepositoryMongo implements IEventRepository {
         }
 
         if (filter.district_id) query.district_id = filter.district_id;
-        if (filter.instituteId) query.institute_id = filter.instituteId;
+
+        if (filter.instituteId) {
+            query.institute_id = filter.instituteId;
+        }
 
         if (filter.music_type) {
             const musicTypes = filter.music_type.split(" ");
@@ -198,6 +201,8 @@ export class EventRepositoryMongo implements IEventRepository {
             const category = filter.category.split(" ");
             query.category = { $in: category };
         }
+
+        console.log("Consulta final:", query); 
 
         const eventDocs = await eventMongoClient
             ?.find(query)
@@ -215,6 +220,7 @@ export class EventRepositoryMongo implements IEventRepository {
         throw new Error(`Erro ao buscar eventos com filtro no MongoDB: ${error}`);
     }
 }
+
 
 
   async getEventById(eventId: string): Promise<Event> {
