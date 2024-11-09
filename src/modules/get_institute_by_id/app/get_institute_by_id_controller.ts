@@ -13,7 +13,7 @@ export class GetInstituteByIdController {
             const { instituteId } = req.data;
 
             if(instituteId == undefined) {
-                throw new MissingParameters("idInstitute");
+                throw new MissingParameters("instituteId");
             }
             const institute = await this.usecase.execute(instituteId as string);
             console.log(institute)
@@ -25,7 +25,7 @@ export class GetInstituteByIdController {
             }
             if (error instanceof Error) {
                 return new InternalServerError(
-                    `CreateEventController, Error on handle: ${error.message}`
+                    `GetInstituteByIdController, Error on handle: ${error.message}`
                 );
             }
         }
