@@ -159,6 +159,7 @@ export class EventRepositoryMongo implements IEventRepository {
       const eventMongoClient =
         db.connections[0].db?.collection<IEvent>("Event");
 
+      // Construção do filtro de consulta
       const query: any = {};
 
       if (filter.name) {
@@ -186,7 +187,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
       if (filter.district_id) query.district_id = filter.district_id;
 
-      if (filter.instituteId) {
+      if (filter.instituteId && typeof filter.instituteId === "string") {
         query.institute_id = filter.instituteId;
       }
 
@@ -203,12 +204,14 @@ export class EventRepositoryMongo implements IEventRepository {
         query.category = { $in: category };
       }
 
-      console.log("Consulta final:", query);
+      console.log("Consulta final:", query); 
 
       const eventDocs = await eventMongoClient
         ?.find(query)
         .sort({ event_date: 1 })
         .toArray();
+
+      console.log("Eventos encontrados:", eventDocs); 
 
       if (!eventDocs || eventDocs.length === 0) {
         return [];
