@@ -1,13 +1,17 @@
 export class CreateInstituteViewModel {
     message: string;
-
-    constructor(message: string) {
-        this.message = message;
+    id: string;
+  
+    constructor(message: string, id: string) {
+      this.message = message;
+      this.id = id;
     }
-
+  
     toJSON() {
-        return {
-            message: this.message,
-        };
+      return {
+        message: this.message,
+        id: this.id,
+      };
     }
-}
+  }
+  
