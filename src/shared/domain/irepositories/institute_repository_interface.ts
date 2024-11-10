@@ -3,7 +3,7 @@ import { INSTITUTE_TYPE } from "../enums/institute_type_enum";
 import { PARTNER_TYPE } from "../enums/partner_type_enum";
 
 export interface IInstituteRepository {
-  createInstitute(institute: Institute): Promise<Institute>;
+  createInstitute(institute: Institute): Promise<string>;
   getAllInstitutes(): Promise<Institute[]>;
   getAllInstitutesByPartnerType(partnerType: PARTNER_TYPE): Promise<Institute[]>;
   getInstituteById(instituteId: string): Promise<Institute>;
