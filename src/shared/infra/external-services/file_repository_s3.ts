@@ -120,42 +120,61 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
-        Prefix: `${eventId}/`, 
+        Prefix: `${eventId}+`,
       };
 
       const listedObjects = await s3.listObjectsV2(listParams).promise();
 
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+        throw new NoItemsFound("pasta do evento");
+      }
+
+      const eventFolder = listedObjects.Contents.find(
+        (file) => file.Key && file.Key.includes(`${eventId}+`)
+      );
+
+      if (!eventFolder) {
+        throw new NoItemsFound("pasta do evento");
+      }
+
+      const listFilesInFolderParams: S3.ListObjectsV2Request = {
+        Bucket: this.s3BucketName,
+        Prefix: eventFolder.Key!,
+      };
+
+      const filesInEventFolder = await s3
+        .listObjectsV2(listFilesInFolderParams)
+        .promise();
+
+      if (
+        !filesInEventFolder.Contents ||
+        filesInEventFolder.Contents.length === 0
+      ) {
         throw new NoItemsFound("foto do evento");
       }
 
-      const matchingFiles = listedObjects.Contents.filter(
+      const eventPhoto = filesInEventFolder.Contents.find(
         (file) => file.Key && file.Key.includes(eventId)
       );
 
-      if (matchingFiles.length === 0) {
+      if (!eventPhoto) {
         throw new NoItemsFound("foto do evento");
       }
 
-      const deletePromises = matchingFiles.map(async (file) => {
-        const deleteParams: S3.DeleteObjectRequest = {
-          Bucket: this.s3BucketName,
-          Key: file.Key!,
-        };
+      const deleteParams: S3.DeleteObjectRequest = {
+        Bucket: this.s3BucketName,
+        Key: eventPhoto.Key!,
+      };
 
-        await s3.deleteObject(deleteParams).promise();
-        console.log(`Foto deletada com sucesso: ${file.Key}`);
-      });
-
-      await Promise.all(deletePromises);
+      await s3.deleteObject(deleteParams).promise();
+      console.log(`Foto do evento deletada com sucesso: ${eventPhoto.Key}`);
     } catch (error: any) {
       if (error instanceof NoItemsFound) {
         throw new NoItemsFound(error.message);
       }
-      throw new Error(`Erro ao deletar fotos: ${error.message}`);
+      throw new Error(`Erro ao deletar foto do evento: ${error.message}`);
     }
   }
-
 
   async deleteInstitutePhoto(name: string): Promise<void> {
     try {
