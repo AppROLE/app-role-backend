@@ -100,7 +100,7 @@ export class CreateInstituteController {
         }
       }
 
-      await this.usecase.execute({
+      const instituteId = await this.usecase.execute({
         description: description,
         institute_type:
           INSTITUTE_TYPE[institute_type as keyof typeof INSTITUTE_TYPE],
@@ -113,7 +113,7 @@ export class CreateInstituteController {
       });
 
       const viewmodel = new CreateInstituteViewModel(
-        "Instituição criada com sucesso"
+        "Instituição criada com sucesso", String(instituteId)
       );
       return new Created(viewmodel.toJSON());
     } catch (error) {
