@@ -19,7 +19,7 @@ export interface CreateInstituteParams {
 export class CreateInstituteUseCase {
   constructor(private repo: IInstituteRepository) {}
 
-  async execute(params: CreateInstituteParams): Promise<Institute> {
+  async execute(params: CreateInstituteParams): Promise<string> {
     const institute = new Institute({
       name: params.name,
       description: params.description,
