@@ -19,6 +19,8 @@ export class UploadEventPhotoUseCase {
     console.log("EVENT ID PORRA" + eventId);
     const event = await this.mongoRepo.getEventById(eventId);
 
+
+
     if (!event) {
       throw new NoItemsFound("Evento");
     }
@@ -32,7 +34,7 @@ export class UploadEventPhotoUseCase {
 
     const imageKey = `${eventId}-${nameFormat}${extensionName}`;
 
-    await this.fileRepo.uploadEventPhoto(imageKey, eventPhoto, mimetype);
+    await this.fileRepo.uploadEventPhoto(eventId, nameFormat, imageKey, eventPhoto, mimetype);
 
     await this.mongoRepo.updateEventPhoto(
       eventId,
