@@ -16,9 +16,12 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     throw new Error("Method not implemented.");
   }
 
-  createInstitute(institute: Institute): Promise<Institute> {
+  createInstitute(institute: Institute): Promise<string> {
     this.institutes.push(institute);
-    return Promise.resolve(institute);
+    if (!institute.instituteId) {
+      throw new Error("Institute ID is undefined");
+    }
+    return Promise.resolve(institute.instituteId);
   }
 
   getInstituteById(instituteId: string): Promise<Institute> {
