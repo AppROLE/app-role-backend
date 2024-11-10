@@ -34,7 +34,7 @@ export class UploadGalleryEventUseCase {
 
     await this.fileRepo.uploadEventGalleryPhoto(
       eventId,
-      eventName,
+      nameFormat,
       imageKey,
       eventPhoto,
       mimetype
