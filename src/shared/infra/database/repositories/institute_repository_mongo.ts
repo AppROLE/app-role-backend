@@ -9,7 +9,7 @@ import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
-  async createInstitute(institute: Institute): Promise<Institute> {
+  async createInstitute(institute: Institute): Promise<string> {
     try {
       const db = await connectDB();
       db.connections[0].on("error", () => {
@@ -35,7 +35,12 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       const respMongo = await instituteMongoClient?.insertOne(instituteDoc);
       console.log("MONGO REPO INSTITUTE RESPMONGO: ", respMongo);
 
-      return institute;
+      if (!respMongo) {
+        throw new Error("Failed to insert institute document");
+      }
+
+      return respMongo.insertedId;
+      
     } catch (error) {
       throw new Error(`Error creating institute on MongoDB: ${error}`);
     }
