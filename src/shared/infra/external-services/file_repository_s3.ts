@@ -95,16 +95,17 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
+        Prefix: `${eventId}/`, 
       };
 
       const listedObjects = await s3.listObjectsV2(listParams).promise();
 
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-        throw new Error("Nenhum arquivo encontrado no bucket.");
+        throw new NoItemsFound("foto do evento");
       }
 
-      const matchingFiles = listedObjects.Contents.filter((file) =>
-        file.Key?.includes(eventId)
+      const matchingFiles = listedObjects.Contents.filter(
+        (file) => file.Key && file.Key.includes(eventId)
       );
 
       if (matchingFiles.length === 0) {
@@ -129,6 +130,7 @@ export class FileRepositoryS3 implements IFileRepository {
       throw new Error(`Erro ao deletar fotos: ${error.message}`);
     }
   }
+
 
   async deleteInstitutePhoto(name: string): Promise<void> {
     try {
