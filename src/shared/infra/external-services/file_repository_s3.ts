@@ -34,6 +34,31 @@ export class FileRepositoryS3 implements IFileRepository {
     }
   }
 
+  async uploadInstitutePhoto(
+    instituteId: string,
+    instituteName: string,
+    imageNameKey: string,
+    eventPhoto: Buffer,
+    mimetype: string
+  ): Promise<void> {
+    try {
+      const s3 = new S3();
+      console.log("s3BucketName: ", this.s3BucketName);
+      const params: S3.PutObjectRequest = {
+        Bucket: this.s3BucketName,
+        Key: `${instituteId}+${instituteName}/${imageNameKey}`,
+        Body: eventPhoto,
+        ContentType: mimetype,
+      };
+
+      await s3.putObject(params).promise();
+    } catch (error: any) {
+      throw new Error(
+        `FileRepositoryS3, Error on uploadEventPhoto: ${error.message}`
+      );
+    }
+  }
+
   async uploadEventGalleryPhoto(
     eventId: string,
     eventName: string,
