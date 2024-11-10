@@ -40,7 +40,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       }
 
       return respMongo.insertedId;
-      
+
     } catch (error) {
       throw new Error(`Error creating institute on MongoDB: ${error}`);
     }
@@ -168,7 +168,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     }
   }
 
-  async updateInstitutePhoto(name: string, institutePhoto: string): Promise<string> {
+  async updateInstitutePhoto(instituteId: string, institutePhoto: string): Promise<string> {
     try {
       const db = await connectDB();
       db.connections[0].on('error', () => {
@@ -178,7 +178,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
       const instituteMongoClient = db.connections[0].db?.collection<IInstitute>('Institute');
 
-      const instituteDoc = await instituteMongoClient?.findOne({ name });
+      const instituteDoc = await instituteMongoClient?.findOne({ _id: instituteId });
 
       if (!instituteDoc) {
         throw new NoItemsFound('name');
@@ -186,7 +186,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
       instituteDoc.logo_photo = institutePhoto;
 
-      const respMongo = await instituteMongoClient?.updateOne({ name }, { $set: instituteDoc });
+      const respMongo = await instituteMongoClient?.updateOne({ instituteId }, { $set: instituteDoc });
       console.log('MONGO REPO USER RESPMONGO: ', respMongo);
 
       return institutePhoto;
