@@ -89,6 +89,7 @@ export class EventRepositoryMongo implements IEventRepository {
         throw new Error("Failed to insert event into MongoDB");
       }
       return respMongo.insertedId;
+      
     } catch (error) {
       throw new Error(`Error creating event on MongoDB: ${error}`);
     }
