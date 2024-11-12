@@ -21,7 +21,7 @@ export class FileRepositoryS3 implements IFileRepository {
       console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
-        Key: `${eventId}+${eventName}/`,
+        Key: `${eventId}+${eventName}`,
         Body: eventPhoto,
         ContentType: mimetype,
       };
