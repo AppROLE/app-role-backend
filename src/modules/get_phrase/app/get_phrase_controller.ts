@@ -17,7 +17,7 @@ export class GetPhraseController {
       const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
       
       const phrase = await this.usecase.execute();
-      const viewmodel = new GetPhraseViewModel(phrase.phrase, parsedUserApiGateway.username);
+      const viewmodel = new GetPhraseViewModel(phrase.phrase, parsedUserApiGateway.nickname);
       
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
