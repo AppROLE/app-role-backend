@@ -186,6 +186,8 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
       instituteDoc.logo_photo = institutePhoto;
 
+      console.log('MONGO REPO USER INSTITUTEDOC: ', instituteDoc);
+
       const respMongo = await instituteMongoClient?.updateOne({ instituteId }, { $set: instituteDoc });
       console.log('MONGO REPO USER RESPMONGO: ', respMongo);
 
