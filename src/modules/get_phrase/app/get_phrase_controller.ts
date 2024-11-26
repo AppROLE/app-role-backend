@@ -12,14 +12,14 @@ import { GetPhraseViewModel } from "./get_phrase_viewmodel";
 export class GetPhraseController {
   constructor(private readonly usecase: GetPhraseUseCase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>): Promise<any> {
+  async handle(req: IRequest, requesterUser?: Record<string, any>): Promise<any> {
     try {
-      console.log('ta morrendo aqui')
-      const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      console.log('ta passando')
       let nickname = '';
-      if (parsedUserApiGateway) {
-        nickname = parsedUserApiGateway.nickname;
+      if (requesterUser) {
+        const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+        if (parsedUserApiGateway) {
+          nickname = parsedUserApiGateway.nickname;
+        }
       }
     
       const phrase = await this.usecase.execute();
