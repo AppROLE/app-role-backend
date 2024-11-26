@@ -16,11 +16,11 @@ export class GetPhraseController {
     try {
       const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
 
-      if (!parsedUserApiGateway.nickname) {
-        const nickname = ''
+      let nickname = '';
+      if (parsedUserApiGateway) {
+        nickname = parsedUserApiGateway.nickname;
       }
-      const nickname = parsedUserApiGateway.nickname;
-      
+    
       const phrase = await this.usecase.execute();
       const viewmodel = new GetPhraseViewModel(phrase.phrase, nickname);
       
