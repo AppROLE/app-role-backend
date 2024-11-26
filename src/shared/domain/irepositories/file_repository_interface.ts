@@ -17,8 +17,6 @@ export interface IFileRepository {
     mimetype: string
   ): Promise<void>;
   uploadEventBanner(
-    eventId: string,
-    eventName: string,
     imageNameKey: string,
     eventPhoto: Buffer,
     mimetype: string
