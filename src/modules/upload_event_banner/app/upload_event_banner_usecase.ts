@@ -33,12 +33,10 @@ export class UploadEventBannerUseCase {
     }
 
     const nameFormat = event.getEventName.trim().replace(/\s+/g, "+").replace(/[^a-zA-Z0-9+]/g, "");
-    const imageKey = `${eventId}-${nameFormat}-banner.${extensionName}`;
+    const imageKey = `events/${eventId}/banner.${extensionName.split("/")[1]}`;
     console.log("Chave da imagem gerada:", imageKey);
 
     await this.fileRepo.uploadEventBanner(
-      eventId,
-      nameFormat,
       imageKey,
       eventPhoto,
       mimetype
