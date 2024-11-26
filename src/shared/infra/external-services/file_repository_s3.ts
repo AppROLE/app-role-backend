@@ -10,8 +10,6 @@ export class FileRepositoryS3 implements IFileRepository {
   }
 
   async uploadEventPhoto(
-    eventId: string,
-    eventName: string,
     imageNameKey: string,
     eventPhoto: Buffer,
     mimetype: string
@@ -21,7 +19,7 @@ export class FileRepositoryS3 implements IFileRepository {
       console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
-        Key: `${eventId}+${eventName}/${imageNameKey}`,
+        Key: imageNameKey,
         Body: eventPhoto,
         ContentType: mimetype,
       };
@@ -35,8 +33,6 @@ export class FileRepositoryS3 implements IFileRepository {
   }
 
   async uploadInstitutePhoto(
-    instituteId: string,
-    instituteName: string,
     imageNameKey: string,
     eventPhoto: Buffer,
     mimetype: string
@@ -46,7 +42,7 @@ export class FileRepositoryS3 implements IFileRepository {
       console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
-        Key: `${instituteId}+${instituteName}/${imageNameKey}`,
+        Key: imageNameKey,
         Body: eventPhoto,
         ContentType: mimetype,
       };
