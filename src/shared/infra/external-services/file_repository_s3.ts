@@ -81,8 +81,6 @@ export class FileRepositoryS3 implements IFileRepository {
   }
 
   async uploadEventBanner(
-    eventId: string,
-    eventName: string,
     imageNameKey: string,
     eventPhoto: Buffer,
     mimetype: string
@@ -92,7 +90,7 @@ export class FileRepositoryS3 implements IFileRepository {
       console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
-        Key: `${eventId}+${eventName}/banner/${imageNameKey}`,
+        Key: imageNameKey,
         Body: eventPhoto,
         ContentType: mimetype,
       };
