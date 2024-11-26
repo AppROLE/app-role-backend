@@ -14,8 +14,9 @@ export class GetPhraseController {
 
   async handle(req: IRequest, requesterUser: Record<string, any>): Promise<any> {
     try {
+      console.log('ta morrendo aqui')
       const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-
+      console.log('ta passando')
       let nickname = '';
       if (parsedUserApiGateway) {
         nickname = parsedUserApiGateway.nickname;
