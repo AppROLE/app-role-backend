@@ -19,8 +19,6 @@ export class UploadGalleryEventUseCase {
     if (!event) {
       throw new NoItemsFound("Evento");
     }
-    const eventName = event.getEventName;
-    const nameFormat = eventName.replace(/\s+/g, "-");
 
     const numberImages = await this.eventRepo.countGalleryEvent(eventId);
 
@@ -28,7 +26,7 @@ export class UploadGalleryEventUseCase {
       throw new FailedToAddToGallery();
     }
 
-    const imageKey = `${nameFormat}-${numberImages.valueOf() + 1}${typePhoto}`;
+    const imageKey = `events/${eventId}/gallery/photo-gallery-${numberImages.valueOf() + 1}.${typePhoto.split("/")[1]}`;
 
     await this.eventRepo.updateGalleryArray(
       eventId,
@@ -36,8 +34,6 @@ export class UploadGalleryEventUseCase {
     );
 
     await this.fileRepo.uploadEventGalleryPhoto(
-      eventId,
-      nameFormat,
       imageKey,
       eventPhoto,
       mimetype
