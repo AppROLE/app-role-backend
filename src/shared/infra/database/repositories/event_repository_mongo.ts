@@ -25,7 +25,7 @@ export class EventRepositoryMongo implements IEventRepository {
       const eventDoc = await eventMongoClient?.findOne({ _id: eventId });
 
       if (!eventDoc) {
-        console.log("Nenhum evento encontrado com o ID fornecido.");
+        console.error("Evento não encontrado no MongoDB.");
         throw new NoItemsFound("event");
       }
 
@@ -226,7 +226,7 @@ export class EventRepositoryMongo implements IEventRepository {
     }
   }
 
-  async getEventById(eventId: string): Promise<Event> {
+  async getEventById(eventId: string): Promise<Event | undefined> {
     try {
       const db = await connectDB();
       db.connections[0].on("error", () => {
@@ -239,15 +239,12 @@ export class EventRepositoryMongo implements IEventRepository {
 
       const eventDoc = await eventMongoClient?.findOne({ _id: eventId });
       if (!eventDoc) {
-        throw new NoItemsFound("evento");
+        return undefined;
       }
       console.log("eventDocAQUI: ", eventDoc);
 
       return EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc));
     } catch (error) {
-      if (error instanceof NoItemsFound) {
-        throw new NoItemsFound("evento");
-      }
       throw new Error(`Error retrieving event by ID from MongoDB: ${error}`);
     }
   }
