@@ -15,9 +15,14 @@ export class GetPhraseController {
   async handle(req: IRequest, requesterUser: Record<string, any>): Promise<any> {
     try {
       const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+
+      if (!parsedUserApiGateway.nickname) {
+        const nickname = ''
+      }
+      const nickname = parsedUserApiGateway.nickname;
       
       const phrase = await this.usecase.execute();
-      const viewmodel = new GetPhraseViewModel(phrase.phrase, parsedUserApiGateway.nickname);
+      const viewmodel = new GetPhraseViewModel(phrase.phrase, nickname);
       
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
