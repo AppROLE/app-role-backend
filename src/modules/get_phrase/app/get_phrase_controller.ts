@@ -12,15 +12,17 @@ import { GetPhraseViewModel } from "./get_phrase_viewmodel";
 export class GetPhraseController {
   constructor(private readonly usecase: GetPhraseUseCase) {}
 
-  async handle(req: IRequest, requesterUser?: Record<string, any>): Promise<any> {
+  async handle(req: IRequest, requesterUser: Record<string, any> = {}): Promise<any> {
     try {
       let nickname = '';
-      if (requesterUser) {
-        const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-        if (parsedUserApiGateway) {
-          nickname = parsedUserApiGateway.nickname;
+        try {
+          const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+          if (parsedUserApiGateway) {
+            nickname = parsedUserApiGateway.nickname;
+          }
+        } catch (error) {
+          nickname = '';
         }
-      }
     
       const phrase = await this.usecase.execute();
       const viewmodel = new GetPhraseViewModel(phrase.phrase, nickname);
