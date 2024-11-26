@@ -1,14 +1,10 @@
 export interface IFileRepository {
   uploadEventPhoto(
-    eventId: string,
-    eventName: string,
     imageNameKey: string,
     eventPhoto: Buffer,
     mimetype: string
   ): Promise<void>;
   uploadInstitutePhoto(
-    instituteId: string,
-    instituteName: string,
     imageNameKey: string,
     eventPhoto: Buffer,
     mimetype: string
