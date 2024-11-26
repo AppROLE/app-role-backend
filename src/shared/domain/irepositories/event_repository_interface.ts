@@ -5,7 +5,7 @@ export interface IEventRepository {
   getAllEvents(): Promise<Event[]>;
   getAllEventsFromToday(): Promise<Event[]>;
   getEventsByFilter(filter: any): Promise<Event[]>;
-  getEventById(eventId: string): Promise<Event>;
+  getEventById(eventId: string): Promise<Event | undefined>;
   deleteEventById(eventId: string): Promise<void>;
   updateEventPhoto(eventId: string, profilePhoto: string): Promise<string>;
   updateGalleryArray(evenetId: string, imageKey: string): Promise<void>;
