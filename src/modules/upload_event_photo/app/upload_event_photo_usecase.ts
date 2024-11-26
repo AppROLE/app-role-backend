@@ -19,22 +19,13 @@ export class UploadEventPhotoUseCase {
     console.log("EVENT ID PORRA" + eventId);
     const event = await this.mongoRepo.getEventById(eventId);
 
-
-
     if (!event) {
       throw new NoItemsFound("Evento");
     }
 
-    // isso seria legal de implementar, uma validaçao de tamanho de imagem
-    // caso não for da extensão correta, ou do tamanho correto, retornar um erro
-    // teria de criar o erro
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const imageKey = `events/${eventId}/event-photo${extensionName}`;
 
-    const nameFormat = event.getEventName.trim().replace(/\s+/g, "+").replace(/[^a-zA-Z0-9+]/g, "");
-
-    const imageKey = `${eventId}-${nameFormat}${extensionName}`;
-
-    await this.fileRepo.uploadEventPhoto(eventId, nameFormat, imageKey, eventPhoto, mimetype);
+    await this.fileRepo.uploadEventPhoto(imageKey, eventPhoto, mimetype);
 
     await this.mongoRepo.updateEventPhoto(
       eventId,
