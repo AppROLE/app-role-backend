@@ -10,10 +10,11 @@ export class DeleteEventByIdUseCase {
 
   async execute(eventId: string): Promise<void> {
     const event = await this.eventRepository.getEventById(eventId);
-    const eventName = event?.getEventName;
     if (!event) {
       throw new NoItemsFound("event");
     }
+
+    const eventName = event?.getEventName;
     if (event?.getEventPhotoLink) {
       await this.fileRepository.deleteEventPhotoByEventId(eventId);
     }
