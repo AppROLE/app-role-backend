@@ -1,7 +1,7 @@
 import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
 import { IFileRepository } from "src/shared/domain/irepositories/file_repository_interface";
 import { Environments } from "src/shared/environments";
-import { FailedToAddToGallery } from "src/shared/helpers/errors/usecase_errors";
+import { FailedToAddToGallery, NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 
 export class UploadGalleryEventUseCase {
   constructor(
@@ -16,8 +16,9 @@ export class UploadGalleryEventUseCase {
     mimetype: string
   ) {
     const event = await this.eventRepo.getEventById(eventId);
-    const eventName = event.getEventName;
-    const nameFormat = eventName.replace(/\s+/g, "-");
+    if (!event) {
+      throw new NoItemsFound("Evento");
+    }
 
     const numberImages = await this.eventRepo.countGalleryEvent(eventId);
 
@@ -25,7 +26,7 @@ export class UploadGalleryEventUseCase {
       throw new FailedToAddToGallery();
     }
 
-    const imageKey = `${nameFormat}-${numberImages.valueOf() + 1}${typePhoto}`;
+    const imageKey = `events/${eventId}/gallery/photo-gallery-${numberImages.valueOf() + 1}.${typePhoto.split("/")[1]}`;
 
     await this.eventRepo.updateGalleryArray(
       eventId,
@@ -33,8 +34,6 @@ export class UploadGalleryEventUseCase {
     );
 
     await this.fileRepo.uploadEventGalleryPhoto(
-      eventId,
-      nameFormat,
       imageKey,
       eventPhoto,
       mimetype

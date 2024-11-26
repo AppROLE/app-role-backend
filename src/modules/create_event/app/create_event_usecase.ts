@@ -42,6 +42,7 @@ export class CreateEventUseCase {
       instituteId: params.instituteId,
       eventStatus: params.eventStatus,
       musicType: params.musicType,
+      category: params.category,
       menuLink: params.menuLink,
       galeryLink: params.galeryLink,
       bannerUrl: params.bannerUrl,
