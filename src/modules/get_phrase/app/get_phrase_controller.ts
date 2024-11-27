@@ -15,18 +15,23 @@ export class GetPhraseController {
   async handle(req: IRequest, requesterUser: Record<string, any> = {}): Promise<any> {
     try {
       let nickname = '';
-      try {
+  
+      if (requesterUser && Object.keys(requesterUser).length > 0) {
+        try {
           const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-          if (parsedUserApiGateway) {
+          if (parsedUserApiGateway && parsedUserApiGateway.nickname) {
             nickname = parsedUserApiGateway.nickname;
           }
-        } catch (error) {
+        } catch (error: any) {
+          console.warn("Erro ao parsear o usuário do token:", error.message);
           nickname = '';
         }
-    
+      }
+  
       const phrase = await this.usecase.execute();
+  
       const viewmodel = new GetPhraseViewModel(phrase.phrase, nickname);
-      
+  
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
       if (error instanceof NoItemsFound) {
@@ -34,7 +39,7 @@ export class GetPhraseController {
       }
       if (error instanceof Error) {
         return new InternalServerError(
-          `CreateEventController, Error on handle: ${error.message}`
+          `GetPhraseController, Error on handle: ${error.message}`
         );
       }
     }
