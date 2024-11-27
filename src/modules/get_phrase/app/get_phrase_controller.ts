@@ -17,6 +17,7 @@ export class GetPhraseController {
       let nickname = '';
         try {
           const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+          console.log("parsedUserApiGateway", parsedUserApiGateway);
           if (parsedUserApiGateway) {
             nickname = parsedUserApiGateway.nickname;
           }
