@@ -26,6 +26,9 @@ export class GetPhraseController {
           console.warn("Erro ao parsear o usuário do token:", error.message);
           nickname = '';
         }
+      } else {
+        console.warn("requesterUser ou claims não estão presentes");
+        nickname = ''; 
       }
   
       const phrase = await this.usecase.execute();
