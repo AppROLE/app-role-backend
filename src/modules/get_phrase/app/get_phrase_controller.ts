@@ -16,9 +16,9 @@ export class GetPhraseController {
     try {
       let nickname = '';
   
-      if (requesterUser && Object.keys(requesterUser).length > 0) {
+      if (requesterUser && requesterUser.claims) {
         try {
-          const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+          const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser.claims).getParsedData();
           if (parsedUserApiGateway && parsedUserApiGateway.nickname) {
             nickname = parsedUserApiGateway.nickname;
           }
