@@ -14,57 +14,47 @@ import { IPresence } from "../models/presence.model";
 import { IUser } from "../models/user.model";
 
 export class EventRepositoryMongo implements IEventRepository {
+
   async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
     try {
       console.log("Conectando ao MongoDB para atualizar o banner do evento...");
       const db = await connectDB();
-      const eventMongoClient =
-        db.connections[0].db?.collection<IEvent>("Event");
-
+      const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
+  
       console.log(`Buscando evento com ID: ${eventId}`);
       const eventDoc = await eventMongoClient?.findOne({ _id: eventId });
-
+  
       if (!eventDoc) {
         console.error("Evento não encontrado no MongoDB.");
         throw new NoItemsFound("event");
       }
-
+  
       console.log("Link atual do banner:", eventDoc.banner_url);
       console.log("Novo link do banner:", bannerUrl);
-
+  
       if (eventDoc.banner_url === bannerUrl) {
-        console.log(
-          "O link do banner fornecido é idêntico ao atual. Nenhuma atualização necessária."
-        );
+        console.log("O link do banner fornecido é idêntico ao atual. Nenhuma atualização necessária.");
         return;
       }
-
+  
       const result = await eventMongoClient?.updateOne(
         { _id: eventId },
         { $set: { banner_url: bannerUrl } }
       );
-
-      if (!result?.modifiedCount) {
+  
+      if (result?.modifiedCount === 0) {
         console.log("Nenhuma modificação detectada no documento do evento.");
-        throw new Error(
-          "Error updating event banner, no modifications detected."
-        );
+        throw new Error("Erro ao atualizar o banner do evento, nenhuma modificação detectada.");
       }
-
+  
       console.log("Banner do evento atualizado com sucesso no MongoDB.");
     } catch (error: any) {
-      if (error instanceof NoItemsFound) {
-        throw new NoItemsFound("event");
-      }
-      console.error(
-        "Erro ao atualizar o banner do evento no MongoDB:",
-        error.message
-      );
-      throw new Error(
-        `Error updating event banner on MongoDB: ${error.message}`
-      );
+      console.error("Erro ao atualizar o banner do evento no MongoDB:", error.message);
+      throw new Error(`Erro ao atualizar o banner do evento no MongoDB: ${error.message}`);
     }
   }
+  
+  
 
   async createEvent(event: Event): Promise<string> {
     try {
