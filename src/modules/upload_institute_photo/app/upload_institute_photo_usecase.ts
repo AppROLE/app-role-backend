@@ -12,7 +12,6 @@ export class UploadInstitutePhotoUseCase {
     async execute(
         instituteId: string,
         institutePhoto: Buffer,
-        extensionName: string,
         mimetype: string
       )  {
         const institute = await this.instituteRepo.getInstituteById(instituteId);
@@ -21,7 +20,7 @@ export class UploadInstitutePhotoUseCase {
             throw new NoItemsFound("Instituto");
         }
 
-        const imageKey = `institutes/${instituteId}/institute-photo${extensionName}`;
+        const imageKey = `institutes/${instituteId}/institute-photo.${mimetype.split("/")[1]}`;
 
         await this.fileRepo.uploadInstitutePhoto(imageKey, institutePhoto, mimetype);
 
