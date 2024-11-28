@@ -18,13 +18,9 @@ export class UploadEventPhotoController {
     try {
       console.log("CONTROLLER FORM DATA", formData);
       const eventId = formData.fields.eventId;
-      const typePhoto = formData.fields.typePhoto;
 
       if (!eventId) {
         throw new MissingParameters("eventId");
-      }
-      if (!typePhoto) {
-        throw new MissingParameters("typePhoto");
       }
 
       console.log("Event", eventId);
@@ -48,7 +44,6 @@ export class UploadEventPhotoController {
       await this.usecase.execute(
         eventId,
         imagesBuffers[0],
-        typePhoto,
         mimetypes[0]
       );
 
