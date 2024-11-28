@@ -12,13 +12,9 @@ export class UploadInstitutePhotoController {
     async handle(request: IRequest, formData: any) {
         try {
             const instituteId = formData.fields.instituteId
-            const typePhoto = formData.fields.typePhoto;
 
             if (!instituteId) {
                 throw new MissingParameters("instituteId")
-            }
-            if (!typePhoto) {
-                throw new MissingParameters("typePhoto");
             }
 
             const imagesBuffers = formData.files.map((file: any) => {
@@ -37,7 +33,7 @@ export class UploadInstitutePhotoController {
             console.log("fieldNames: ", fieldNames)
             console.log("mimetypes: ", mimetypes)
 
-            await this.usecase.execute(instituteId, imagesBuffers[0], typePhoto, mimetypes[0])
+            await this.usecase.execute(instituteId, imagesBuffers[0], mimetypes[0])
 
             const viewmodel = new UploadInstitutePhotoViewmodel("A foto do instituto foi adicionada com sucesso!")
 
