@@ -13,7 +13,6 @@ export class UploadEventPhotoUseCase {
   async execute(
     eventId: string,
     eventPhoto: Buffer,
-    extensionName: string,
     mimetype: string
   ) {
     const event = await this.mongoRepo.getEventById(eventId);
@@ -22,7 +21,7 @@ export class UploadEventPhotoUseCase {
       throw new NoItemsFound("Evento");
     }
 
-    const imageKey = `events/${eventId}/event-photo${extensionName}`;
+    const imageKey = `events/${eventId}/event-photo.${mimetype.split("/")[1]}`;
 
     await this.fileRepo.uploadEventPhoto(imageKey, eventPhoto, mimetype);
 
