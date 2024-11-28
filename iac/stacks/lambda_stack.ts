@@ -41,6 +41,7 @@ export class LambdaStack extends Construct {
   getDistrictByIdFunction: lambda.Function
 
   getPhrase: lambda.Function
+  getPhraseNoneUser: lambda.Function
 
   getAllPresencesByEventIdFunction: lambda.Function
   confirmEventFunction: lambda.Function
@@ -126,7 +127,8 @@ export class LambdaStack extends Construct {
     this.getAllFavoriteInstitutesFunction = this.createLambdaApiGatewayIntegration('get_all_favorites_institutes', 'GET', apiGatewayResource, environmentVariables, authorizer)
     this.favoriteInstituteFunction = this.createLambdaApiGatewayIntegration('favorite_institute', 'PUT', apiGatewayResource, environmentVariables, authorizer)
 
-    this.getPhrase = this.createLambdaApiGatewayIntegration('get_phrase', 'GET', apiGatewayResource, environmentVariables)
+    this.getPhrase = this.createLambdaApiGatewayIntegration('get_phrase', 'GET', apiGatewayResource, environmentVariables, authorizer)
+    this.getPhraseNoneUser = this.createLambdaApiGatewayIntegration('get_phrase_none_user', 'GET', apiGatewayResource, environmentVariables)
 
     // presence routes
     this.getAllPresencesByEventIdFunction = this.createLambdaApiGatewayIntegration('get_all_presences_by_event_id', 'GET', apiGatewayResource, environmentVariables, authorizer)
