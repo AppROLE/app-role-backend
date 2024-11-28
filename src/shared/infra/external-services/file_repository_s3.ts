@@ -34,7 +34,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
   async uploadInstitutePhoto(
     imageNameKey: string,
-    eventPhoto: Buffer,
+    institutePhoto: Buffer,
     mimetype: string
   ): Promise<void> {
     try {
@@ -43,7 +43,7 @@ export class FileRepositoryS3 implements IFileRepository {
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
         Key: imageNameKey,
-        Body: eventPhoto,
+        Body: institutePhoto,
         ContentType: mimetype,
       };
 
