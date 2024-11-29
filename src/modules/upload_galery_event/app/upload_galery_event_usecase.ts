@@ -12,7 +12,6 @@ export class UploadGalleryEventUseCase {
   async execute(
     eventId: string,
     eventPhoto: Buffer,
-    typePhoto: string,
     mimetype: string
   ) {
     const event = await this.eventRepo.getEventById(eventId);
@@ -26,7 +25,7 @@ export class UploadGalleryEventUseCase {
       throw new FailedToAddToGallery();
     }
 
-    const imageKey = `events/${eventId}/gallery/photo-gallery-${numberImages.valueOf() + 1}.${typePhoto.split("/")[1]}`;
+    const imageKey = `events/${eventId}/gallery/photo-gallery-${numberImages.valueOf() + 1}.${mimetype.split("/")[1]}`;
 
     await this.eventRepo.updateGalleryArray(
       eventId,
