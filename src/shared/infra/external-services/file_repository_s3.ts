@@ -253,41 +253,44 @@ export class FileRepositoryS3 implements IFileRepository {
     try {
       const s3 = new S3();
       console.log("s3BucketName: ", this.s3BucketName);
-
+  
       if (!eventId) {
         throw new Error("Event ID não fornecido.");
       }
-
-      const bannerPrefix = `${eventId}/banner`;
-
+  
+      const bannerPrefix = `events/${eventId}/banner`;
+  
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
         Prefix: `events/${eventId}/`,
       };
-
+  
       const listedObjects = await s3.listObjectsV2(listParams).promise();
-
+  
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+        console.error(`Nenhum arquivo encontrado na pasta do evento ${eventId}.`);
         throw new Error("Nenhum arquivo encontrado na pasta do evento.");
       }
-
+  
       const bannerFile = listedObjects.Contents.find(
         (file) => file.Key && file.Key.startsWith(bannerPrefix)
       );
-
+  
       if (!bannerFile) {
+        console.error(`Nenhum arquivo banner encontrado para o evento ${eventId}.`);
         throw new Error("Nenhum arquivo banner encontrado na pasta do evento.");
       }
-
+  
       const deleteParams: S3.DeleteObjectRequest = {
         Bucket: this.s3BucketName,
         Key: bannerFile.Key!,
       };
-
+  
       await s3.deleteObject(deleteParams).promise();
       console.log(`Arquivo banner do evento ${eventId} deletado com sucesso.`);
     } catch (error: any) {
+      console.error(`Erro ao deletar o arquivo banner: ${error.message}`);
       throw new Error(`Erro ao deletar o arquivo banner: ${error.message}`);
     }
-  }
+  }  
 }
