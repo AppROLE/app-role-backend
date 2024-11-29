@@ -48,7 +48,6 @@ export class UploadEventBannerController {
       await this.usecase.execute(
         eventId,
         imagesBuffers[0],
-        typePhoto,
         mimetypes[0]
       );
 
