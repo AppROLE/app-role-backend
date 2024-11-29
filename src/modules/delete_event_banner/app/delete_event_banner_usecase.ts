@@ -2,6 +2,7 @@ import { IEventRepository } from "src/shared/domain/irepositories/event_reposito
 import { IFileRepository } from "src/shared/domain/irepositories/file_repository_interface";
 import {
   galleryEmpty,
+  BannerEmpty,
   NoItemsFound,
 } from "src/shared/helpers/errors/usecase_errors";
 
@@ -19,8 +20,8 @@ export class DeleteEventBannerUseCase {
     }
     console.log("EVENTO: ", event);
     console.log("ACHEI O EVENTO - ESTOU NO USECASE: ", event);
-    if (!event?.getGaleryLink || event.getGaleryLink.length === 0) {
-      throw new galleryEmpty();
+    if (!event?.getEventBannerUrl || event.getEventBannerUrl.length === 0) {
+      throw new BannerEmpty();
     }
 
     const eventName = event.getEventName
