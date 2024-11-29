@@ -249,7 +249,7 @@ export class FileRepositoryS3 implements IFileRepository {
     }
   }
 
-  async deleteEventBanner(eventId: string, eventName: string): Promise<void> {
+  async deleteEventBanner(eventId: string): Promise<void> {
     try {
       const s3 = new S3();
       console.log("s3BucketName: ", this.s3BucketName);
@@ -262,26 +262,32 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
-        Prefix: bannerPrefix,
+        Prefix: `${eventId}/`,
       };
 
       const listedObjects = await s3.listObjectsV2(listParams).promise();
 
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-        throw new Error("Nenhum arquivo encontrado na pasta banner.");
+        throw new Error("Nenhum arquivo encontrado na pasta do evento.");
       }
 
-      const deleteParams: S3.DeleteObjectsRequest = {
+      const bannerFile = listedObjects.Contents.find(
+        (file) => file.Key && file.Key.startsWith(bannerPrefix)
+      );
+
+      if (!bannerFile) {
+        throw new Error("Nenhum arquivo banner encontrado na pasta do evento.");
+      }
+
+      const deleteParams: S3.DeleteObjectRequest = {
         Bucket: this.s3BucketName,
-        Delete: {
-          Objects: listedObjects.Contents.map((file) => ({ Key: file.Key! })),
-        },
+        Key: bannerFile.Key!,
       };
 
-      await s3.deleteObjects(deleteParams).promise();
-      console.log(`Pasta 'banner' do evento ${eventId} deletada com sucesso.`);
+      await s3.deleteObject(deleteParams).promise();
+      console.log(`Arquivo banner do evento ${eventId} deletado com sucesso.`);
     } catch (error: any) {
-      throw new Error(`Erro ao deletar a pasta banner: ${error.message}`);
+      throw new Error(`Erro ao deletar o arquivo banner: ${error.message}`);
     }
   }
 }
