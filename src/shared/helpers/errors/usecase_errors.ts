@@ -47,3 +47,9 @@ export class galleryEmpty extends BaseError {
     super("A galeria está vazia");
   }
 }
+
+export class BannerEmpty extends BaseError {
+  constructor() {
+    super("Não tem banner neste evento");
+  }
+}
