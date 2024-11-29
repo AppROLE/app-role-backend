@@ -262,7 +262,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
-        Prefix: `${eventId}/`,
+        Prefix: `events/${eventId}/`,
       };
 
       const listedObjects = await s3.listObjectsV2(listParams).promise();
