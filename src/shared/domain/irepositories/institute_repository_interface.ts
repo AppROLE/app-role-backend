@@ -19,4 +19,5 @@ export interface IInstituteRepository {
     district_id?: string,
     phone?: string
   ): Promise<Institute>;
+  updateInstituteV2(instituteId: string, updatedFields: any): Promise<Institute>;
 }
