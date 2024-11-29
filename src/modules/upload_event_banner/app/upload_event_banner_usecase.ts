@@ -20,7 +20,6 @@ export class UploadEventBannerUseCase {
       "Executando UploadEventBannerUseCase para o evento ID:",
       eventId
     );
-
     const event = await this.mongoRepo.getEventById(eventId);
     if (!event) {
       console.log("Evento não encontrado.");
