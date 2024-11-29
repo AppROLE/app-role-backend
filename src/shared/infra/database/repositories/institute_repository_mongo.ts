@@ -275,5 +275,32 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       throw new Error(`Error updating institute on MongoDB: ${error.message}`);
     }
   }
+
+  async updateInstituteV2(instituteId: string, updatedFields: any): Promise<Institute> {
+  try {
+    const db = await connectDB();
+    db.connections[0].on("error", () => {
+    console.error.bind(console, "connection error:");
+    throw new Error("Error connecting to MongoDB");
+    });
+
+    const instituteMongoClient =
+    db.connections[0].db?.collection<IInstitute>("Institute");
+
+    const updatedInstitute = await instituteMongoClient?.findOneAndUpdate(
+    { _id: instituteId },
+    { $set: updatedFields },
+    { returnDocument: 'after' }
+    );
+
+    if (!updatedInstitute) {
+    throw new Error(`Institute with ID ${instituteId} not found`);
+    }
+
+    return InstituteMongoDTO.toEntity(InstituteMongoDTO.fromMongo(updatedInstitute));
+  } catch (error) {
+    throw new Error(`Error updating institute in MongoDB: ${error}`);
+  }
   
+}
 }
