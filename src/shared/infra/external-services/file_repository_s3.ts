@@ -105,59 +105,35 @@ export class FileRepositoryS3 implements IFileRepository {
     try {
       const s3 = new S3();
       console.log("s3BucketName: ", this.s3BucketName);
-
+  
       if (!eventId) {
         throw new Error("Event ID não fornecido.");
       }
-
+  
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
-        Prefix: `${eventId}+`,
+        Prefix: `events/${eventId}/`, 
       };
-
+  
       const listedObjects = await s3.listObjectsV2(listParams).promise();
-
+  
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
         throw new NoItemsFound("pasta do evento");
       }
-
-      const eventFolder = listedObjects.Contents.find(
-        (file) => file.Key && file.Key.includes(`${eventId}+`)
+  
+      const eventPhoto = listedObjects.Contents.find(
+        (file) => file.Key && file.Key.includes("event-photo")
       );
-
-      if (!eventFolder) {
-        throw new NoItemsFound("pasta do evento");
-      }
-
-      const listFilesInFolderParams: S3.ListObjectsV2Request = {
-        Bucket: this.s3BucketName,
-        Prefix: eventFolder.Key!,
-      };
-
-      const filesInEventFolder = await s3
-        .listObjectsV2(listFilesInFolderParams)
-        .promise();
-
-      if (
-        !filesInEventFolder.Contents ||
-        filesInEventFolder.Contents.length === 0
-      ) {
-        throw new NoItemsFound("foto do evento");
-      }
-
-      const eventPhoto = filesInEventFolder.Contents.find(
-        (file) => file.Key && file.Key.includes(eventId)
-      );
-
+  
       if (!eventPhoto) {
         throw new NoItemsFound("foto do evento");
       }
-
+  
       const deleteParams: S3.DeleteObjectRequest = {
         Bucket: this.s3BucketName,
         Key: eventPhoto.Key!,
       };
-
+  
       await s3.deleteObject(deleteParams).promise();
       console.log(`Foto do evento deletada com sucesso: ${eventPhoto.Key}`);
     } catch (error: any) {
@@ -167,7 +143,7 @@ export class FileRepositoryS3 implements IFileRepository {
       throw new Error(`Erro ao deletar foto do evento: ${error.message}`);
     }
   }
-
+  
   async deleteInstitutePhoto(name: string): Promise<void> {
     try {
       const s3 = new S3();
