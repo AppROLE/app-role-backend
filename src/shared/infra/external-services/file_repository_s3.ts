@@ -258,7 +258,7 @@ export class FileRepositoryS3 implements IFileRepository {
         throw new Error("Event ID não fornecido.");
       }
 
-      const bannerPrefix = `${eventId}+${eventName}/banner/`;
+      const bannerPrefix = `${eventId}/banner`;
 
       const listParams: S3.ListObjectsV2Request = {
         Bucket: this.s3BucketName,
