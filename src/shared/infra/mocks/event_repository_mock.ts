@@ -10,38 +10,19 @@ export class EventRepositoryMock implements IEventRepository {
     const eventMock = new EventMock();
     this.events = eventMock.events;
   }
-  getAllEventsFromToday(): Promise<Event[]> {
+  getAllEventsFromToday(page: number): Promise<Event[]> {
     throw new Error("Method not implemented.");
   }
-  async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
-    const event = this.events.find((event) => event.getEventId === eventId);
-    if (!event) {
-      throw new NoItemsFound("event");
-    }
-    event.setEventBannerUrl = bannerUrl;
+  getEventsByUpcomingDates(dates: Date[]): Promise<Event[]> {
+    throw new Error("Method not implemented.");
   }
   updateEvent(eventId: string, updatedFields: any): Promise<Event> {
     throw new Error("Method not implemented.");
   }
-
-  async getEventsByUpcomingDates(dates: Date[]): Promise<Event[]> {
-    if (!dates || dates.length === 0) {
-      return [];
-    }
-
-    const upcomingEvents = this.events.filter((event) => {
-      const eventDate = new Date(event.getEventDate);
-      return dates.some(
-        (date) => eventDate.toISOString() === date.toISOString()
-      );
-    });
-
-    if (upcomingEvents.length === 0) {
-      throw new NoItemsFound("eventos");
-    }
-
-    return upcomingEvents;
+  updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
+    throw new Error("Method not implemented.");
   }
+  
 
   async createEvent(event: Event): Promise<string> {
     this.events.push(event);
