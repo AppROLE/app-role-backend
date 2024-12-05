@@ -109,7 +109,7 @@ export class EventRepositoryMongo implements IEventRepository {
     }
   }
 
-  async getAllEventsFromToday(): Promise<Event[]> {
+  async getAllEventsFromToday(page: number): Promise<Event[]> {
     try {
       const db = await connectDB();
       db.connections[0].on("error", () => {
@@ -125,6 +125,8 @@ export class EventRepositoryMongo implements IEventRepository {
 
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
+        .sort({ event_date: -1 })
+        .limit(20 * page)
         .toArray()) as IEvent[];
 
       if (!events || events.length === 0) {
