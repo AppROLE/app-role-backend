@@ -125,6 +125,17 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
       const instituteMongoClient =
         db.connections[0].db?.collection<IInstitute>("Institute");
+      const eventMongoClient = db.connections[0].db?.collection("Event");
+
+      const events = await eventMongoClient?.find({
+        institute_id: instituteId
+      }).toArray();
+
+      if (events) {
+        await eventMongoClient?.deleteMany({
+          institute_id: instituteId
+        });
+      }
 
       const result = await instituteMongoClient?.deleteOne({ _id: instituteId });
       if (!result?.deletedCount) {
