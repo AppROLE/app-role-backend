@@ -13,10 +13,14 @@ export class GetAllEventsController {
 
   async handle(req: IRequest): Promise<any> {
     try {
-      const { fromtoday } = req.data;
+      const { fromtoday, page } = req.data;
 
       if (fromtoday === "true") {
-        const events = await this.usecase.executeFromToday();
+        const pageNumber = Number(page);
+        if (isNaN(pageNumber)) {
+          throw new InternalServerError("Invalid page number");
+        }
+        const events = await this.usecase.executeFromToday(pageNumber);
         const viewModel = new GetAllEventsViewModel(events);
         return new OK(viewModel.toJSON());
       }
