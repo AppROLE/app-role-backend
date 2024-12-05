@@ -3,7 +3,7 @@ import { Event } from "../entities/event";
 export interface IEventRepository {
   createEvent(event: Event): Promise<string>;
   getAllEvents(): Promise<Event[]>;
-  getAllEventsFromToday(): Promise<Event[]>;
+  getAllEventsFromToday(page: number): Promise<Event[]>;
   getEventsByFilter(filter: any): Promise<Event[]>;
   getEventById(eventId: string): Promise<Event | undefined>;
   deleteEventById(eventId: string): Promise<void>;
