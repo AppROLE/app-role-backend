@@ -13,8 +13,8 @@ export class GetAllEventsUseCase {
     return events;
   }
 
-  executeFromToday(): Promise<Event[]> {
-    const events = this.repo.getAllEventsFromToday();
+  executeFromToday(page: number): Promise<Event[]> {
+    const events = this.repo.getAllEventsFromToday(page);
     if (!events) {
       throw new NoItemsFound("eventos");
     }
