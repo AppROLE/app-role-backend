@@ -116,27 +116,25 @@ export class EventRepositoryMongo implements IEventRepository {
         console.error("connection error:");
         throw new Error("Error connecting to MongoDB");
       });
-
+  
       const eventMongoClient =
         db.connections[0].db?.collection<IEvent>("Event");
-
+  
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
-
-      const limit = 20;
-      const skip = (page - 1) * limit * page;
-    
+  
+      const limit = 20 * page;
+  
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
         .sort({ event_date: 1 })
-        .skip(skip)
-        .limit(limit * page)
+        .limit(limit)
         .toArray()) as IEvent[];
-
+  
       if (!events || events.length === 0) {
         throw new NoItemsFound("events");
       }
-
+  
       return events.map((eventDoc) =>
         EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
       );
@@ -144,6 +142,7 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new Error(`Error retrieving events from MongoDB: ${error}`);
     }
   }
+  
 
   async getEventsByFilter(filter: any): Promise<Event[]> {
     try {
