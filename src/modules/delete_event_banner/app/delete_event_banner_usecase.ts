@@ -1,5 +1,6 @@
 import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
 import { IFileRepository } from "src/shared/domain/irepositories/file_repository_interface";
+import { Environments } from "src/shared/environments";
 import {
   galleryEmpty,
   BannerEmpty,
@@ -31,8 +32,9 @@ export class DeleteEventBannerUseCase {
 
     await this.fileRepository.deleteEventBanner(eventId, eventName);
 
-    await this.eventRepository.updateEvent(eventId, {
-      bannerUrl: "",
-    });
+    await this.eventRepository.updateEventBanner(
+      eventId,
+      ''
+    );
   }
 }
