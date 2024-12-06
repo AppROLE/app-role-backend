@@ -117,18 +117,17 @@ export class EventRepositoryMongo implements IEventRepository {
         throw new Error("Error connecting to MongoDB");
       });
   
-      const eventMongoClient =
-        db.connections[0].db?.collection<IEvent>("Event");
+      const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
   
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
   
-      const limit = 20 * page;
+      const limit = 20 * page; 
   
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
-        .sort({ event_date: 1 })
-        .limit(limit)
+        .sort({ event_date: 1 }) 
+        .limit(limit) 
         .toArray()) as IEvent[];
   
       if (!events || events.length === 0) {
@@ -138,10 +137,11 @@ export class EventRepositoryMongo implements IEventRepository {
       return events.map((eventDoc) =>
         EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
       );
-    } catch (error) {
-      throw new Error(`Error retrieving events from MongoDB: ${error}`);
+    } catch (error: any) {
+      throw new Error(`Error retrieving events from MongoDB: ${error.message}`);
     }
   }
+  
   
 
   async getEventsByFilter(filter: any): Promise<Event[]> {
