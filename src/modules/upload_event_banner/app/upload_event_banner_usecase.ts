@@ -34,7 +34,7 @@ export class UploadEventBannerUseCase {
     const imageKey = `events/${eventId}/banner.${mimetype.split("/")[1]}`;
     console.log("Chave da imagem gerada:", imageKey);
 
-    await this.fileRepo.uploadEventBanner(
+    await this.fileRepo.uploadEventPhoto(
       imageKey,
       eventPhoto,
       mimetype
