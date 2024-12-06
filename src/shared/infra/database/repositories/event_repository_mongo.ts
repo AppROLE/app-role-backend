@@ -123,10 +123,14 @@ export class EventRepositoryMongo implements IEventRepository {
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
 
+      const limit = 20;
+      const skip = (page - 1) * limit * page;
+    
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
         .sort({ event_date: 1 })
-        .limit(20 * page)
+        .skip(skip)
+        .limit(limit * page)
         .toArray()) as IEvent[];
 
       if (!events || events.length === 0) {
