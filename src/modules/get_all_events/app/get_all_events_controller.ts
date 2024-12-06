@@ -17,11 +17,14 @@ export class GetAllEventsController {
 
       if (fromtoday === "true") {
         const pageNumber = Number(page);
-        if (isNaN(pageNumber)) {
+
+        if (isNaN(pageNumber) || pageNumber <= 0) {
           throw new InternalServerError("Invalid page number");
         }
+
         const events = await this.usecase.executeFromToday(pageNumber);
         const viewModel = new GetAllEventsViewModel(events);
+
         return new OK(viewModel.toJSON());
       }
 
@@ -32,11 +35,10 @@ export class GetAllEventsController {
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message);
       }
-      if (error instanceof Error) {
-        return new InternalServerError(
-          `CreateEventController, Error on handle: ${error.message}`
-        );
-      }
+
+      return new InternalServerError(
+        `GetAllEventsController, Error on handle: ${error.message}`
+      );
     }
   }
 }
