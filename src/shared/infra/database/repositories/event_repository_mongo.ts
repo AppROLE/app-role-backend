@@ -122,7 +122,7 @@ export class EventRepositoryMongo implements IEventRepository {
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
   
-      const limit = 20 * page; 
+      const limit = 100 * page; 
   
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
