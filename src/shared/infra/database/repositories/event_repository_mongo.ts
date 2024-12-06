@@ -125,7 +125,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
-        .sort({ event_date: -1 })
+        .sort({ event_date: 1 })
         .limit(20 * page)
         .toArray()) as IEvent[];
 
