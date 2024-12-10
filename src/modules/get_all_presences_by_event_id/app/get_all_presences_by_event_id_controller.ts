@@ -11,10 +11,7 @@ export class GetAllPresencesByEventIdController {
   constructor(private readonly usecase: GetAllPresencesByEventIdUseCase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
-    try {
-      const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      if (!parsedUserApiGateway) throw new ForbiddenAction("usuário")
-      
+    try {      
       const { eventId } = request.data;
   
       if (!eventId) throw new MissingParameters("eventId");
@@ -39,9 +36,6 @@ export class GetAllPresencesByEventIdController {
       }
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message)
-      }
-      if (error instanceof ForbiddenAction) {
-        return new Unauthorized(error.message)
       }
       if (error instanceof Error) {
         return new InternalServerError(error.message)
