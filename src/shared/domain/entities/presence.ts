@@ -114,7 +114,7 @@ export class Presence {
       return false;
     }
 
-    if (!/^[a-zA-Z0-9_]*$/.test(nickname)) {
+    if (!/^[\p{L}\p{M}\p{N}_\- ]+$/u.test(nickname)) {
       return false;
     }
 
