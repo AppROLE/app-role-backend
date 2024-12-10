@@ -19,6 +19,7 @@ export class EventViewModel {
   private packageType?: string[];
   private category?: string;
   private ticketUrl?: string;
+  private eventPhotoLink?: string;
 
   constructor(event: Event) {
     this.eventId = event.getEventId;
@@ -59,6 +60,7 @@ export class EventViewModel {
       packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,
+      eventPhotoLink: this.eventPhotoLink,
     };
   }
 }
