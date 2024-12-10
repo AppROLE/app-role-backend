@@ -13,9 +13,8 @@ const usecase = new GetAllPresencesByEventIdUseCase(eventRepo, presenceRepo);
 const controller = new GetAllPresencesByEventIdController(usecase);
 
 export async function getAllPresencesByEventIdPresenter(event: Record<string, any>) {  
-  const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
-  const response = await controller.handle(httpRequest, requesterUser);
+  const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,
     response?.statusCode,
