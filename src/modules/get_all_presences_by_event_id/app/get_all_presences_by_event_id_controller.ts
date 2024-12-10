@@ -10,7 +10,7 @@ import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
 export class GetAllPresencesByEventIdController {
   constructor(private readonly usecase: GetAllPresencesByEventIdUseCase) {}
 
-  async handle(request: IRequest, requesterUser: Record<string, any>) {
+  async handle(request: IRequest) {
     try {      
       const { eventId } = request.data;
   
