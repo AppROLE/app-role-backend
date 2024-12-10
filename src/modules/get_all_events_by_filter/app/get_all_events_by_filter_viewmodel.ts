@@ -39,6 +39,7 @@ export class EventViewModel {
     this.packageType = event.getPackageType;
     this.category = event.getCategoryType;
     this.ticketUrl = event.getTicketUrl;
+    this.eventPhotoLink = event.getEventPhotoLink;
   }
 
   toJSON() {
