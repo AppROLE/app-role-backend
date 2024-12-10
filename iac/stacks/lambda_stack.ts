@@ -133,7 +133,7 @@ export class LambdaStack extends Construct {
     this.getPhraseNoneUser = this.createLambdaApiGatewayIntegration('get_phrase_none_user', 'GET', apiGatewayResource, environmentVariables)
 
     // presence routes
-    this.getAllPresencesByEventIdFunction = this.createLambdaApiGatewayIntegration('get_all_presences_by_event_id', 'GET', apiGatewayResource, environmentVariables, authorizer)
+    this.getAllPresencesByEventIdFunction = this.createLambdaApiGatewayIntegration('get_all_presences_by_event_id', 'GET', apiGatewayResource, environmentVariables)
     this.confirmEventFunction = this.createLambdaApiGatewayIntegration('confirm_event', 'POST', apiGatewayResource, environmentVariables, authorizer)
     this.unConfirmEventFunction = this.createLambdaApiGatewayIntegration('unconfirm_event', 'POST', apiGatewayResource, environmentVariables, authorizer)
 
