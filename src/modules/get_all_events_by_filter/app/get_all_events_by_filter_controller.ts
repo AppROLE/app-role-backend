@@ -15,6 +15,8 @@ export class GetEventsByFilterController {
     try {
       const filters = this.validateAndSanitizeFilters(req.data);
 
+      console.log("Filtros recebidos - CONTROLLER:", filters);
+
       const events = await this.usecase.execute(filters);
 
       const viewModel = new GetAllEventsByFilterViewModel(events);
@@ -31,7 +33,7 @@ export class GetEventsByFilterController {
     if (filters.name && typeof filters.name === "string") {
       sanitizedFilters.name = filters.name.replace(/\+/g, " ");
     }
-
+    
     if (filters.price) {
       const price = Number(filters.price);
       if (!isNaN(price)) {
