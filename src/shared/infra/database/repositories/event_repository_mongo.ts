@@ -161,6 +161,8 @@ export class EventRepositoryMongo implements IEventRepository {
 
       const query: any = {};
 
+      console.log("Query MongoDB:", query);
+
       if (filter.name) {
         query.name = {
           $regex: new RegExp(filter.name.replace(/\+/g, " "), "i"),
