@@ -14,47 +14,54 @@ import { IPresence } from "../models/presence.model";
 import { IUser } from "../models/user.model";
 
 export class EventRepositoryMongo implements IEventRepository {
-
   async updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
     try {
       console.log("Conectando ao MongoDB para atualizar o banner do evento...");
       const db = await connectDB();
-      const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
-  
+      const eventMongoClient =
+        db.connections[0].db?.collection<IEvent>("Event");
+
       console.log(`Buscando evento com ID: ${eventId}`);
       const eventDoc = await eventMongoClient?.findOne({ _id: eventId });
-  
+
       if (!eventDoc) {
         console.error("Evento não encontrado no MongoDB.");
         throw new NoItemsFound("event");
       }
-  
+
       console.log("Link atual do banner:", eventDoc.banner_url);
       console.log("Novo link do banner:", bannerUrl);
-  
+
       if (eventDoc.banner_url === bannerUrl) {
-        console.log("O link do banner fornecido é idêntico ao atual. Nenhuma atualização necessária.");
+        console.log(
+          "O link do banner fornecido é idêntico ao atual. Nenhuma atualização necessária."
+        );
         return;
       }
-  
+
       const result = await eventMongoClient?.updateOne(
         { _id: eventId },
         { $set: { banner_url: bannerUrl } }
       );
-  
+
       if (result?.modifiedCount === 0) {
         console.log("Nenhuma modificação detectada no documento do evento.");
-        throw new Error("Erro ao atualizar o banner do evento, nenhuma modificação detectada.");
+        throw new Error(
+          "Erro ao atualizar o banner do evento, nenhuma modificação detectada."
+        );
       }
-  
+
       console.log("Banner do evento atualizado com sucesso no MongoDB.");
     } catch (error: any) {
-      console.error("Erro ao atualizar o banner do evento no MongoDB:", error.message);
-      throw new Error(`Erro ao atualizar o banner do evento no MongoDB: ${error.message}`);
+      console.error(
+        "Erro ao atualizar o banner do evento no MongoDB:",
+        error.message
+      );
+      throw new Error(
+        `Erro ao atualizar o banner do evento no MongoDB: ${error.message}`
+      );
     }
   }
-  
-  
 
   async createEvent(event: Event): Promise<string> {
     try {
@@ -79,7 +86,6 @@ export class EventRepositoryMongo implements IEventRepository {
         throw new Error("Failed to insert event into MongoDB");
       }
       return respMongo.insertedId;
-      
     } catch (error) {
       throw new Error(`Error creating event on MongoDB: ${error}`);
     }
@@ -116,24 +122,25 @@ export class EventRepositoryMongo implements IEventRepository {
         console.error("connection error:");
         throw new Error("Error connecting to MongoDB");
       });
-  
-      const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
-  
+
+      const eventMongoClient =
+        db.connections[0].db?.collection<IEvent>("Event");
+
       const today = new Date();
       today.setUTCHours(0, 0, 0, 0);
-  
-      const limit = 100 * page; 
-  
+
+      const limit = 100 * page;
+
       const events = (await eventMongoClient
         ?.find({ event_date: { $gte: today } })
-        .sort({ event_date: 1 }) 
-        .limit(limit) 
+        .sort({ event_date: 1 })
+        .limit(limit)
         .toArray()) as IEvent[];
-  
+
       if (!events || events.length === 0) {
         throw new NoItemsFound("events");
       }
-  
+
       return events.map((eventDoc) =>
         EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
       );
@@ -142,42 +149,44 @@ export class EventRepositoryMongo implements IEventRepository {
     }
   }
 
-  
   async getEventsByFilter(filter: any): Promise<Event[]> {
     try {
       const db = await connectDB();
-  
-      const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
+
+      const eventMongoClient =
+        db.connections[0].db?.collection<IEvent>("Event");
       if (!eventMongoClient) {
         throw new Error("Erro ao acessar a coleção de eventos");
       }
-  
+
       const query: any = {};
-  
+
       if (filter.name) {
-        query.name = { $regex: new RegExp(filter.name.replace(/\+/g, " "), "i") };
+        query.name = {
+          $regex: new RegExp(filter.name.replace(/\+/g, " "), "i"),
+        };
       }
-  
+
       if (filter.price) {
         const price = Number(filter.price);
         if (!isNaN(price)) {
           query.price = price;
         }
       }
-  
+
       if (filter.age_range) {
         query.age_range = filter.age_range;
       }
-  
+
       if (filter.event_date) {
         const eventDate = new Date(filter.event_date);
         if (!isNaN(eventDate.getTime())) {
           const startOfDay = new Date(eventDate);
           startOfDay.setUTCHours(0, 0, 0, 0);
-  
+
           const endOfDay = new Date(eventDate);
           endOfDay.setUTCHours(23, 59, 59, 999);
-  
+
           query.event_date = { $gte: startOfDay, $lte: endOfDay };
         }
       } else {
@@ -185,37 +194,40 @@ export class EventRepositoryMongo implements IEventRepository {
         today.setUTCHours(0, 0, 0, 0);
         query.event_date = { $gte: today };
       }
-  
+
       if (filter.district_id) {
         query.district_id = filter.district_id;
       }
-  
+
       if (filter.instituteId) {
         query.institute_id = filter.instituteId;
       }
-  
+
       if (filter.music_type) {
         query.music_type = { $in: filter.music_type.split(",") };
       }
-  
+
       if (filter.features) {
         query.features = { $in: filter.features.split(",") };
       }
-  
+
       if (filter.category) {
         query.category = { $in: filter.category.split(",") };
       }
-  
+
       console.log("Query construída:", query);
-  
-      const eventDocs = await eventMongoClient.find(query).sort({ event_date: 1 }).toArray();
-  
+
+      const eventDocs = await eventMongoClient
+        .find(query)
+        .sort({ event_date: 1 })
+        .toArray();
+
       console.log("Eventos encontrados:", eventDocs);
-  
+
       if (!eventDocs || eventDocs.length === 0) {
         return [];
       }
-  
+
       return eventDocs.map((eventDoc) =>
         EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
       );
@@ -224,7 +236,6 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new Error(`Erro ao buscar eventos: ${error.message}`);
     }
   }
-  
 
   async getEventById(eventId: string): Promise<Event | undefined> {
     try {
