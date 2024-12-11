@@ -141,85 +141,90 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new Error(`Error retrieving events from MongoDB: ${error.message}`);
     }
   }
-  
-  
 
+  
   async getEventsByFilter(filter: any): Promise<Event[]> {
     try {
       const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error("Erro de conexão com o MongoDB");
-        throw new Error("Erro ao conectar ao MongoDB");
-      });
-
-      const eventMongoClient =
-        db.connections[0].db?.collection<IEvent>("Event");
-
-      // Construção do filtro de consulta
-      const query: any = {};
-
-      if (filter.name) {
-        query.name = { $regex: new RegExp(filter.name, "i") };
+  
+      const eventMongoClient = db.connections[0].db?.collection<IEvent>("Event");
+      if (!eventMongoClient) {
+        throw new Error("Erro ao acessar a coleção de eventos");
       }
-      if (filter.price) query.price = Number(filter.price);
-      if (filter.age_range) query.age_range = filter.age_range;
-
+  
+      const query: any = {};
+  
+      if (filter.name) {
+        query.name = { $regex: new RegExp(filter.name.replace(/\+/g, " "), "i") };
+      }
+  
+      if (filter.price) {
+        const price = Number(filter.price);
+        if (!isNaN(price)) {
+          query.price = price;
+        }
+      }
+  
+      if (filter.age_range) {
+        query.age_range = filter.age_range;
+      }
+  
       if (filter.event_date) {
-        const startOfDay = new Date(filter.event_date);
-        startOfDay.setUTCHours(0, 0, 0, 0);
-
-        const endOfDay = new Date(filter.event_date);
-        endOfDay.setUTCHours(23, 59, 59, 999);
-
-        query.event_date = {
-          $gte: startOfDay,
-          $lte: endOfDay,
-        };
+        const eventDate = new Date(filter.event_date);
+        if (!isNaN(eventDate.getTime())) {
+          const startOfDay = new Date(eventDate);
+          startOfDay.setUTCHours(0, 0, 0, 0);
+  
+          const endOfDay = new Date(eventDate);
+          endOfDay.setUTCHours(23, 59, 59, 999);
+  
+          query.event_date = { $gte: startOfDay, $lte: endOfDay };
+        }
       } else {
         const today = new Date();
         today.setUTCHours(0, 0, 0, 0);
         query.event_date = { $gte: today };
       }
-
-      if (filter.district_id) query.district_id = filter.district_id;
-
-      if (filter.instituteId && typeof filter.instituteId === "string") {
+  
+      if (filter.district_id) {
+        query.district_id = filter.district_id;
+      }
+  
+      if (filter.instituteId) {
         query.institute_id = filter.instituteId;
       }
-
+  
       if (filter.music_type) {
-        const musicTypes = filter.music_type.split(" ");
-        query.music_type = { $in: musicTypes };
+        query.music_type = { $in: filter.music_type.split(",") };
       }
+  
       if (filter.features) {
-        const features = filter.features.split(" ");
-        query.features = { $in: features };
+        query.features = { $in: filter.features.split(",") };
       }
+  
       if (filter.category) {
-        const category = filter.category.split(" ");
-        query.category = { $in: category };
+        query.category = { $in: filter.category.split(",") };
       }
-
-      console.log("Consulta final:", query); 
-
-      const eventDocs = await eventMongoClient
-        ?.find(query)
-        .sort({ event_date: 1 })
-        .toArray();
-
-      console.log("Eventos encontrados:", eventDocs); 
-
+  
+      console.log("Query construída:", query);
+  
+      const eventDocs = await eventMongoClient.find(query).sort({ event_date: 1 }).toArray();
+  
+      console.log("Eventos encontrados:", eventDocs);
+  
       if (!eventDocs || eventDocs.length === 0) {
         return [];
       }
-
+  
       return eventDocs.map((eventDoc) =>
         EventMongoDTO.toEntity(EventMongoDTO.fromMongo(eventDoc))
       );
-    } catch (error) {
-      throw new Error(`Erro ao buscar eventos com filtro no MongoDB: ${error}`);
+    } catch (error: any) {
+      console.error("Erro no método getEventsByFilter:", error);
+      throw new Error(`Erro ao buscar eventos: ${error.message}`);
     }
   }
+  
 
   async getEventById(eventId: string): Promise<Event | undefined> {
     try {
