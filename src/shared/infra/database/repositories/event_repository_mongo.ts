@@ -207,14 +207,14 @@ export class EventRepositoryMongo implements IEventRepository {
       }
 
       if (filter.music_type) {
-        const music_type = filter.music_type.split(",").map((item: string) => item.trim());
+        const music_type = filter.music_type.split(" ").map((item: string) => item.trim());
         query.$or = music_type.map((category: string) => ({
           category: category,
         }));
       }
 
       if (filter.features) {
-        const features = filter.features.split(",").map((item: string) => item.trim());
+        const features = filter.features.split(" ").map((item: string) => item.trim());
         query.$or = features.map((category: string) => ({
           features: category,
         }));
@@ -222,7 +222,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
       if (filter.category) {
         console.log("CATEGORIA AQUI: ", filter.category);
-        const categories = filter.category.split(",").map((item: string) => item.trim());
+        const categories = filter.category.split(" ").map((item: string) => item.trim());
         query.$or = categories.map((category: string) => ({
           category: category,
         }));
