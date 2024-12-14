@@ -208,15 +208,15 @@ export class EventRepositoryMongo implements IEventRepository {
 
       if (filter.music_type) {
         const music_type = filter.music_type.split(" ").map((item: string) => item.trim());
-        query.$or = music_type.map((category: string) => ({
-          category: category,
+        query.$or = music_type.map((music_type: string) => ({
+          music_type: music_type,
         }));
       }
 
       if (filter.features) {
         const features = filter.features.split(" ").map((item: string) => item.trim());
-        query.$or = features.map((category: string) => ({
-          features: category,
+        query.$or = features.map((features: string) => ({
+          features: features,
         }));
       }
 
