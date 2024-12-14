@@ -221,6 +221,7 @@ export class EventRepositoryMongo implements IEventRepository {
       }
 
       if (filter.category) {
+        console.log("CATEGORIA AQUI: ", filter.category);
         const categories = filter.category.split(",").map((item: string) => item.trim());
         query.$or = categories.map((category: string) => ({
           category: category,
