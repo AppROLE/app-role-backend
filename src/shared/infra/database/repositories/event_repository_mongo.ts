@@ -207,6 +207,7 @@ export class EventRepositoryMongo implements IEventRepository {
       }
 
       if (filter.music_type) {
+        console.log("MUSIC TYPE AQUI: ", filter.music_type);
         const music_type = filter.music_type.split(" ").map((item: string) => item.trim());
         query.$or = music_type.map((music_type: string) => ({
           music_type: music_type,
@@ -214,6 +215,7 @@ export class EventRepositoryMongo implements IEventRepository {
       }
 
       if (filter.features) {
+        console.log("FEATURES AQUI: ", filter.features);
         const features = filter.features.split(" ").map((item: string) => item.trim());
         query.$or = features.map((features: string) => ({
           features: features,
