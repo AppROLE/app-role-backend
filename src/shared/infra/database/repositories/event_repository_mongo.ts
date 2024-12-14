@@ -207,15 +207,24 @@ export class EventRepositoryMongo implements IEventRepository {
       }
 
       if (filter.music_type) {
-        query.music_type = { $in: filter.music_type.split(",").map((item: string) => item.trim()) };
+        const music_type = filter.music_type.split(",").map((item: string) => item.trim());
+        query.$or = music_type.map((category: string) => ({
+          category: category,
+        }));
       }
 
       if (filter.features) {
-        query.features = { $in: filter.features.split(",").map((item: string) => item.trim()) };
+        const features = filter.features.split(",").map((item: string) => item.trim());
+        query.$or = features.map((category: string) => ({
+          features: category,
+        }));
       }
 
       if (filter.category) {
-        query.category = { $in: filter.category.split(",").map((item: string) => item.trim()) };
+        const categories = filter.category.split(",").map((item: string) => item.trim());
+        query.$or = categories.map((category: string) => ({
+          category: category,
+        }));
       }
 
       console.log("Query construída:", query);
