@@ -62,6 +62,7 @@ export class GetEventsByFilterController {
     }
 
     if (filters.category) {
+      console.log("Categoria recebida:", filters.category);
       sanitizedFilters.category = filters.category;
     }
 
