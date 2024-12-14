@@ -160,7 +160,7 @@ export class EventRepositoryMongo implements IEventRepository {
         throw new Error("Erro ao acessar a coleção de eventos");
       }
 
-      const query: any = {};
+      let query: { $or?: any[]; [key: string]: any } = {};
 
       console.log("Query MongoDB:", query);
 
@@ -209,25 +209,22 @@ export class EventRepositoryMongo implements IEventRepository {
       if (filter.music_type) {
         console.log("MUSIC TYPE AQUI: ", filter.music_type);
         const music_type = filter.music_type.split(" ").map((item: string) => item.trim());
-        query.$or = music_type.map((music_type: string) => ({
-          music_type: music_type,
-        }));
+        query.$or = query.$or || [];
+        query.$or.push(...music_type.map((music_type: string) => ({ music_type: music_type })));
       }
-
+      
       if (filter.features) {
         console.log("FEATURES AQUI: ", filter.features);
         const features = filter.features.split(" ").map((item: string) => item.trim());
-        query.$or = features.map((features: string) => ({
-          features: features,
-        }));
+        query.$or = query.$or || [];
+        query.$or.push(...features.map((features: string) => ({ features: features })));
       }
-
+      
       if (filter.category) {
         console.log("CATEGORIA AQUI: ", filter.category);
         const categories = filter.category.split(" ").map((item: string) => item.trim());
-        query.$or = categories.map((category: string) => ({
-          category: category,
-        }));
+        query.$or = query.$or || [];
+        query.$or.push(...categories.map((category: string) => ({ category: category })));
       }
 
       console.log("Query construída:", query);
