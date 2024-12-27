@@ -7,9 +7,6 @@ export class GetAllInstitutesUseCase {
 
   execute(): Promise<Institute[]> {
     const institutes = this.repo.getAllInstitutes();
-    if (!institutes) {
-      throw new NoItemsFound("institutos");
-    }
     return institutes;
   }
 }

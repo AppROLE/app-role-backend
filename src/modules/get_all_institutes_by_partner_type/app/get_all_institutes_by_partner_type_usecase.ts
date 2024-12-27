@@ -3,13 +3,10 @@ import { IInstituteRepository } from "src/shared/domain/irepositories/institute_
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 
 export class GetAllInstitutesByPartnerTypeUseCase {
-    constructor(private readonly repo: IInstituteRepository) {}
+  constructor(private readonly repo: IInstituteRepository) {}
 
-    async execute(partner_type: PARTNER_TYPE) {
-        const institutes = this.repo.getAllInstitutesByPartnerType(partner_type);
-        if(!institutes){
-            throw new NoItemsFound('institutes');
-        }
-        return institutes;
-    }
+  async execute(partner_type: PARTNER_TYPE) {
+    const institutes = this.repo.getAllInstitutesByPartnerType(partner_type);
+    return institutes;
+  }
 }

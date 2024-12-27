@@ -12,9 +12,9 @@ export class GetAllPresencesByEventIdUseCase {
     const event = await this.eventRepo.getEventById(eventId);
 
     if (!event) throw new NoItemsFound("eventId");
-    
+
     const presences = await this.presenceRepo.getAllPresences(eventId);
-    
-    return presences
+
+    return presences;
   }
 }

@@ -7,9 +7,6 @@ export class GetEventsByFilterUseCase {
 
   async execute(filter: any): Promise<Event[]> {
     const events = await this.repo.getEventsByFilter(filter);
-    if (!events || events.length === 0) {
-      throw new NoItemsFound("eventos");
-    }
     return events;
   }
 }

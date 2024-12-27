@@ -7,17 +7,11 @@ export class GetAllEventsUseCase {
 
   execute(): Promise<Event[]> {
     const events = this.repo.getAllEvents();
-    if (!events) {
-      throw new NoItemsFound("eventos");
-    }
     return events;
   }
 
   executeFromToday(page: number): Promise<Event[]> {
     const events = this.repo.getAllEventsFromToday(page);
-    if (!events) {
-      throw new NoItemsFound("eventos");
-    }
     return events;
   }
 }
