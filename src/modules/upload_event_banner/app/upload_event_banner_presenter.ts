@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -7,12 +6,10 @@ import { parseMultipartFormData } from "src/shared/helpers/functions/export_busb
 import { UploadEventBannerController } from "./upload_event_banner_controller";
 import { UploadEventBannerUseCase } from "./upload_event_banner_usecase";
 
-const repo = Environments.getEventRepo();
-const fileRepo = Environments.getFileRepo();
-const usecase = new UploadEventBannerUseCase(repo, fileRepo);
+const usecase = new UploadEventBannerUseCase();
 const controller = new UploadEventBannerController(usecase);
 
-export async function uploadEventBanner(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const formDataParsed = await parseMultipartFormData(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, formDataParsed);
@@ -23,9 +20,4 @@ export async function uploadEventBanner(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await uploadEventBanner(event);
-  return response;
 }

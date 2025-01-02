@@ -41,11 +41,7 @@ export class UploadEventPhotoController {
       console.log("FIELD NAMES", fieldNames);
       console.log("MIMETYPES", mimetypes);
 
-      await this.usecase.execute(
-        eventId,
-        imagesBuffers[0],
-        mimetypes[0]
-      );
+      await this.usecase.execute(eventId, imagesBuffers[0], mimetypes[0]);
 
       const viewmodel = new UploadEventPhotoViewmodel(
         "A foto do event foi adicionada com sucesso!"
@@ -64,6 +60,8 @@ export class UploadEventPhotoController {
           "Internal Server Error, error: " + error.message
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

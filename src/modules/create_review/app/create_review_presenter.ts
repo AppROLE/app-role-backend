@@ -7,12 +7,10 @@ import { CreateReviewUseCase } from "./create_review_usecase";
 import { CreateReviewController } from "./create_review_controller";
 import { getRequesterUser } from "src/shared/utils/get_requester_user";
 
-const presenceRepo = Environments.getPresenceRepo();
-const eventRepo = Environments.getEventRepo();
-const usecase = new CreateReviewUseCase(eventRepo);
+const usecase = new CreateReviewUseCase();
 const controller = new CreateReviewController(usecase);
 
-export async function createReviewPresenter(event: Record<string, any>) {  
+export async function createReviewPresenter(event: Record<string, any>) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -24,8 +22,8 @@ export async function createReviewPresenter(event: Record<string, any>) {
 
   return httpResponse.toJSON();
 }
-  
-  export async function lambda_handler(event: any, context: any) {
-    const response = await createReviewPresenter(event);
-    return response;
-  }
+
+export async function lambda_handler(event: any, context: any) {
+  const response = await createReviewPresenter(event);
+  return response;
+}

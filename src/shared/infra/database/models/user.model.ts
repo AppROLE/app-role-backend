@@ -38,18 +38,18 @@ export interface IUser extends Document {
 }
 
 const FollowingSchema = new Schema<IFollowing>({
-  user_followed_id: { type: String, ref: "User" },
+  user_followed_id: { type: String, ref: "user" },
   followed_at: { type: Date, default: Date.now },
 });
 
 const FavoriteSchema = new Schema<IFavorite>({
-  institute_id: { type: String, ref: "Institute" },
+  institute_id: { type: String, ref: "institute" },
   favorited_at: { type: Date, default: Date.now },
 });
 
 const ReviewSchema = new Schema<IReview>({
-  institute_id: { type: String, ref: "Institute" },
-  event_id: { type: String, ref: "Event" },
+  institute_id: { type: String, ref: "institute" },
+  event_id: { type: String, ref: "event" },
   star: { type: Number, required: true },
   review: { type: String, required: true },
   reviewed_at: { type: Date, default: Date.now },
@@ -73,4 +73,4 @@ const UserSchema: Schema = new Schema<IUser>({
   reviews: [ReviewSchema],
 });
 
-export const userModel = mongoose.model<IUser>("User", UserSchema);
+export const userModel = mongoose.model<IUser>("user", UserSchema);

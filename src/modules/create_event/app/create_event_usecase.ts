@@ -5,7 +5,8 @@ import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { STATUS } from "src/shared/domain/enums/status_enum";
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 interface CreateEventParams {
   name: string;
@@ -28,7 +29,15 @@ interface CreateEventParams {
 }
 
 export class CreateEventUseCase {
-  constructor(private repo: IEventRepository) {}
+  repository: Repository;
+  private readonly event_repo: IEventRepository;
+
+  constructor() {
+    this.repository = new Repository({
+      event_repo: true,
+    });
+    this.event_repo = this.repository.event_repo!;
+  }
 
   async execute(params: CreateEventParams): Promise<string> {
     const event = new Event({
@@ -51,7 +60,7 @@ export class CreateEventUseCase {
       ticketUrl: params.ticketUrl,
     });
 
-    const savedEvent = await this.repo.createEvent(event);
+    const savedEvent = await this.event_repo.createEvent(event);
 
     return savedEvent;
   }

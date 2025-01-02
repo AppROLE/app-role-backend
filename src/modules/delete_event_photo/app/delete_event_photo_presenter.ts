@@ -6,12 +6,10 @@ import {
 import { DeleteEventPhotoUseCase } from "./delete_event_photo_usecase";
 import { deleteEventPhotoController } from "./delete_event_photo_controller";
 
-const fileRepository = Environments.getFileRepo();
-const eventRepository = Environments.getEventRepo();
-const usecase = new DeleteEventPhotoUseCase(fileRepository, eventRepository);
+const usecase = new DeleteEventPhotoUseCase();
 const controller = new deleteEventPhotoController(usecase);
 
-export async function deleteEventPhotoPresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
@@ -21,9 +19,4 @@ export async function deleteEventPhotoPresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await deleteEventPhotoPresenter(event);
-  return response;
 }

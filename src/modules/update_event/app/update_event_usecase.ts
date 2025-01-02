@@ -1,4 +1,4 @@
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { Event } from "src/shared/domain/entities/event";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
@@ -7,6 +7,7 @@ import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 interface UpdateEventParams {
   eventId: string;
@@ -30,7 +31,16 @@ interface UpdateEventParams {
 }
 
 export class UpdateEventUseCase {
-  constructor(private repo: IEventRepository) {}
+  repository: Repository;
+  private readonly event_repo: IEventRepository;
+
+  constructor() {
+    this.repository = new Repository({
+      event_repo: true,
+      presence_repo: true,
+    });
+    this.event_repo = this.repository.event_repo!;
+  }
 
   async execute(params: UpdateEventParams): Promise<void> {
     const { eventId, ...updatedFields } = params;
@@ -39,7 +49,7 @@ export class UpdateEventUseCase {
       throw new EntityError("Event ID is required");
     }
 
-    const existingEvent = await this.repo.getEventById(eventId);
+    const existingEvent = await this.event_repo.getEventById(eventId);
     if (!existingEvent) {
       throw new EntityError(`Event with ID ${eventId} not found`);
     }
@@ -118,7 +128,7 @@ export class UpdateEventUseCase {
       eventToUpdate.setTicketUrl = updatedFields.ticketUrl;
     }
 
-    const updatedEvent = await this.repo.updateEvent(eventId, {
+    const updatedEvent = await this.event_repo.updateEvent(eventId, {
       name: eventToUpdate.getEventName,
       description: eventToUpdate.getEventDescription,
       address: eventToUpdate.getEventAddress,

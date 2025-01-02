@@ -7,11 +7,10 @@ import { GetPhraseUseCase } from "./get_phrase_usecase";
 import { GetPhraseController } from "./get_phrase_controller";
 import { getRequesterUser } from "src/shared/utils/get_requester_user";
 
-const repo = Environments.getPhraseRepo();
-const usecase = new GetPhraseUseCase(repo);
+const usecase = new GetPhraseUseCase();
 const controller = new GetPhraseController(usecase);
 
-export async function getPhrasePresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -22,9 +21,4 @@ export async function getPhrasePresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await getPhrasePresenter(event);
-  return response;
 }

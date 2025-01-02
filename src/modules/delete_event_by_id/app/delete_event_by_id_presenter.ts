@@ -6,9 +6,7 @@ import {
 import { DeleteEventByIdUseCase } from "./delete_event_by_id_usecase";
 import { DeleteEventByIdController } from "./delete_event_by_id_controller";
 
-const eventRepository = Environments.getEventRepo();
-const fileRepository = Environments.getFileRepo();
-const usecase = new DeleteEventByIdUseCase(eventRepository, fileRepository);
+const usecase = new DeleteEventByIdUseCase();
 const controller = new DeleteEventByIdController(usecase);
 
 export async function deleteEventByIdPresenter(event: Record<string, any>) {

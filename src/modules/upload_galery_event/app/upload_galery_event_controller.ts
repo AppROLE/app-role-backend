@@ -8,7 +8,10 @@ import {
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { FailedToAddToGallery, NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import {
+  FailedToAddToGallery,
+  NoItemsFound,
+} from "src/shared/helpers/errors/usecase_errors";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 
 export class UploadGalleryEventController {
@@ -34,11 +37,7 @@ export class UploadGalleryEventController {
         return file.mimeType;
       }) as string[];
 
-      await this.usecase.execute(
-        eventId,
-        imagesBuffers[0],
-        mimetypes[0]
-      );
+      await this.usecase.execute(eventId, imagesBuffers[0], mimetypes[0]);
 
       const viewmodel = new UploadGalleryEventViewmodel(
         "A foto do ROLE foi adicionada na galeria com sucesso!"
@@ -63,6 +62,8 @@ export class UploadGalleryEventController {
           "Internal Server Error, error: " + error.message
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

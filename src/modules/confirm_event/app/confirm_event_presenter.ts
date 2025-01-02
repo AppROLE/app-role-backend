@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -7,12 +6,10 @@ import { ConfirmEventUseCase } from "./confirm_event_usecase";
 import { ConfirmEventController } from "./confirm_event_controller";
 import { getRequesterUser } from "src/shared/utils/get_requester_user";
 
-const presenceRepo = Environments.getPresenceRepo();
-const eventRepo = Environments.getEventRepo();
-const usecase = new ConfirmEventUseCase(eventRepo, presenceRepo);
+const usecase = new ConfirmEventUseCase();
 const controller = new ConfirmEventController(usecase);
 
-export async function confirmEventPresenter(event: Record<string, any>) {  
+export async function lambda_handler(event: any, context: any) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -24,8 +21,3 @@ export async function confirmEventPresenter(event: Record<string, any>) {
 
   return httpResponse.toJSON();
 }
-  
-  export async function lambda_handler(event: any, context: any) {
-    const response = await confirmEventPresenter(event);
-    return response;
-  }

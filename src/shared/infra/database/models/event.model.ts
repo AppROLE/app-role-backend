@@ -41,7 +41,7 @@ const ReviewSchema = new Schema<IReview>({
 
 const EventSchema: Schema = new Schema<IEvent>({
   _id: { type: String, default: uuidv4 },
-  institute_id: { type: String, ref: "Institute", required: true },
+  institute_id: { type: String, ref: "institute", required: true },
   name: { type: String, required: true },
   banner_url: { type: String },
   address: { type: String, required: true },
@@ -50,7 +50,7 @@ const EventSchema: Schema = new Schema<IEvent>({
   age_range: { type: String },
   event_date: { type: Date, required: true },
   district_id: { type: String, required: true },
-  features: [{ type: String, ref: "Feature" }],
+  features: [{ type: String, ref: "feature" }],
   music_type: [{ type: String }],
   menu_link: { type: String },
   galery_link: [{ type: String }],
@@ -61,4 +61,4 @@ const EventSchema: Schema = new Schema<IEvent>({
   eventStatus: { type: String, required: true },
 });
 
-export default mongoose.model<IEvent>("Event", EventSchema);
+export default mongoose.model<IEvent>("event", EventSchema);

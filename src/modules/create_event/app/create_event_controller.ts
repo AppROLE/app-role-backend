@@ -1,4 +1,4 @@
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { CreateEventUseCase } from "src/modules/create_event/app/create_event_usecase";
 import { CreateEventViewModel } from "./create_event_viewmodel"; // Supondo que você tenha um viewmodel similar
@@ -115,7 +115,9 @@ export class CreateEventController {
         description,
         address,
         price,
-        ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM) ? (ageRange as AGE_ENUM) : AGE_ENUM.DEFAULT, // Replace 'DEFAULT' with an appropriate default value from AGE_ENUM
+        ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM)
+          ? (ageRange as AGE_ENUM)
+          : AGE_ENUM.DEFAULT, // Replace 'DEFAULT' with an appropriate default value from AGE_ENUM
         eventDate,
         districtId,
         instituteId,
@@ -143,8 +145,11 @@ export class CreateEventController {
           : undefined,
         ticketUrl: typeof ticketUrl === "string" ? ticketUrl : undefined,
       });
-    
-      const viewmodel = new CreateEventViewModel("Evento criado com sucesso", eventId);
+
+      const viewmodel = new CreateEventViewModel(
+        "Evento criado com sucesso",
+        eventId
+      );
 
       return new Created(viewmodel.toJSON());
     } catch (error: any) {
@@ -162,6 +167,8 @@ export class CreateEventController {
           `CreateEventController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

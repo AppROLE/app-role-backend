@@ -1,29 +1,43 @@
-import { IFileRepository } from "src/shared/domain/irepositories/file_repository_interface";
-import { IInstituteRepository } from "src/shared/domain/irepositories/institute_repository_interface";
+import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
+import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
 import { Environments } from "src/shared/environments";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class UploadInstitutePhotoUseCase {
-    constructor(
-        private readonly instituteRepo: IInstituteRepository,
-        private readonly fileRepo: IFileRepository
-    ) {}
+  repository: Repository;
+  private readonly institute_repo: IInstituteRepository;
+  private readonly file_repo: IFileRepository;
 
-    async execute(
-        instituteId: string,
-        institutePhoto: Buffer,
-        mimetype: string
-      )  {
-        const institute = await this.instituteRepo.getInstituteById(instituteId);
+  constructor() {
+    this.repository = new Repository({
+      institute_repo: true,
+      file_repo: true,
+    });
+    this.institute_repo = this.repository.institute_repo!;
+    this.file_repo = this.repository.file_repo!;
+  }
 
-        if (!institute) {
-            throw new NoItemsFound("Instituto");
-        }
+  async execute(instituteId: string, institutePhoto: Buffer, mimetype: string) {
+    const institute = await this.institute_repo.getInstituteById(instituteId);
 
-        const imageKey = `institutes/${instituteId}/institute-photo.${mimetype.split("/")[1]}`;
-
-        await this.fileRepo.uploadInstitutePhoto(imageKey, institutePhoto, mimetype);
-
-        await this.instituteRepo.updateInstitutePhoto(instituteId, `${Environments.getEnvs().cloudFrontUrl}/${imageKey}`);
+    if (!institute) {
+      throw new NoItemsFound("Instituto");
     }
+
+    const imageKey = `institutes/${instituteId}/institute-photo.${
+      mimetype.split("/")[1]
+    }`;
+
+    await this.file_repo.uploadInstitutePhoto(
+      imageKey,
+      institutePhoto,
+      mimetype
+    );
+
+    await this.institute_repo.updateInstitutePhoto(
+      instituteId,
+      `${Environments.cloudFrontUrl}/${imageKey}`
+    );
+  }
 }

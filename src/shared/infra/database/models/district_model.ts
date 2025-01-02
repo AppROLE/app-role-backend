@@ -1,11 +1,10 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import mongoose, { Document, Schema } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 export interface IDistrict extends Document {
   _id: string;
   name: string; // nome da zona (leste, oeste, norte, sul)
   neighborhoods: string[]; // bairros que compõem a zona
-
 }
 
 const DistrictSchema = new Schema<IDistrict>({
@@ -14,5 +13,4 @@ const DistrictSchema = new Schema<IDistrict>({
   neighborhoods: [{ type: String }],
 });
 
-export default mongoose.model<IDistrict>('District', DistrictSchema);
-  
+export default mongoose.model<IDistrict>("district", DistrictSchema);

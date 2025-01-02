@@ -12,12 +12,19 @@ import { GetPhraseViewModel } from "./get_phrase_viewmodel";
 export class GetPhraseController {
   constructor(private readonly usecase: GetPhraseUseCase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>): Promise<any> {
+  async handle(
+    req: IRequest,
+    requesterUser: Record<string, any>
+  ): Promise<any> {
     try {
-      const parsedUserApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+      const parsedUserApiGateway =
+        UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
 
       const phrase = await this.usecase.execute();
-      const viewmodel = new GetPhraseViewModel(phrase.phrase, parsedUserApiGateway.nickname);
+      const viewmodel = new GetPhraseViewModel(
+        phrase.phrase,
+        parsedUserApiGateway.nickname
+      );
 
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
@@ -29,6 +36,8 @@ export class GetPhraseController {
           `CreateEventController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

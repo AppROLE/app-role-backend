@@ -10,3 +10,9 @@ export class BaseError extends Error {
     return this._message;
   }
 }
+
+export class DatabaseException extends BaseError {
+  constructor(message: string) {
+    super(`Erro ao conectar com o MongoDB: ${message}`);
+  }
+}

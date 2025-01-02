@@ -11,4 +11,4 @@ const EventSchema: Schema = new Schema<IPhrase>({
   phrase: { type: String, required: true },
 });
 
-export default mongoose.model<IPhrase>("Phrase", EventSchema);
+export default mongoose.model<IPhrase>("phrase", EventSchema);

@@ -1,29 +1,44 @@
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
-import { IPresenceRepository } from "src/shared/domain/irepositories/presence_repository_interface";
-import { NoItemsFound, UserAlreadyConfirmedEvent } from "src/shared/helpers/errors/usecase_errors";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
+import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
+import {
+  NoItemsFound,
+  UserAlreadyConfirmedEvent,
+} from "src/shared/helpers/errors/usecase_errors";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class ConfirmEventUseCase {
-  constructor(
-    private readonly eventRepo: IEventRepository,
-    private readonly presenceRepo: IPresenceRepository
-  ) {}
+  repository: Repository;
+  private readonly event_repo: IEventRepository;
+  private readonly presence_repo: IPresenceRepository;
 
-  async execute(eventId: string, username: string, nickname: string, profilePhoto?: string, promoterCode?: string) {
-    console.log("ConfirmEventUseCase -> execute -> eventId", eventId)
-    console.log("ConfirmEventUseCase -> execute -> username", username)
-    console.log("ConfirmEventUseCase -> execute -> nickname", nickname)
-    console.log("ConfirmEventUseCase -> execute -> profilePhoto", profilePhoto)
-    console.log("ConfirmEventUseCase -> execute -> promoterCode", promoterCode)
-    
-    const event = await this.eventRepo.getEventById(eventId);
+  constructor() {
+    this.repository = new Repository({
+      event_repo: true,
+      presence_repo: true,
+    });
+    this.event_repo = this.repository.event_repo!;
+    this.presence_repo = this.repository.presence_repo!;
+  }
+
+  async execute(
+    eventId: string,
+    username: string,
+    nickname: string,
+    profilePhoto?: string,
+    promoterCode?: string
+  ) {
+    const event = await this.event_repo.getEventById(eventId);
 
     if (!event) throw new NoItemsFound("eventId");
 
-    const alreadyConfirmed = await this.presenceRepo.getPresenceByEventAndUser(eventId, username);
+    const alreadyConfirmed = await this.presence_repo.getPresenceByEventAndUser(
+      eventId,
+      username
+    );
 
-    if (alreadyConfirmed) throw new UserAlreadyConfirmedEvent()
+    if (alreadyConfirmed) throw new UserAlreadyConfirmedEvent();
 
-    await this.presenceRepo.confirmPresence(
+    await this.presence_repo.confirmPresence(
       eventId,
       username,
       nickname,

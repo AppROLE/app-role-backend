@@ -6,9 +6,7 @@ import {
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import {
-  NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { DeleteEventBannerViewModel } from "./delete_event_banner_viewmodel";
 import { DeleteEventBannerUseCase } from "./delete_event_banner_usecase";
@@ -46,6 +44,8 @@ export class DeleteEventBannerController {
           "Internal Server Error, error: " + error.message
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

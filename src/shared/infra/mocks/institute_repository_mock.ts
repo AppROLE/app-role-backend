@@ -1,6 +1,6 @@
 import { InstituteMock } from "src/shared/domain/mocks/institute_mock";
 import { Institute } from "../../domain/entities/institute";
-import { IInstituteRepository } from "../../domain/irepositories/institute_repository_interface";
+import { IInstituteRepository } from "../../domain/repositories/institute_repository_interface";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
@@ -12,7 +12,10 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     const instituteMock = new InstituteMock();
     this.institutes = instituteMock.institutes;
   }
-  updateInstituteV2(instituteId: string, updatedFields: any): Promise<Institute> {
+  updateInstituteV2(
+    instituteId: string,
+    updatedFields: any
+  ): Promise<Institute> {
     throw new Error("Method not implemented.");
   }
   updateInstitutePhoto(name: string, institutePhoto: string): Promise<string> {
@@ -28,7 +31,9 @@ export class InstituteRepositoryMock implements IInstituteRepository {
   }
 
   getInstituteById(instituteId: string): Promise<Institute> {
-    const institute = this.institutes.find((institute) => institute.instituteId === instituteId);
+    const institute = this.institutes.find(
+      (institute) => institute.instituteId === instituteId
+    );
     if (!institute) {
       throw new NoItemsFound("institute");
     }
@@ -39,8 +44,12 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     return [...this.institutes];
   }
 
-  async getAllInstitutesByPartnerType(partnerType: PARTNER_TYPE): Promise<Institute[]> {
-    const institutes = this.institutes.filter((institute) => institute.institutePartnerType === partnerType);
+  async getAllInstitutesByPartnerType(
+    partnerType: PARTNER_TYPE
+  ): Promise<Institute[]> {
+    const institutes = this.institutes.filter(
+      (institute) => institute.institutePartnerType === partnerType
+    );
     return institutes;
   }
 
@@ -48,14 +57,14 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     const eventIndex = this.institutes.findIndex(
       (institute) => institute.instituteId === instituteId
     );
-    
+
     if (eventIndex === -1) {
       throw new NoItemsFound("event");
     }
-  
+
     this.institutes.splice(eventIndex, 1);
-    
-    return Promise.resolve(); 
+
+    return Promise.resolve();
   }
 
   async updateInstitute(
@@ -68,7 +77,9 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     district_id?: string,
     phone?: string
   ): Promise<Institute> {
-    const institute = this.institutes.find((institute) => institute.instituteId === institute_id);
+    const institute = this.institutes.find(
+      (institute) => institute.instituteId === institute_id
+    );
     if (!institute) {
       throw new NoItemsFound("institute");
     }

@@ -7,13 +7,10 @@ import { CreateDistrictController } from "./create_district_controller";
 import { CreateDistrictUseCase } from "./create_district_usecase";
 import { getRequesterUser } from "src/shared/utils/get_requester_user";
 
-const repo = Environments.getDistrictRepo();
-const usecase = new CreateDistrictUseCase(repo);
+const usecase = new CreateDistrictUseCase();
 const controller = new CreateDistrictController(usecase);
 
-export async function createDistrictPresenter(
-  event: Record<string, any>
-) {
+export async function lambda_handler(event: any, context: any) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -24,9 +21,4 @@ export async function createDistrictPresenter(
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await createDistrictPresenter(event);
-  return response;
 }

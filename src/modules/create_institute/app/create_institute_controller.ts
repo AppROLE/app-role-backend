@@ -88,7 +88,7 @@ export class CreateInstituteController {
           typeof district_id
         );
       }
-      
+
       if (price !== undefined) {
         if (typeof price !== "number") {
           throw new WrongTypeParameters("price", "number", typeof price);
@@ -109,11 +109,12 @@ export class CreateInstituteController {
         phone: phone,
         address: address,
         district_id: district_id,
-        price: price
+        price: price,
       });
 
       const viewmodel = new CreateInstituteViewModel(
-        "Instituição criada com sucesso", String(instituteId)
+        "Instituição criada com sucesso",
+        String(instituteId)
       );
       return new Created(viewmodel.toJSON());
     } catch (error) {
@@ -134,6 +135,8 @@ export class CreateInstituteController {
           `CreateEventController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

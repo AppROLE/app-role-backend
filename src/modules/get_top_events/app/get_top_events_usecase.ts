@@ -1,12 +1,21 @@
 import { Event } from "src/shared/domain/entities/event";
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
-import { IPresenceRepository } from "src/shared/domain/irepositories/presence_repository_interface";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
+import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 import { getUpcomingWeekdays } from "src/shared/utils/date_utils";
 export class GetTopEventsUseCase {
-  constructor(
-    private readonly eventRepo: IEventRepository,
-    private readonly presenceRepo: IPresenceRepository
-  ) {}
+  repository: Repository;
+  private readonly event_repo: IEventRepository;
+  private readonly presence_repo: IPresenceRepository;
+
+  constructor() {
+    this.repository = new Repository({
+      event_repo: true,
+      presence_repo: true,
+    });
+    this.event_repo = this.repository.event_repo!;
+    this.presence_repo = this.repository.presence_repo!;
+  }
 
   async execute(): Promise<any> {
     console.log("ENTROU NO USECASE EXECUTE");
@@ -17,7 +26,8 @@ export class GetTopEventsUseCase {
 
     console.log("DADOS DAS DATAS: ", dates);
 
-    const events = (await this.eventRepo.getEventsByUpcomingDates(dates)) || [];
+    const events =
+      (await this.event_repo.getEventsByUpcomingDates(dates)) || [];
 
     console.log("EVENTOS RETORNADOS DO USECASE: ", events);
 
@@ -60,7 +70,7 @@ export class GetTopEventsUseCase {
 
     console.log("EVENT IDs: ", eventIds);
 
-    const presencesCount = await this.presenceRepo.countPresencesByEvent(
+    const presencesCount = await this.presence_repo.countPresencesByEvent(
       eventIds
     );
 
@@ -80,7 +90,7 @@ export class GetTopEventsUseCase {
       const validEvents = day.events.filter((event) => event.presenceCount > 0);
       if (validEvents.length === 0) {
         console.log(`Nenhum evento com presença para ${day.date}`);
-        return { date: day.date, events: [] }; 
+        return { date: day.date, events: [] };
       }
       const topEvent = validEvents.reduce((prev, current) =>
         current.presenceCount > prev.presenceCount ? current : prev
@@ -91,7 +101,7 @@ export class GetTopEventsUseCase {
 
     const allDatesWithEvents = dateLabels.map((label, index) => {
       const dayWithEvents = topEventsByDate.find((day) => day.date === label);
-      return dayWithEvents || { date: label, events: [] }; 
+      return dayWithEvents || { date: label, events: [] };
     });
 
     console.log("TOP EVENTS BY DATE: ", allDatesWithEvents);

@@ -73,4 +73,4 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   events: [EventSchema],
 });
 
-export default mongoose.model<IInstitute>("Institute", InstituteSchema);
+export default mongoose.model<IInstitute>("institute", InstituteSchema);

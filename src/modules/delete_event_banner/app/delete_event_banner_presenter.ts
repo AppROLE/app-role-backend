@@ -6,9 +6,7 @@ import {
 import { DeleteEventBannerUseCase } from "./delete_event_banner_usecase";
 import { DeleteEventBannerController } from "./delete_event_banner_controller";
 
-const eventRepository = Environments.getEventRepo();
-const fileRepository = Environments.getFileRepo();
-const usecase = new DeleteEventBannerUseCase(eventRepository, fileRepository);
+const usecase = new DeleteEventBannerUseCase();
 const controller = new DeleteEventBannerController(usecase);
 
 export async function DeleteEventBannerPresenter(event: Record<string, any>) {

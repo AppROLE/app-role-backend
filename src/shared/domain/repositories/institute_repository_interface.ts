@@ -5,7 +5,9 @@ import { PARTNER_TYPE } from "../enums/partner_type_enum";
 export interface IInstituteRepository {
   createInstitute(institute: Institute): Promise<string>;
   getAllInstitutes(): Promise<Institute[]>;
-  getAllInstitutesByPartnerType(partnerType: PARTNER_TYPE): Promise<Institute[]>;
+  getAllInstitutesByPartnerType(
+    partnerType: PARTNER_TYPE
+  ): Promise<Institute[]>;
   getInstituteById(instituteId: string): Promise<Institute>;
   deleteInstituteById(instituteId: string): Promise<void>;
   updateInstitutePhoto(name: string, institutePhoto: string): Promise<string>;
@@ -19,5 +21,4 @@ export interface IInstituteRepository {
     district_id?: string,
     phone?: string
   ): Promise<Institute>;
-  updateInstituteV2(instituteId: string, updatedFields: any): Promise<Institute>;
 }

@@ -11,11 +11,9 @@ import { GetPhraseNoneUserViewModel } from "./get_phrase_none_user_viewmodel";
 export class GetPhraseNoneUserController {
   constructor(private readonly usecase: GetPhraseNoneUserUseCase) {}
 
-  async handle(
-    req: IRequest
-  ): Promise<any> {
+  async handle(req: IRequest): Promise<any> {
     try {
-      const nickname = '';
+      const nickname = "";
       const phrase = await this.usecase.execute();
       const viewmodel = new GetPhraseNoneUserViewModel(phrase.phrase, nickname);
 
@@ -29,6 +27,8 @@ export class GetPhraseNoneUserController {
           `CreateEventController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

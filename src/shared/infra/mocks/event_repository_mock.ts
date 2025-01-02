@@ -1,6 +1,6 @@
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { Event } from "../../domain/entities/event";
-import { IEventRepository } from "../../domain/irepositories/event_repository_interface";
+import { IEventRepository } from "../../domain/repositories/event_repository_interface";
 import { EventMock } from "../../domain/mocks/event_mock";
 
 export class EventRepositoryMock implements IEventRepository {
@@ -22,7 +22,6 @@ export class EventRepositoryMock implements IEventRepository {
   updateEventBanner(eventId: string, bannerUrl: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  
 
   async createEvent(event: Event): Promise<string> {
     this.events.push(event);
@@ -147,7 +146,15 @@ export class EventRepositoryMock implements IEventRepository {
     return event.getGaleryLink ? event.getGaleryLink.length : 0;
   }
 
-  async createReview(star: number, review: string, reviewedAt: Date, eventId: string, username: string, name: string, photoUrl: string): Promise<void> {
+  async createReview(
+    star: number,
+    review: string,
+    reviewedAt: Date,
+    eventId: string,
+    username: string,
+    name: string,
+    photoUrl: string
+  ): Promise<void> {
     const event = this.events.find((event) => event.getEventId === eventId);
     if (!event) {
       throw new NoItemsFound("event");

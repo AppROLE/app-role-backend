@@ -1,13 +1,22 @@
-import { IDistrictRepository } from "src/shared/domain/irepositories/district_repository_interface";
+import { IDistrictRepository } from "src/shared/domain/repositories/district_repository_interface";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class GetDistrictByIdUseCase {
-  constructor(private readonly districtRepo: IDistrictRepository) {}
+  repository: Repository;
+  private readonly district_repo: IDistrictRepository;
+
+  constructor() {
+    this.repository = new Repository({
+      district_repo: true,
+    });
+    this.district_repo = this.repository.district_repo!;
+  }
 
   async execute(districtId: string) {
-    const district = await this.districtRepo.getDistrictById(districtId);
+    const district = await this.district_repo.getDistrictById(districtId);
 
-    if (!district) throw new NoItemsFound('zona');
+    if (!district) throw new NoItemsFound("zona");
 
     return district;
   }

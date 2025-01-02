@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -6,8 +5,7 @@ import {
 import { CreateInstituteUseCase } from "./create_institute_usecase";
 import { CreateInstituteController } from "./create_institute_controller";
 
-const repo = Environments.getInstituteRepo();
-const usecase = new CreateInstituteUseCase(repo);
+const usecase = new CreateInstituteUseCase();
 const controller = new CreateInstituteController(usecase);
 
 export async function createInstitutePresenter(event: Record<string, any>) {

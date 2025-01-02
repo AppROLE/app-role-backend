@@ -61,6 +61,8 @@ export class GetAllFavoriteInstitutesController {
       return new InternalServerError(
         `GetAllFavoriteInstitutesController, Error on handle: ${error.message}`
       );
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

@@ -23,6 +23,8 @@ export class deleteEventPhotoController {
           `DeleteEventPhotoController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

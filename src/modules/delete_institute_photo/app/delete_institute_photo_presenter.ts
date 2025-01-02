@@ -6,12 +6,12 @@ import {
 import { DeleteInstitutePhotoUseCase } from "./delete_institute_photo_usecase";
 import { DeleteInstitutePhotoController } from "./delete_institute_photo_controller";
 
-const fileRepository = Environments.getFileRepo();
-const instituteRepository = Environments.getInstituteRepo();
-const usecase = new DeleteInstitutePhotoUseCase(fileRepository, instituteRepository);
+const usecase = new DeleteInstitutePhotoUseCase();
 const controller = new DeleteInstitutePhotoController(usecase);
 
-export async function deleteInstitutePhotoPresenter(event: Record<string, any>) {
+export async function deleteInstitutePhotoPresenter(
+  event: Record<string, any>
+) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(

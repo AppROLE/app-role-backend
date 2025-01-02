@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -6,8 +5,7 @@ import {
 import { CreateEventUseCase } from "./create_event_usecase";
 import { CreateEventController } from "./create_event_controller";
 
-const repo = Environments.getEventRepo();
-const usecase = new CreateEventUseCase(repo);
+const usecase = new CreateEventUseCase();
 const controller = new CreateEventController(usecase);
 
 export async function createEventPresenter(event: Record<string, any>) {

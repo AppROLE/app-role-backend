@@ -54,6 +54,8 @@ export class DeleteGalleryEventController {
           "Internal Server Error, error: " + error.message
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

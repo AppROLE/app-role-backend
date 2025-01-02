@@ -24,6 +24,8 @@ export class GetEventsByFilterController {
       return new OK(viewModel.toJSON());
     } catch (error: any) {
       return this.handleError(error);
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 
@@ -33,7 +35,7 @@ export class GetEventsByFilterController {
     if (filters.name && typeof filters.name === "string") {
       sanitizedFilters.name = filters.name.replace(/\+/g, " ");
     }
-    
+
     if (filters.price) {
       const price = Number(filters.price);
       if (!isNaN(price)) {

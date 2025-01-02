@@ -1,30 +1,24 @@
-import { connectDB } from "../models";
 import { IPhrase } from "../models/phrase.model";
-import { IPhraseRepository } from "../../../domain/irepositories/phrase_repository_interface";
+import { IPhraseRepository } from "../../../domain/repositories/phrase_repository_interface";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { Collection, Connection } from "mongoose";
 
 export class PhraseRepositoryMongo implements IPhraseRepository {
-  async getPhrase(): Promise<IPhrase | null> {
-    try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
+  private phraseCollection: Collection<IPhrase>;
 
-      const phraseMongoClient = db.connections[0].db?.collection<IPhrase>("phrases");
+  constructor(connection: Connection) {
+    this.phraseCollection = connection.collection<IPhrase>("phrase");
+  }
 
-      const randomPhrase = await phraseMongoClient
-        ?.aggregate([{ $sample: { size: 1 } }])
-        .toArray();
+  async getPhrase(): Promise<IPhrase> {
+    const randomPhrase = await this.phraseCollection
+      .aggregate([{ $sample: { size: 1 } }])
+      .toArray();
 
-      if (!randomPhrase || randomPhrase.length === 0) {
-        throw new NoItemsFound("phrase in db");
-      }
-
-      return randomPhrase[0] as IPhrase;
-    } catch (error) {
-      throw new Error(`Error retrieving random phrase from MongoDB: ${error}`);
+    if (!randomPhrase || randomPhrase.length === 0) {
+      throw new NoItemsFound("phrase in db");
     }
+
+    return randomPhrase[0] as IPhrase;
   }
 }
