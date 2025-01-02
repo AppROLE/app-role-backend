@@ -27,8 +27,6 @@ export class GetDistrictByIdController {
 
       const { districtId } = request.data;
 
-      console.log("RAW DISTRICT ID ", districtId);
-
       if (!districtId) throw new MissingParameters("nome");
 
       if (typeof districtId !== "string")

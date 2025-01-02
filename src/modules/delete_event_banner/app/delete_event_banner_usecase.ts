@@ -23,13 +23,10 @@ export class DeleteEventBannerUseCase {
   }
 
   async execute(eventId: string) {
-    console.log("ESTOU NO USECASE - EVENT ID PORRA: ", eventId);
     const event = await this.event_repo.getEventById(eventId);
     if (!event) {
       throw new NoItemsFound("evento");
     }
-    console.log("EVENTO: ", event);
-    console.log("ACHEI O EVENTO - ESTOU NO USECASE: ", event);
     if (!event?.getEventBannerUrl || event.getEventBannerUrl.length === 0) {
       throw new BannerEmpty();
     }

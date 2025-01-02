@@ -34,10 +34,6 @@ export class UploadInstitutePhotoController {
         return file.mimeType;
       }) as string[];
 
-      console.log("imagesBuffers: ", imagesBuffers);
-      console.log("fieldNames: ", fieldNames);
-      console.log("mimetypes: ", mimetypes);
-
       await this.usecase.execute(instituteId, imagesBuffers[0], mimetypes[0]);
 
       const viewmodel = new UploadInstitutePhotoViewmodel(

@@ -1,10 +1,11 @@
 import { S3 } from "aws-sdk";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 import { Environments } from "src/shared/environments";
+import { S3Exception } from "src/shared/helpers/errors/base_error";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 
 export class FileRepositoryS3 implements IFileRepository {
-  s3BucketName: string;
+  private readonly s3BucketName: string;
 
   constructor() {
     this.s3BucketName = Environments.s3BucketName;
@@ -17,7 +18,6 @@ export class FileRepositoryS3 implements IFileRepository {
   ): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
         Key: imageNameKey,
@@ -27,9 +27,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
       await s3.putObject(params).promise();
     } catch (error: any) {
-      throw new Error(
-        `FileRepositoryS3, Error on uploadEventPhoto: ${error.message}`
-      );
+      throw new S3Exception(`uploadEventPhoto - ${error.message}`);
     }
   }
 
@@ -40,7 +38,6 @@ export class FileRepositoryS3 implements IFileRepository {
   ): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
         Key: imageNameKey,
@@ -50,9 +47,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
       await s3.putObject(params).promise();
     } catch (error: any) {
-      throw new Error(
-        `FileRepositoryS3, Error on uploadEventPhoto: ${error.message}`
-      );
+      throw new S3Exception(`uploadEventPhoto - ${error.message}`);
     }
   }
 
@@ -63,7 +58,6 @@ export class FileRepositoryS3 implements IFileRepository {
   ): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
         Key: imageNameKey,
@@ -73,9 +67,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
       await s3.putObject(params).promise();
     } catch (error: any) {
-      throw new Error(
-        `FileRepositoryS3, Error on uploadEventPhoto: ${error.message}`
-      );
+      throw new S3Exception(`uploadEventPhoto - ${error.message}`);
     }
   }
 
@@ -86,7 +78,6 @@ export class FileRepositoryS3 implements IFileRepository {
   ): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
       const params: S3.PutObjectRequest = {
         Bucket: this.s3BucketName,
         Key: imageNameKey,
@@ -96,16 +87,13 @@ export class FileRepositoryS3 implements IFileRepository {
 
       await s3.putObject(params).promise();
     } catch (error: any) {
-      throw new Error(
-        `FileRepositoryS3, Error on upload event banner: ${error.message}`
-      );
+      throw new S3Exception(`uploadEventBanner - ${error.message}`);
     }
   }
 
   async deleteEventPhotoByEventId(eventId: string): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
 
       if (!eventId) {
         throw new Error("Event ID não fornecido.");
@@ -136,19 +124,17 @@ export class FileRepositoryS3 implements IFileRepository {
       };
 
       await s3.deleteObject(deleteParams).promise();
-      console.log(`Foto do evento deletada com sucesso: ${eventPhoto.Key}`);
     } catch (error: any) {
       if (error instanceof NoItemsFound) {
         throw new NoItemsFound(error.message);
       }
-      throw new Error(`Erro ao deletar foto do evento: ${error.message}`);
+      throw new S3Exception(`deleteEventPhotoByEventId - ${error.message}`);
     }
   }
 
   async deleteInstitutePhoto(name: string): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
 
       if (!name) {
         throw new Error("InstituteName não fornecido.");
@@ -179,21 +165,17 @@ export class FileRepositoryS3 implements IFileRepository {
         };
 
         await s3.deleteObject(deleteParams).promise();
-        console.log(`Foto deletada com sucesso: ${file.Key}`);
       });
 
       await Promise.all(deletePromises);
     } catch (error: any) {
-      throw new Error(
-        `FileRepositoryS3, Error on deleteInstitutePhoto: ${error.message}`
-      );
+      throw new S3Exception(`deleteInstitutePhoto - ${error.message}`);
     }
   }
 
   async deleteGallery(eventId: string): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
 
       if (!eventId) {
         throw new Error("Event ID não fornecido.");
@@ -220,19 +202,14 @@ export class FileRepositoryS3 implements IFileRepository {
       };
 
       await s3.deleteObjects(deleteParams).promise();
-      console.log(
-        `Pasta e arquivos da galeria do evento ${eventId} deletados com sucesso.`
-      );
     } catch (error: any) {
-      console.error(`Erro ao deletar a pasta da galeria: ${error.message}`);
-      throw new Error(`Erro ao deletar a pasta da galeria: ${error.message}`);
+      throw new S3Exception(`deleteGallery - ${error.message}`);
     }
   }
 
   async deleteEventBanner(eventId: string): Promise<void> {
     try {
       const s3 = new S3();
-      console.log("s3BucketName: ", this.s3BucketName);
 
       if (!eventId) {
         throw new Error("Event ID não fornecido.");
@@ -248,10 +225,7 @@ export class FileRepositoryS3 implements IFileRepository {
       const listedObjects = await s3.listObjectsV2(listParams).promise();
 
       if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-        console.error(
-          `Nenhum arquivo encontrado na pasta do evento ${eventId}.`
-        );
-        throw new Error("Nenhum arquivo encontrado na pasta do evento.");
+        throw new S3Exception("Nenhum arquivo encontrado na pasta do evento.");
       }
 
       const bannerFile = listedObjects.Contents.find(
@@ -259,10 +233,9 @@ export class FileRepositoryS3 implements IFileRepository {
       );
 
       if (!bannerFile) {
-        console.error(
-          `Nenhum arquivo banner encontrado para o evento ${eventId}.`
+        throw new S3Exception(
+          "Nenhum arquivo banner encontrado na pasta do evento."
         );
-        throw new Error("Nenhum arquivo banner encontrado na pasta do evento.");
       }
 
       const deleteParams: S3.DeleteObjectRequest = {
@@ -271,10 +244,8 @@ export class FileRepositoryS3 implements IFileRepository {
       };
 
       await s3.deleteObject(deleteParams).promise();
-      console.log(`Arquivo banner do evento ${eventId} deletado com sucesso.`);
     } catch (error: any) {
-      console.error(`Erro ao deletar o arquivo banner: ${error.message}`);
-      throw new Error(`Erro ao deletar o arquivo banner: ${error.message}`);
+      throw new S3Exception(`deleteEventBanner - ${error.message}`);
     }
   }
 }

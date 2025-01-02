@@ -12,7 +12,6 @@
 //   }
 
 //   static fromAPIGateway(data: Record<string, any>): UserAPIGatewayDTO {
-//     console.log('data FROM API GATEWAY ', data)
 //     return new UserAPIGatewayDTO(data['sub'], data['cognito:username'], data['email'], data['nickname'])
 //   }
 
@@ -32,7 +31,12 @@ export class UserAPIGatewayDTO {
   email: string;
   nickname: string;
 
-  constructor(userId: string, username: string, email: string, nickname: string) {
+  constructor(
+    userId: string,
+    username: string,
+    email: string,
+    nickname: string
+  ) {
     this.userId = userId;
     this.username = username;
     this.email = email;
@@ -40,15 +44,11 @@ export class UserAPIGatewayDTO {
   }
 
   static fromAPIGateway(data: Record<string, any>): UserAPIGatewayDTO {
-    // Log para depurar os dados recebidos
-    console.log('Data recebido do API Gateway:', data);
-
-    // Garante que os campos necessários estão presentes
     return new UserAPIGatewayDTO(
-      data['sub'] || '',
-      data['cognito:username'] || '',
-      data['email'] || '',
-      data['nickname'] || ''
+      data["sub"] || "",
+      data["cognito:username"] || "",
+      data["email"] || "",
+      data["nickname"] || ""
     );
   }
 

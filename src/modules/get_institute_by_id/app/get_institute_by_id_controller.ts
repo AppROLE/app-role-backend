@@ -20,7 +20,6 @@ export class GetInstituteByIdController {
         throw new MissingParameters("instituteId");
       }
       const institute = await this.usecase.execute(instituteId as string);
-      console.log(institute);
       const viewModel = new GetInstituteByIdViewModel(institute);
       return new OK(viewModel.toJSON());
     } catch (error: any) {

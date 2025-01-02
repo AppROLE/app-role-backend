@@ -20,13 +20,8 @@ export class UploadEventBannerUseCase {
   }
 
   async execute(eventId: string, eventPhoto: Buffer, mimetype: string) {
-    console.log(
-      "Executando UploadEventBannerUseCase para o evento ID:",
-      eventId
-    );
     const event = await this.event_repo.getEventById(eventId);
     if (!event) {
-      console.log("Evento não encontrado.");
       throw new NoItemsFound("Evento");
     }
 
@@ -40,16 +35,12 @@ export class UploadEventBannerUseCase {
       .replace(/\s+/g, "+")
       .replace(/[^a-zA-Z0-9+]/g, "");
     const imageKey = `events/${eventId}/banner.${mimetype.split("/")[1]}`;
-    console.log("Chave da imagem gerada:", imageKey);
 
     await this.file_repo.uploadEventPhoto(imageKey, eventPhoto, mimetype);
-
-    console.log("Banner do evento enviado para o S3 com sucesso.");
 
     await this.event_repo.updateEventBanner(
       eventId,
       `${Environments.cloudFrontUrl}/${imageKey}`
     );
-    console.log("Link do banner atualizado no MongoDB.");
   }
 }

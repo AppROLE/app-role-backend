@@ -16,14 +16,11 @@ export class UploadEventPhotoController {
 
   async handle(request: IRequest, formData: any) {
     try {
-      console.log("CONTROLLER FORM DATA", formData);
       const eventId = formData.fields.eventId;
 
       if (!eventId) {
         throw new MissingParameters("eventId");
       }
-
-      console.log("Event", eventId);
 
       const imagesBuffers = formData.files.map((file: any) => {
         return file.data;
@@ -36,10 +33,6 @@ export class UploadEventPhotoController {
       const mimetypes = formData.files.map((file: any) => {
         return file.mimeType;
       }) as string[];
-
-      console.log("IMAGES PATH", imagesBuffers);
-      console.log("FIELD NAMES", fieldNames);
-      console.log("MIMETYPES", mimetypes);
 
       await this.usecase.execute(eventId, imagesBuffers[0], mimetypes[0]);
 

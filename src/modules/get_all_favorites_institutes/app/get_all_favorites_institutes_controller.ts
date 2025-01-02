@@ -25,39 +25,24 @@ export class GetAllFavoriteInstitutesController {
         UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
       if (!parsedUserApiGateway) throw new ForbiddenAction("usuário");
 
-      console.log(
-        "Handling request in GetAllFavoriteInstitutesController with data:",
-        req.data
-      );
       const username = parsedUserApiGateway.username;
 
       if (!username) {
-        console.log("Missing username parameter in request.");
         throw new MissingParameters("username");
       }
 
-      console.log("Executing use case with username:", username);
       const favoriteInstitutes = await this.usecase.execute(username as string);
 
-      console.log("Use case executed successfully, creating view model.");
       const viewModel = new GetAllFavoriteInstitutesViewModel(
         favoriteInstitutes
       );
 
-      console.log(
-        "Returning response with view model data:",
-        viewModel.toJSON()
-      );
       return new OK(viewModel.toJSON());
     } catch (error: any) {
       if (error instanceof NoItemsFound) {
-        console.log("NoItemsFound error in controller:", error);
         return new NotFound(error.message);
       }
-      console.log(
-        "Unexpected error in GetAllFavoriteInstitutesController:",
-        error
-      );
+
       return new InternalServerError(
         `GetAllFavoriteInstitutesController, Error on handle: ${error.message}`
       );

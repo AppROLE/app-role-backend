@@ -15,8 +15,6 @@ export class GetEventsByFilterController {
     try {
       const filters = this.validateAndSanitizeFilters(req.data);
 
-      console.log("Filtros recebidos - CONTROLLER:", filters);
-
       const events = await this.usecase.execute(filters);
 
       const viewModel = new GetAllEventsByFilterViewModel(events);
@@ -64,7 +62,6 @@ export class GetEventsByFilterController {
     }
 
     if (filters.category) {
-      console.log("Categoria recebida:", filters.category);
       sanitizedFilters.category = filters.category;
     }
 
@@ -75,8 +72,6 @@ export class GetEventsByFilterController {
     if (error instanceof NoItemsFound) {
       return new NotFound(error.message);
     }
-
-    console.error("Erro no controlador GetEventsByFilter:", error);
 
     return new InternalServerError(
       `GetEventsByFilterController, Error on handle: ${error.message}`
