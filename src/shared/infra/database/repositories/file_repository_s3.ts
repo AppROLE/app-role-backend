@@ -37,11 +37,11 @@ export class FileRepositoryS3 implements IFileRepository {
     }
   }
 
-  async deleteImage(imageKey: string): Promise<void> {
+  async deleteImage(pathName: string): Promise<void> {
     try {
       const params: DeleteObjectCommandInput = {
         Bucket: this.s3BucketName,
-        Key: imageKey,
+        Key: pathName,
       };
 
       await this.s3Client.send(new DeleteObjectCommand(params));
@@ -51,7 +51,7 @@ export class FileRepositoryS3 implements IFileRepository {
   }
 
   async uploadImage(
-    imageNameKey: string,
+    imagePathName: string,
     image: Buffer,
     mimetype: string,
     isCompressed: boolean = false
@@ -63,27 +63,27 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const params: PutObjectCommandInput = {
         Bucket: this.s3BucketName,
-        Key: imageNameKey,
+        Key: imagePathName,
         Body: image,
         ContentType: mimetype,
       };
 
       await this.s3Client.send(new PutObjectCommand(params));
 
-      return `https://${this.s3BucketName}.s3.amazonaws.com/${imageNameKey}`;
+      return `https://${this.s3BucketName}.s3.amazonaws.com/${imagePathName}`;
     } catch (error: any) {
       throw new S3Exception(`uploadProfilePhoto - ${error.message}`);
     }
   }
 
-  async updateImageNameKey(
-    imageKey: string,
-    newImageKey: string
+  async updateimagePathName(
+    pathName: string,
+    newPathName: string
   ): Promise<string | undefined> {
     try {
       const params: GetObjectCommandInput = {
         Bucket: this.s3BucketName,
-        Key: imageKey,
+        Key: pathName,
       };
 
       const { Body } = await this.s3Client.send(new GetObjectCommand(params));
@@ -94,23 +94,62 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const paramsUpdate: PutObjectCommandInput = {
         Bucket: this.s3BucketName,
-        Key: newImageKey,
+        Key: newPathName,
         Body: bodyBuffer,
       };
 
       await this.s3Client.send(new PutObjectCommand(paramsUpdate));
 
-      // Delete the old profile photo
       const paramsDelete: DeleteObjectCommandInput = {
         Bucket: this.s3BucketName,
-        Key: imageKey,
+        Key: pathName,
       };
 
       await this.s3Client.send(new DeleteObjectCommand(paramsDelete));
 
-      return newImageKey;
+      return `https://${this.s3BucketName}.s3.amazonaws.com/${newPathName}`;
     } catch (error: any) {
       throw new S3Exception(`updateKeyProfilePhoto - ${error.message}`);
+    }
+  }
+
+  async deleteFolder(folderPath: string): Promise<void> {
+    try {
+      if (!folderPath.endsWith("/")) {
+        folderPath += "/";
+      }
+
+      const listedObjects = await this.s3Client.send(
+        new ListObjectsV2Command({
+          Bucket: this.s3BucketName,
+          Prefix: folderPath,
+        })
+      );
+
+      if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+        console.log(`Nenhum objeto encontrado em ${folderPath}`);
+        return;
+      }
+
+      const deleteParams = {
+        Bucket: this.s3BucketName,
+        Delete: {
+          Objects: listedObjects.Contents.map((object) => ({
+            Key: object.Key!,
+          })),
+          Quiet: false,
+        },
+      };
+
+      await this.s3Client.send(new DeleteObjectsCommand(deleteParams));
+
+      if (listedObjects.IsTruncated) {
+        await this.deleteFolder(folderPath);
+      }
+
+      console.log(`Pasta "${folderPath}" apagada com sucesso.`);
+    } catch (error: any) {
+      throw new S3Exception(`deleteFolder - ${error.message}`);
     }
   }
 

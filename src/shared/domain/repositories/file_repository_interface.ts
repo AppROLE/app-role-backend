@@ -1,13 +1,14 @@
 export interface IFileRepository {
   uploadImage(
-    imageNameKey: string,
+    imagePathName: string,
     image: Buffer,
     mimetype: string,
     isCompressed?: boolean
   ): Promise<string>;
-  updateImageNameKey(
-    imageKey: string,
-    newImageKey: string
+  updateimagePathName(
+    pathName: string,
+    newpathName: string
   ): Promise<string | undefined>;
-  deleteImage(imageKey: string): Promise<void>;
+  deleteImage(pathName: string): Promise<void>;
+  deleteFolder(folderPath: string): Promise<void>;
 }

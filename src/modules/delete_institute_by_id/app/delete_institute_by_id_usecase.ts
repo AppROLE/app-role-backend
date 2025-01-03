@@ -31,22 +31,14 @@ export class DeleteInstituteByIdUseCase {
       for (const eventId of institute.instituteEventsId) {
         const event = await this.event_repo.getEventById(eventId);
 
-        if (event?.getEventPhotoLink) {
-          const path = `events/${eventId}/${event.getEventPhotoLink}`;
-          await this.file_repo.deleteImage(path);
+        if (event) {
+          await this.event_repo.deleteEventById(eventId);
+          await this.file_repo.deleteFolder(`events/${eventId}`);
         }
-        if ((event?.getGaleryLink?.length ?? 0) > 0) {
-          const path = `events/${eventId}/gallery`;
-          await this.file_repo.deleteGallery(eventId);
-        }
-
-        await this.event_repo.deleteEventById(eventId);
       }
-    }
-    if (institute.instituteLogoPhoto) {
-      await this.file_repo.deleteInstitutePhoto(institute.instituteName);
     }
 
     await this.institute_repo.deleteInstituteById(instituteId);
+    await this.file_repo.deleteFolder(`institutes/${instituteId}`);
   }
 }

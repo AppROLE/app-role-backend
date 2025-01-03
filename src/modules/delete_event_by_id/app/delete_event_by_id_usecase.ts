@@ -23,16 +23,7 @@ export class DeleteEventByIdUseCase {
       throw new NoItemsFound("event");
     }
 
-    const eventName = event?.getEventName;
-    if (event?.getEventPhotoLink) {
-      await this.file_repo.deleteEventPhotoByEventId(eventId);
-    }
-    if ((event?.getGaleryLink?.length ?? 0) > 0) {
-      await this.file_repo.deleteGallery(eventId);
-    }
-    if ((event?.getEventBannerUrl?.length ?? 0) > 0) {
-      await this.file_repo.deleteEventBanner(eventId, eventName);
-    }
     await this.event_repo.deleteEventById(eventId);
+    await this.file_repo.deleteFolder(`events/${eventId}`);
   }
 }

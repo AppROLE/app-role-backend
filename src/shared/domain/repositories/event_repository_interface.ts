@@ -8,7 +8,7 @@ export interface IEventRepository {
   getEventById(eventId: string): Promise<Event | undefined>;
   deleteEventById(eventId: string): Promise<void>;
   updateEventPhoto(eventId: string, profilePhoto: string): Promise<string>;
-  updateGalleryArray(evenetId: string, imageKey: string): Promise<void>;
+  updateGalleryArray(evenetId: string, pathName: string): Promise<void>;
   countGalleryEvent(eventId: string): Promise<Number>;
   getEventsByUpcomingDates(dates: Date[]): Promise<Event[]>;
   createReview(
@@ -20,7 +20,11 @@ export interface IEventRepository {
     photoUrl: string,
     username: string
   ): Promise<void>;
-  getAllConfirmedEvents(username: string, isMyEvents: boolean, myUsername: string): Promise<Event[]>;
+  getAllConfirmedEvents(
+    username: string,
+    isMyEvents: boolean,
+    myUsername: string
+  ): Promise<Event[]>;
   updateEvent(eventId: string, updatedFields: any): Promise<Event>;
   updateEventBanner(eventId: string, bannerUrl: string): Promise<void>;
 }
