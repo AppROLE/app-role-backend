@@ -1,11 +1,11 @@
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
-import { Event } from "../../../shared/domain/entities/event";
+import { Event, LocationProps } from "../../../shared/domain/entities/event";
 
 export class EventViewModel {
   private eventId?: string;
   private name: string;
   private bannerUrl?: string;
-  private address: string;
+  private location: LocationProps;
   private price: number;
   private description: string;
   private ageRange: AGE_ENUM;
@@ -24,7 +24,7 @@ export class EventViewModel {
     this.eventId = event.getEventId;
     this.name = event.getEventName;
     this.bannerUrl = event.getEventBannerUrl;
-    this.address = event.getEventAddress;
+    this.location = event.getEventLocation;
     this.price = event.getEventPrice;
     this.description = event.getEventDescription;
     this.ageRange = event.getEventAgeRange;
@@ -45,7 +45,15 @@ export class EventViewModel {
       eventId: this.eventId,
       name: this.name,
       bannerUrl: this.bannerUrl,
-      address: this.address,
+      location: {
+        address: this.location.address,
+        cep: this.location.cep,
+        city: this.location.city,
+        neighborhood: this.location.neighborhood,
+        state: this.location.state,
+        latitude: this.location.latitude,
+        longitude: this.location.longitude,
+      },
       price: this.price,
       description: this.description,
       ageRange: this.ageRange,

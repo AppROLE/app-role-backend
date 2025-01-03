@@ -10,7 +10,7 @@ import { getRequesterUser } from "src/shared/utils/get_requester_user";
 const usecase = new CreateReviewUseCase();
 const controller = new CreateReviewController(usecase);
 
-export async function createReviewPresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -21,9 +21,4 @@ export async function createReviewPresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await createReviewPresenter(event);
-  return response;
 }

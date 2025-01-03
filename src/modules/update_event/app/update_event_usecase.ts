@@ -1,5 +1,5 @@
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { Event } from "src/shared/domain/entities/event";
+import { Event, LocationProps } from "src/shared/domain/entities/event";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 import { STATUS } from "src/shared/domain/enums/status_enum";
@@ -13,7 +13,7 @@ interface UpdateEventParams {
   eventId: string;
   name?: string;
   description?: string;
-  address?: string;
+  location?: LocationProps;
   price?: number;
   ageRange?: AGE_ENUM;
   eventDate?: Date;
@@ -57,7 +57,7 @@ export class UpdateEventUseCase {
       eventId: existingEvent.getEventId,
       name: existingEvent.getEventName,
       description: existingEvent.getEventDescription,
-      location: existingEvent.getEventAddress,
+      location: existingEvent.getEventLocation,
       price: existingEvent.getEventPrice,
       ageRange: existingEvent.getEventAgeRange,
       eventDate: existingEvent.getEventDate,
@@ -80,8 +80,8 @@ export class UpdateEventUseCase {
     if (updatedFields.description) {
       eventToUpdate.setEventDescription = updatedFields.description;
     }
-    if (updatedFields.address) {
-      eventToUpdate.setEventAddress = updatedFields.address;
+    if (updatedFields.location) {
+      eventToUpdate.setEventLocation = updatedFields.location;
     }
     if (updatedFields.price !== undefined) {
       eventToUpdate.setEventPrice = updatedFields.price;
@@ -126,7 +126,7 @@ export class UpdateEventUseCase {
     const updatedEvent = await this.event_repo.updateEvent(eventId, {
       name: eventToUpdate.getEventName,
       description: eventToUpdate.getEventDescription,
-      address: eventToUpdate.getEventAddress,
+      location: eventToUpdate.getEventLocation,
       price: eventToUpdate.getEventPrice,
       ageRange: eventToUpdate.getEventAgeRange,
       eventDate: eventToUpdate.getEventDate,

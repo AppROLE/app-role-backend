@@ -1,3 +1,4 @@
+import { LocationProps } from "src/shared/domain/entities/event";
 import { Institute } from "src/shared/domain/entities/institute";
 
 export class GetInstituteByIdViewModel {
@@ -8,7 +9,7 @@ export class GetInstituteByIdViewModel {
   private institute_type: string;
   private partner_type: string;
   private phone: string;
-  private address: string;
+  private location: LocationProps;
   private price: number;
   private photos_url: string[];
   private events_id: string[];
@@ -21,7 +22,7 @@ export class GetInstituteByIdViewModel {
     this.institute_type = institute.instituteInstituteType;
     this.partner_type = institute.institutePartnerType;
     this.phone = institute.institutePhone ?? "";
-    this.address = institute.instituteLocation ?? "";
+    this.location = institute.instituteLocation;
     this.price = institute.institutePrice ?? 0;
     this.photos_url = institute.institutePhotosUrl ?? [];
     this.events_id = institute.instituteEventsId ?? [];
@@ -36,7 +37,15 @@ export class GetInstituteByIdViewModel {
       institute_type: this.institute_type,
       partner_type: this.partner_type,
       phone: this.phone,
-      address: this.address,
+      location: {
+        latitude: this.location.latitude,
+        longitude: this.location.longitude,
+        address: this.location.address,
+        neighborhood: this.location.neighborhood,
+        city: this.location.city,
+        state: this.location.state,
+        cep: this.location.cep,
+      },
       price: this.price,
       photos_url: this.photos_url,
       events_id: this.events_id,

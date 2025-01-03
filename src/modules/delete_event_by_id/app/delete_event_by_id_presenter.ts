@@ -9,7 +9,7 @@ import { DeleteEventByIdController } from "./delete_event_by_id_controller";
 const usecase = new DeleteEventByIdUseCase();
 const controller = new DeleteEventByIdController(usecase);
 
-export async function deleteEventByIdPresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
@@ -19,9 +19,4 @@ export async function deleteEventByIdPresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await deleteEventByIdPresenter(event);
-  return response;
 }

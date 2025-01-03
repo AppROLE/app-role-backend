@@ -1,7 +1,5 @@
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { CreateEventUseCase } from "src/modules/create_event/app/create_event_usecase";
-import { CreateEventViewModel } from "./create_event_viewmodel"; // Supondo que você tenha um viewmodel similar
 import {
   MissingParameters,
   WrongTypeParameters,
@@ -28,7 +26,13 @@ export class CreateEventController {
       const {
         name,
         description,
+        latitude,
+        longitude,
         address,
+        neighborhood,
+        city,
+        state,
+        cep,
         price,
         ageRange,
         instituteId,
@@ -46,7 +50,7 @@ export class CreateEventController {
       const requiredParams = [
         "name",
         "description",
-        "address",
+        "location",
         "price",
         "ageRange",
         "eventDate",
@@ -70,8 +74,30 @@ export class CreateEventController {
           typeof description
         );
       }
+      if (typeof latitude !== "number") {
+        throw new WrongTypeParameters("latitude", "number", typeof latitude);
+      }
+      if (typeof longitude !== "number") {
+        throw new WrongTypeParameters("longitude", "number", typeof longitude);
+      }
       if (typeof address !== "string") {
         throw new WrongTypeParameters("address", "string", typeof address);
+      }
+      if (typeof neighborhood !== "string") {
+        throw new WrongTypeParameters(
+          "neighborhood",
+          "string",
+          typeof neighborhood
+        );
+      }
+      if (typeof city !== "string") {
+        throw new WrongTypeParameters("city", "string", typeof city);
+      }
+      if (typeof state !== "string") {
+        throw new WrongTypeParameters("state", "string", typeof state);
+      }
+      if (typeof cep !== "string") {
+        throw new WrongTypeParameters("cep", "string", typeof cep);
       }
       if (typeof price !== "number") {
         throw new WrongTypeParameters("price", "number", typeof price);
@@ -104,7 +130,15 @@ export class CreateEventController {
       const eventId = await this.usecase.execute({
         name,
         description,
-        address,
+        location: {
+          latitude,
+          longitude,
+          address,
+          neighborhood,
+          city,
+          state,
+          cep,
+        },
         price,
         ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM)
           ? (ageRange as AGE_ENUM)
@@ -136,12 +170,10 @@ export class CreateEventController {
         ticketUrl: typeof ticketUrl === "string" ? ticketUrl : undefined,
       });
 
-      const viewmodel = new CreateEventViewModel(
-        "Evento criado com sucesso",
-        eventId
-      );
-
-      return new Created(viewmodel.toJSON());
+      return new Created({
+        message: "Evento criado com sucesso",
+        id: eventId,
+      });
     } catch (error: any) {
       if (
         error instanceof MissingParameters ||

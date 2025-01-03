@@ -22,7 +22,6 @@ export class UpdateInstituteUseCase {
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
     name?: string,
-    location?: LocationProps,
     phone?: string
   ) {
     const institute: {
@@ -31,7 +30,6 @@ export class UpdateInstituteUseCase {
       instituteInstituteType?: INSTITUTE_TYPE;
       institutePartnerType?: PARTNER_TYPE;
       instituteName?: string;
-      instituteLocation?: LocationProps;
       institutePrice?: number;
       institutePhone?: string;
     } = {
@@ -49,9 +47,6 @@ export class UpdateInstituteUseCase {
     if (name) {
       institute.instituteName = name;
     }
-    if (location) {
-      institute.instituteLocation = location;
-    }
     if (phone) {
       institute.institutePhone = phone;
     }
@@ -62,7 +57,7 @@ export class UpdateInstituteUseCase {
       institute.instituteInstituteType,
       institute.institutePartnerType,
       institute.instituteName,
-      institute.instituteLocation,
+      undefined,
       institute.institutePhone
     );
   }

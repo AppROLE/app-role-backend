@@ -1,3 +1,4 @@
+import { LocationProps } from "src/shared/domain/entities/event";
 import { Institute } from "src/shared/domain/entities/institute";
 import { toEnum } from "src/shared/domain/enums/institute_type_enum";
 import { toEnumPartnerType } from "src/shared/domain/enums/partner_type_enum";
@@ -11,7 +12,7 @@ export interface CreateInstituteParams {
   institute_type: string;
   partner_type: string;
   phone?: string;
-  address?: string;
+  location: LocationProps;
   price?: number;
   photos_url?: string[];
 }
@@ -34,7 +35,7 @@ export class CreateInstituteUseCase {
       institute_type: toEnum(params.institute_type),
       partner_type: toEnumPartnerType(params.partner_type),
       phone: params.phone || "",
-      address: params.address,
+      location: params.location,
       logo_photo: params.logo_photo || "",
       photos_url: params.photos_url || [],
       events_id: [],

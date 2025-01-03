@@ -8,7 +8,7 @@ import { CreateInstituteController } from "./create_institute_controller";
 const usecase = new CreateInstituteUseCase();
 const controller = new CreateInstituteController(usecase);
 
-export async function createInstitutePresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
@@ -18,9 +18,4 @@ export async function createInstitutePresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await createInstitutePresenter(event);
-  return response;
 }

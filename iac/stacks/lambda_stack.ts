@@ -22,13 +22,7 @@ export class LambdaStack extends Construct {
   getEventByIdFunction: lambda.Function;
   getTopEventsFunction: lambda.Function;
   deleteEventByIdFunction: lambda.Function;
-  uploadEventPhotoFunction: lambda.Function;
-  uploadGalleryEventFunction: lambda.Function;
-  uploadEventBannerFunction: lambda.Function;
   getAllConfirmedEventsFunction: lambda.Function;
-  deleteEventPhotoFunction: lambda.Function;
-  deleteGalleryEventFunction: lambda.Function;
-  deleteEventBannerFunction: lambda.Function;
   updateEvent: lambda.Function;
 
   createReviewFunction: lambda.Function;
@@ -160,18 +154,6 @@ export class LambdaStack extends Construct {
       apiGatewayResource,
       environmentVariables
     );
-    this.uploadEventPhotoFunction = this.createLambdaApiGatewayIntegration(
-      "upload_event_photo",
-      "POST",
-      apiGatewayResource,
-      environmentVariables
-    );
-    this.uploadGalleryEventFunction = this.createLambdaApiGatewayIntegration(
-      "upload_galery_event",
-      "POST",
-      apiGatewayResource,
-      environmentVariables
-    );
     this.getTopEventsFunction = this.createLambdaApiGatewayIntegration(
       "get_top_events",
       "GET",
@@ -185,33 +167,9 @@ export class LambdaStack extends Construct {
       environmentVariables,
       authorizer
     );
-    this.deleteEventPhotoFunction = this.createLambdaApiGatewayIntegration(
-      "delete_event_photo",
-      "DELETE",
-      apiGatewayResource,
-      environmentVariables
-    );
     this.updateEvent = this.createLambdaApiGatewayIntegration(
       "update_event",
       "PUT",
-      apiGatewayResource,
-      environmentVariables
-    );
-    this.deleteGalleryEventFunction = this.createLambdaApiGatewayIntegration(
-      "delete_gallery_event",
-      "DELETE",
-      apiGatewayResource,
-      environmentVariables
-    );
-    this.uploadEventBannerFunction = this.createLambdaApiGatewayIntegration(
-      "upload_event_banner",
-      "POST",
-      apiGatewayResource,
-      environmentVariables
-    );
-    this.deleteEventBannerFunction = this.createLambdaApiGatewayIntegration(
-      "delete_event_banner",
-      "DELETE",
       apiGatewayResource,
       environmentVariables
     );
@@ -331,14 +289,9 @@ export class LambdaStack extends Construct {
     );
 
     this.functionsThatNeedS3Permissions = [
-      this.uploadEventPhotoFunction,
       this.uploadInstitutePhotoFunction,
-      this.uploadEventBannerFunction,
-      this.deleteEventPhotoFunction,
       this.deleteEventByIdFunction,
       this.deleteInstituteByIdFunction,
-      this.deleteGalleryEventFunction,
-      this.deleteEventBannerFunction,
     ];
 
     this.functionsThatNeedCognitoPermissions = [

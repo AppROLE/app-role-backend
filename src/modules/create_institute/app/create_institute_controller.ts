@@ -31,7 +31,13 @@ export class CreateInstituteController {
         institute_type,
         partner_type,
         name,
+        latitude,
+        longitude,
         address,
+        neighborhood,
+        city,
+        state,
+        cep,
         price,
         phone,
       } = req.data;
@@ -74,10 +80,30 @@ export class CreateInstituteController {
         throw new WrongTypeParameters("name", "string", typeof name);
       }
 
-      if (address !== undefined) {
-        if (typeof address !== "string") {
-          throw new WrongTypeParameters("address", "string", typeof address);
-        }
+      if (typeof latitude !== "number") {
+        throw new WrongTypeParameters("latitude", "number", typeof latitude);
+      }
+      if (typeof longitude !== "number") {
+        throw new WrongTypeParameters("longitude", "number", typeof longitude);
+      }
+      if (typeof address !== "string") {
+        throw new WrongTypeParameters("address", "string", typeof address);
+      }
+      if (typeof neighborhood !== "string") {
+        throw new WrongTypeParameters(
+          "neighborhood",
+          "string",
+          typeof neighborhood
+        );
+      }
+      if (typeof city !== "string") {
+        throw new WrongTypeParameters("city", "string", typeof city);
+      }
+      if (typeof state !== "string") {
+        throw new WrongTypeParameters("state", "string", typeof state);
+      }
+      if (typeof cep !== "string") {
+        throw new WrongTypeParameters("cep", "string", typeof cep);
       }
 
       if (price !== undefined) {
@@ -99,7 +125,15 @@ export class CreateInstituteController {
         name: name,
         partner_type: PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
         phone: phone,
-        address: address,
+        location: {
+          latitude: latitude,
+          longitude: longitude,
+          address: address,
+          neighborhood: neighborhood,
+          city: city,
+          state: state,
+          cep: cep,
+        },
         price: price,
       });
 

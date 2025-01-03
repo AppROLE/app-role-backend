@@ -1,4 +1,4 @@
-import { Event } from "src/shared/domain/entities/event";
+import { Event, LocationProps } from "src/shared/domain/entities/event";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
@@ -11,7 +11,7 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 interface CreateEventParams {
   name: string;
   description: string;
-  address: string;
+  location: LocationProps;
   price: number;
   ageRange: AGE_ENUM;
   eventDate: Date;
@@ -58,8 +58,6 @@ export class CreateEventUseCase {
       ticketUrl: params.ticketUrl,
     });
 
-    const savedEvent = await this.event_repo.createEvent(event);
-
-    return savedEvent;
+    return await this.event_repo.createEvent(event);
   }
 }
