@@ -6,14 +6,12 @@ import { EventRepositoryMongo } from "./event_repository_mongo";
 import { DatabaseException } from "src/shared/helpers/errors/base_error";
 import { IDistrictRepository } from "src/shared/domain/repositories/district_repository_interface";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { IPhraseRepository } from "src/shared/domain/repositories/phrase_repository_interface";
 import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
 import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
 import { InstituteRepositoryMongo } from "./institute_repository_mongo";
 import { DistrictRepositoryMongo } from "./district_repository_mongo";
 import { PresenceRepositoryMongo } from "./presence_repository_mongo";
 import { UserRepositoryMongo } from "./user_repository_mongo";
-import { PhraseRepositoryMongo } from "./phrase_repository_mongo";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 import { FileRepositoryS3 } from "../../external-services/file_repository_s3";
 
@@ -21,7 +19,6 @@ interface RepositoryConfig {
   event_repo?: boolean;
   district_repo?: boolean;
   institute_repo?: boolean;
-  phrase_repo?: boolean;
   presence_repo?: boolean;
   user_repo?: boolean;
   file_repo?: boolean;
@@ -31,7 +28,6 @@ export class Repository {
   event_repo?: IEventRepository;
   district_repo?: IDistrictRepository;
   institute_repo?: IInstituteRepository;
-  phrase_repo?: IPhraseRepository;
   presence_repo?: IPresenceRepository;
   user_repo?: IUserRepository;
   file_repo?: IFileRepository;
@@ -41,7 +37,6 @@ export class Repository {
     event_repo = false,
     district_repo = false,
     institute_repo = false,
-    phrase_repo = false,
     presence_repo = false,
     user_repo = false,
     file_repo = false,
@@ -51,7 +46,6 @@ export class Repository {
         event_repo,
         district_repo,
         institute_repo,
-        phrase_repo,
         presence_repo,
         user_repo,
         file_repo
@@ -61,7 +55,6 @@ export class Repository {
         event_repo,
         district_repo,
         institute_repo,
-        phrase_repo,
         presence_repo,
         user_repo,
         file_repo
@@ -73,7 +66,6 @@ export class Repository {
     event_repo: boolean = false,
     district_repo: boolean = false,
     institute_repo: boolean = false,
-    phrase_repo: boolean = false,
     presence_repo: boolean = false,
     user_repo: boolean = false,
     file_repo: boolean = false
@@ -87,7 +79,6 @@ export class Repository {
     event_repo: boolean = false,
     district_repo: boolean = false,
     institute_repo: boolean = false,
-    phrase_repo: boolean = false,
     presence_repo: boolean = false,
     user_repo: boolean = false,
     file_repo: boolean = false
@@ -102,9 +93,6 @@ export class Repository {
     }
     if (institute_repo) {
       this.institute_repo = new InstituteRepositoryMongo(this.connection);
-    }
-    if (phrase_repo) {
-      this.phrase_repo = new PhraseRepositoryMongo(this.connection);
     }
     if (presence_repo) {
       this.presence_repo = new PresenceRepositoryMongo(this.connection);
