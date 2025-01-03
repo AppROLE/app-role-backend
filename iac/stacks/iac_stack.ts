@@ -1,8 +1,10 @@
+import * as cdk from "aws-cdk-lib";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { stage } from "../get_stage_env";
 import { LambdaStack } from "./lambda_stack";
+import { CognitoStack } from "./cognito_stack";
 import { Stack, StackProps } from "aws-cdk-lib";
-import { envs } from "../../src/shared/helpers/envs/envs";
 import {
   Cors,
   RestApi,
@@ -10,6 +12,8 @@ import {
 } from "aws-cdk-lib/aws-apigateway";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as iam from "aws-cdk-lib/aws-iam";
+import { S3Stack } from "./s3_stack";
+import { Distribution, OriginAccessIdentity } from "aws-cdk-lib/aws-cloudfront";
 
 export class IacStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
@@ -26,7 +30,7 @@ export class IacStack extends Stack {
       binaryMediaTypes: ["multipart/form-data"],
     });
 
-    const apigatewayResource = restApi.root.addResource("mss-role-event", {
+    const apigatewayResource = restApi.root.addResource("mss-role", {
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
         allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
@@ -34,40 +38,88 @@ export class IacStack extends Stack {
       },
     });
 
-    let userPoolId = "";
+    const s3Stack = new S3Stack(this, `${envs.STACK_NAME}-S3Stack`);
 
-    if (stage === "DEV") userPoolId = envs.AWS_COGNITO_USER_POOL_ID_DEV;
-    if (stage === "PROD") userPoolId = envs.AWS_COGNITO_USER_POOL_ID_PROD;
-    if (stage === "HOMOLOG") userPoolId = envs.AWS_COGNITO_USER_POOL_ID_HOMOLOG;
+    const s3Policy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
+      ],
+      resources: [s3Stack.bucket.bucketArn, `${s3Stack.bucket.bucketArn}/*`],
+    });
 
-    const userpool = cognito.UserPool.fromUserPoolId(
+    const originAccessIdentity = new OriginAccessIdentity(
       this,
-      `${envs.STACK_NAME}-UserPool`,
-      userPoolId
+      "AppRoleFrontOAI",
+      {
+        comment: "OAI for S3 bucket",
+      }
     );
 
-    const authorizer = new CognitoUserPoolsAuthorizer(
+    const distribution = new Distribution(this, "AppRoleFrontDistribution", {
+      defaultBehavior: {
+        origin: new cdk.aws_cloudfront_origins.S3Origin(s3Stack.bucket, {
+          originAccessIdentity: originAccessIdentity,
+        }),
+        allowedMethods: cdk.aws_cloudfront.AllowedMethods.ALLOW_GET_HEAD,
+        cachedMethods: cdk.aws_cloudfront.CachedMethods.CACHE_GET_HEAD,
+        viewerProtocolPolicy:
+          cdk.aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        cachePolicy: cdk.aws_cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      },
+    });
+
+    distribution.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
+
+    s3Stack.bucket.addToResourcePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["s3:GetObject"],
+        resources: [s3Stack.bucket.arnForObjects("*")],
+        principals: [
+          new iam.ServicePrincipal("cloudfront.amazonaws.com", {
+            conditions: {
+              StringEquals: {
+                "AWS:SourceArn": `arn:aws:cloudfront::${this.account}:distribution/${distribution.distributionId}`,
+              },
+            },
+          }),
+        ],
+      })
+    );
+
+    const cloudfrontPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["cloudfront:CreateInvalidation"],
+      resources: ["*"],
+    });
+
+    const cognitoStack = new CognitoStack(
       this,
-      `${envs.STACK_NAME}-Authorizer`,
+      `${Environments.STACK_NAME}-CognitoStack`
+    );
+
+    const authorizer = new cdk.aws_apigateway.CognitoUserPoolsAuthorizer(
+      this,
+      `${Environments.STACK_NAME}-Authorizer`,
       {
-        cognitoUserPools: [userpool],
+        cognitoUserPools: [cognitoStack.userPool],
         identitySource: "method.request.header.Authorization",
       }
     );
 
-    let cloudFrontUrl = "";
-    if (stage === "DEV") cloudFrontUrl = envs.CLOUD_FRONT_URL_DEV;
-    if (stage === "PROD") cloudFrontUrl = envs.CLOUD_FRONT_URL_PROD;
-    if (stage === "HOMOLOG") cloudFrontUrl = envs.CLOUD_FRONT_URL_HOMOLOG;
-
     const environmentVariables = {
       STAGE: stage,
       NODE_PATH: "/var/task:/opt/nodejs",
-      EMAIL_LOGIN: envs.EMAIL_LOGIN,
-      EMAIL_PASSWORD: envs.EMAIL_PASSWORD,
-      MONGO_URI: envs.MONGO_URI,
-      S3_BUCKET_NAME: envs.S3_BUCKET_NAME + stage.toLowerCase(),
-      CLOUD_FRONT_URL: cloudFrontUrl,
+      MONGO_URI: Environments.MONGO_URI,
+      S3_BUCKET_NAME: Environments.S3_BUCKET_NAME + stage.toLowerCase(),
+      CLOUD_FRONT_URL: distribution.domainName,
+      CLOUDFRONT_ID: distribution.distributionId,
+      COGNITO_USER_POOL_ID: cognitoStack.userPool.userPoolId,
+      COGNITO_CLIENT_ID: cognitoStack.client.userPoolClientId,
     };
 
     const lambdaStack = new LambdaStack(
@@ -77,21 +129,15 @@ export class IacStack extends Stack {
       authorizer
     );
 
-    const s3Policy = new iam.PolicyStatement({
+    const cognitoAdminPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      actions: [
-        "s3:ListBucket", // Listar o bucket
-        "s3:GetObject",  // Obter objetos do bucket
-        "s3:DeleteObject", // Deletar objetos do bucket
-        "s3:PutObject",  // Fazer upload de objetos no bucket (permite PUT)
-      ],
-      resources: [
-        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}`,   // O bucket (sem o /*)
-        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}/*`, // Objetos dentro do bucket
-        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}/*/*`, // Objetos dentro do bucket
-      ],
+      actions: ["cognito-idp:*"],
+      resources: [cognitoStack.userPool.userPoolArn],
     });
-    
+
+    for (const fn of lambdaStack.functionsThatNeedCognitoPermissions) {
+      fn.addToRolePolicy(cognitoAdminPolicy);
+    }
 
     for (const fn of lambdaStack.functionsThatNeedS3Permissions) {
       fn.addToRolePolicy(s3Policy);

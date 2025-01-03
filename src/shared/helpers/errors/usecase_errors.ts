@@ -53,3 +53,39 @@ export class BannerEmpty extends BaseError {
     super("Não tem banner neste evento");
   }
 }
+
+export class UserAlreadyExists extends BaseError {
+  constructor() {
+    super("Este usuário já está cadastrado");
+  }
+}
+
+export class UserNotRegistered extends BaseError {
+  constructor() {
+    super("Usuário não cadastrado ainda");
+  }
+}
+
+export class UserNotConfirmed extends BaseError {
+  constructor() {
+    super("Usuário não confirmado ainda");
+  }
+}
+
+export class UserSignUpNotFinished extends BaseError {
+  constructor() {
+    super("Usuário não finalizou o cadastro ainda");
+  }
+}
+
+export class RequestUserToForgotPassword extends BaseError {
+  constructor() {
+    super("Redefina sua senha com o esqueci minha senha");
+  }
+}
+
+export class FollowMeConflict extends BaseError {
+  constructor() {
+    super("Você não pode seguir a si mesmo");
+  }
+}

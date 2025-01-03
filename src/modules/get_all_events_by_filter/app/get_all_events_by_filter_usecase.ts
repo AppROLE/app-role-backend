@@ -10,7 +10,6 @@ export class GetEventsByFilterUseCase {
   constructor() {
     this.repository = new Repository({
       event_repo: true,
-      presence_repo: true,
     });
     this.event_repo = this.repository.event_repo!;
   }

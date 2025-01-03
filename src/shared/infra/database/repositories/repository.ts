@@ -6,12 +6,12 @@ import { EventRepositoryMongo } from "./event_repository_mongo";
 import { DatabaseException } from "src/shared/helpers/errors/base_error";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
 import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
-import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
 import { InstituteRepositoryMongo } from "./institute_repository_mongo";
 import { PresenceRepositoryMongo } from "./presence_repository_mongo";
-import { UserRepositoryMongo } from "./user_repository_mongo";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
-import { FileRepositoryS3 } from "../../external-services/file_repository_s3";
+import { FileRepositoryS3 } from "./file_repository_s3";
+import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
+import { UserRepositoryMongo } from "./user_repository_mongo";
 
 interface RepositoryConfig {
   event_repo?: boolean;
@@ -95,7 +95,7 @@ export class Repository {
 
   private async __connectDb(): Promise<Connection> {
     try {
-      await mongoose.connect(Environments.db_url);
+      await mongoose.connect(Environments.dbUrl);
       return mongoose.connection;
     } catch (error) {
       throw new DatabaseException(`${error}`);

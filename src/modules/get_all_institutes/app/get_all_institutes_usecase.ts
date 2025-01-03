@@ -9,8 +9,7 @@ export class GetAllInstitutesUseCase {
 
   constructor() {
     this.repository = new Repository({
-      event_repo: true,
-      presence_repo: true,
+      institute_repo: true,
     });
     this.institute_repo = this.repository.institute_repo!;
   }

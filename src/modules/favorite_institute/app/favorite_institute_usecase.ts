@@ -8,8 +8,7 @@ export class FavoriteInstituteUseCase {
 
   constructor() {
     this.repository = new Repository({
-      event_repo: true,
-      presence_repo: true,
+      user_repo: true,
     });
     this.user_repo = this.repository.user_repo!;
   }

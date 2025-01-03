@@ -1,26 +1,13 @@
 export interface IFileRepository {
-  uploadEventPhoto(
+  uploadImage(
     imageNameKey: string,
-    eventPhoto: Buffer,
-    mimetype: string
-  ): Promise<void>;
-  uploadInstitutePhoto(
-    imageNameKey: string,
-    eventPhoto: Buffer,
-    mimetype: string
-  ): Promise<void>
-  uploadEventGalleryPhoto(
-    imageNameKey: string,
-    eventPhoto: Buffer,
-    mimetype: string
-  ): Promise<void>;
-  uploadEventBanner(
-    imageNameKey: string,
-    eventPhoto: Buffer,
-    mimetype: string
-  ): Promise<void>;
-  deleteEventPhotoByEventId(eventId: string): Promise<void>;
-  deleteGallery(eventId: string): Promise<void>;
-  deleteInstitutePhoto(name: string): Promise<void>;
-  deleteEventBanner(eventId: string, eventName: string): Promise<void>;
+    image: Buffer,
+    mimetype: string,
+    isCompressed?: boolean
+  ): Promise<string>;
+  updateImageNameKey(
+    imageKey: string,
+    newImageKey: string
+  ): Promise<string | undefined>;
+  deleteImage(imageKey: string): Promise<void>;
 }

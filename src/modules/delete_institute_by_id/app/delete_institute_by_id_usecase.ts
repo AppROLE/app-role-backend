@@ -14,6 +14,7 @@ export class DeleteInstituteByIdUseCase {
     this.repository = new Repository({
       event_repo: true,
       file_repo: true,
+      institute_repo: true,
     });
     this.event_repo = this.repository.event_repo!;
     this.file_repo = this.repository.file_repo!;
@@ -31,9 +32,11 @@ export class DeleteInstituteByIdUseCase {
         const event = await this.event_repo.getEventById(eventId);
 
         if (event?.getEventPhotoLink) {
-          await this.file_repo.deleteEventPhotoByEventId(eventId);
+          const path = `events/${eventId}/${event.getEventPhotoLink}`;
+          await this.file_repo.deleteImage(path);
         }
         if ((event?.getGaleryLink?.length ?? 0) > 0) {
+          const path = `events/${eventId}/gallery`;
           await this.file_repo.deleteGallery(eventId);
         }
 

@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 
 interface IFollowing {
   user_followed_id: string;
@@ -25,6 +25,14 @@ export interface IUser extends Document {
   username: string;
   nickname: string;
   email: string;
+  accepted_terms: boolean;
+  email_verified: boolean;
+  is_oauth_user?: boolean;
+  date_birth?: Date;
+  phone_number?: string;
+  confirmation_code?: string;
+  cpf?: string;
+  gender?: GENDER_TYPE;
   biography?: string;
   created_at: Date;
   lnk_instagram?: string;
@@ -38,29 +46,37 @@ export interface IUser extends Document {
 }
 
 const FollowingSchema = new Schema<IFollowing>({
-  user_followed_id: { type: String, ref: "user" },
+  user_followed_id: { type: String, ref: "User" },
   followed_at: { type: Date, default: Date.now },
 });
 
 const FavoriteSchema = new Schema<IFavorite>({
-  institute_id: { type: String, ref: "institute" },
+  institute_id: { type: String, ref: "Institute" },
   favorited_at: { type: Date, default: Date.now },
 });
 
 const ReviewSchema = new Schema<IReview>({
-  institute_id: { type: String, ref: "institute" },
-  event_id: { type: String, ref: "event" },
+  institute_id: { type: String, ref: "Institute" },
+  event_id: { type: String, ref: "Event" },
   star: { type: Number, required: true },
   review: { type: String, required: true },
   reviewed_at: { type: Date, default: Date.now },
 });
 
 const UserSchema: Schema = new Schema<IUser>({
-  _id: { type: String, default: uuidv4 },
+  _id: { type: String, required: true },
   name: { type: String, required: true },
+  email_verified: { type: Boolean, default: false },
   username: { type: String, required: true, unique: true },
   nickname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  accepted_terms: { type: Boolean, required: true },
+  is_oauth_user: { type: Boolean, default: false },
+  phone_number: { type: String },
+  date_birth: { type: Date },
+  cpf: { type: String, unique: true },
+  confirmation_code: { type: String },
+  gender: { type: GENDER_TYPE },
   biography: { type: String },
   created_at: { type: Date, default: Date.now },
   lnk_instagram: { type: String },
@@ -73,4 +89,4 @@ const UserSchema: Schema = new Schema<IUser>({
   reviews: [ReviewSchema],
 });
 
-export const userModel = mongoose.model<IUser>("user", UserSchema);
+export const userModel = mongoose.model<IUser>("User", UserSchema);
