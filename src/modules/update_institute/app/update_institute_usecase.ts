@@ -1,3 +1,4 @@
+import { LocationProps } from "src/shared/domain/entities/event";
 import { Institute } from "src/shared/domain/entities/institute";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
@@ -21,8 +22,7 @@ export class UpdateInstituteUseCase {
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
     name?: string,
-    address?: string,
-    district_id?: string,
+    location?: LocationProps,
     phone?: string
   ) {
     const institute: {
@@ -31,8 +31,7 @@ export class UpdateInstituteUseCase {
       instituteInstituteType?: INSTITUTE_TYPE;
       institutePartnerType?: PARTNER_TYPE;
       instituteName?: string;
-      instituteAddress?: string;
-      instituteDistrictId?: string;
+      instituteLocation?: LocationProps;
       institutePrice?: number;
       institutePhone?: string;
     } = {
@@ -50,11 +49,8 @@ export class UpdateInstituteUseCase {
     if (name) {
       institute.instituteName = name;
     }
-    if (address) {
-      institute.instituteAddress = address;
-    }
-    if (district_id) {
-      institute.instituteDistrictId = district_id;
+    if (location) {
+      institute.instituteLocation = location;
     }
     if (phone) {
       institute.institutePhone = phone;
@@ -66,8 +62,7 @@ export class UpdateInstituteUseCase {
       institute.instituteInstituteType,
       institute.institutePartnerType,
       institute.instituteName,
-      institute.instituteAddress,
-      institute.instituteDistrictId,
+      institute.instituteLocation,
       institute.institutePhone
     );
   }

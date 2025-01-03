@@ -39,7 +39,6 @@ export class GetTopEventsUseCase {
             ? eventsForDate.map((event) => ({
                 eventId: event.getEventId,
                 name: event.getEventName,
-                districtId: event.getEventDistrictId,
                 date: event.getEventDate,
                 rating:
                   event.getReviews != undefined

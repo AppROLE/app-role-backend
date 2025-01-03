@@ -31,7 +31,6 @@ export class CreateEventController {
         address,
         price,
         ageRange,
-        districtId,
         instituteId,
         eventStatus,
         musicType,
@@ -51,7 +50,6 @@ export class CreateEventController {
         "price",
         "ageRange",
         "eventDate",
-        "districtId",
         "instituteId",
         "eventStatus",
       ];
@@ -88,13 +86,6 @@ export class CreateEventController {
         throw new WrongTypeParameters("eventDate", "Date", typeof eventDate);
       }
 
-      if (typeof districtId !== "string") {
-        throw new WrongTypeParameters(
-          "districtId",
-          "string",
-          typeof districtId
-        );
-      }
       if (typeof instituteId !== "string") {
         throw new WrongTypeParameters(
           "instituteId",
@@ -119,7 +110,6 @@ export class CreateEventController {
           ? (ageRange as AGE_ENUM)
           : AGE_ENUM.DEFAULT, // Replace 'DEFAULT' with an appropriate default value from AGE_ENUM
         eventDate,
-        districtId,
         instituteId,
         eventStatus: STATUS[eventStatus as keyof typeof STATUS],
         musicType: musicType

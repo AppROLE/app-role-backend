@@ -10,7 +10,6 @@ export class GetEventByIdViewModel {
   private description: string;
   private ageRange: AGE_ENUM;
   private eventDate: Date;
-  private districtId: string;
   private instituteId: string;
   private features: string[];
   private musicType?: string[];
@@ -32,7 +31,6 @@ export class GetEventByIdViewModel {
     this.description = event.getEventDescription;
     this.ageRange = event.getEventAgeRange;
     this.eventDate = event.getEventDate;
-    this.districtId = event.getEventDistrictId;
     this.instituteId = event.getInstituteId;
     this.features = event.getFeatures;
     this.musicType = event.getMusicType;
@@ -56,7 +54,6 @@ export class GetEventByIdViewModel {
       description: this.description,
       ageRange: this.ageRange,
       eventDate: this.eventDate,
-      districtId: this.districtId,
       instituteId: this.instituteId,
       features: this.features,
       musicType: this.musicType,
@@ -66,7 +63,11 @@ export class GetEventByIdViewModel {
       packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,
-      rating: this.reviews != undefined ? this.reviews?.reduce((acc, review) => acc + review.star, 0) / this.reviews?.length : 0,
+      rating:
+        this.reviews != undefined
+          ? this.reviews?.reduce((acc, review) => acc + review.star, 0) /
+            this.reviews?.length
+          : 0,
       reviews: this.reviews,
       eventStatus: this.eventStatus,
     };

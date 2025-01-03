@@ -4,6 +4,7 @@ import { INSTITUTE_TYPE } from "../../../domain/enums/institute_type_enum";
 import instituteModel, {
   IInstitute as InstituteDocument,
 } from "../models/institute.model";
+import { LocationProps } from "src/shared/domain/entities/event";
 
 export interface InstituteMongoDTOProps {
   _id: string;
@@ -13,9 +14,8 @@ export interface InstituteMongoDTOProps {
   institute_type: string;
   partner_type: string;
   phone: string;
-  address: string;
+  location: LocationProps;
   price: number;
-  district_id: string;
   photos: string[];
   events: string[];
 }
@@ -28,9 +28,8 @@ export class InstituteMongoDTO {
   private institute_type: INSTITUTE_TYPE;
   private partner_type: string;
   private phone: string;
-  private address: string;
+  private location: LocationProps;
   private price: number;
-  private district_id: string;
   private photos: string[];
   private events: string[];
 
@@ -42,9 +41,8 @@ export class InstituteMongoDTO {
     this.institute_type = props.institute_type as INSTITUTE_TYPE;
     this.partner_type = props.partner_type;
     this.phone = props.phone;
-    this.address = props.address;
+    this.location = props.location;
     this.price = props.price;
-    this.district_id = props.district_id;
     this.photos = props.photos;
     this.events = props.events;
   }
@@ -58,9 +56,8 @@ export class InstituteMongoDTO {
       description: instituteMongoDTO.description,
       institute_type: instituteMongoDTO.institute_type,
       phone: instituteMongoDTO.phone,
-      address: instituteMongoDTO.address,
+      location: instituteMongoDTO.location,
       price: instituteMongoDTO.price,
-      district_id: instituteMongoDTO.district_id,
       photos_url: instituteMongoDTO.photos,
       events_id: instituteMongoDTO.events,
     });
@@ -75,9 +72,8 @@ export class InstituteMongoDTO {
       institute_type: institute.instituteInstituteType,
       partner_type: institute.institutePartnerType,
       phone: institute.institutePhone || "",
-      address: institute.instituteAddress || "",
+      location: institute.instituteLocation,
       price: institute.institutePrice || 0,
-      district_id: institute.instituteDistrictId || "",
       photos: institute.institutePhotosUrl || [],
       events: institute.instituteEventsId || [],
     });
@@ -92,9 +88,8 @@ export class InstituteMongoDTO {
       institute_type: instituteMongoDTO.institute_type,
       partner_type: instituteMongoDTO.partner_type,
       phone: instituteMongoDTO.phone,
-      address: instituteMongoDTO.address,
+      location: instituteMongoDTO.location,
       price: instituteMongoDTO.price,
-      district_id: instituteMongoDTO.district_id,
       photos: instituteMongoDTO.photos,
       events: instituteMongoDTO.events,
     });
@@ -111,9 +106,8 @@ export class InstituteMongoDTO {
       institute_type: institute.institute_type,
       partner_type: institute.partner_type,
       phone: institute.phone,
-      address: institute.address,
+      location: institute.location,
       price: institute.price,
-      district_id: institute.district_id,
       photos: institute.photos,
       events: institute.events,
     });

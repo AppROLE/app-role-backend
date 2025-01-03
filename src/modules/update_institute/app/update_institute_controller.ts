@@ -28,7 +28,6 @@ export class UpdateInstituteController {
         partner_type,
         name,
         address,
-        district_id,
         phone,
       } = req.data;
 
@@ -82,15 +81,6 @@ export class UpdateInstituteController {
           throw new WrongTypeParameters("address", "string", typeof address);
         }
       }
-      if (district_id !== undefined) {
-        if (typeof district_id !== "string") {
-          throw new WrongTypeParameters(
-            "district_id",
-            "string",
-            typeof district_id
-          );
-        }
-      }
       if (phone !== undefined) {
         if (typeof phone !== "string") {
           throw new WrongTypeParameters("phone", "string", typeof phone);
@@ -104,7 +94,6 @@ export class UpdateInstituteController {
         PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
         name,
         address,
-        district_id,
         phone
       );
 

@@ -13,7 +13,6 @@ export interface CreateInstituteParams {
   phone?: string;
   address?: string;
   price?: number;
-  district_id?: string;
   photos_url?: string[];
 }
 
@@ -37,7 +36,6 @@ export class CreateInstituteUseCase {
       phone: params.phone || "",
       address: params.address,
       logo_photo: params.logo_photo || "",
-      district_id: params.district_id || "",
       photos_url: params.photos_url || [],
       events_id: [],
       price: params.price || 0,

@@ -49,9 +49,6 @@ export class EventRepositoryMock implements IEventRepository {
       if (filter.price && event.getEventPrice !== filter.price) {
         matches = false;
       }
-      if (filter.address && event.getEventAddress !== filter.address) {
-        matches = false;
-      }
       if (filter.age_range && event.getEventAgeRange !== filter.age_range) {
         matches = false;
       }
@@ -59,12 +56,6 @@ export class EventRepositoryMock implements IEventRepository {
         filter.event_date &&
         new Date(event.getEventDate).toISOString() !==
           new Date(filter.event_date).toISOString()
-      ) {
-        matches = false;
-      }
-      if (
-        filter.district_id &&
-        event.getEventDistrictId !== filter.district_id
       ) {
         matches = false;
       }

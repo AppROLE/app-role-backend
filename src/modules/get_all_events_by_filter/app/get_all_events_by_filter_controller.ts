@@ -45,10 +45,6 @@ export class GetEventsByFilterController {
       sanitizedFilters.event_date = filters.event_date;
     }
 
-    if (filters.district_id) {
-      sanitizedFilters.district_id = filters.district_id;
-    }
-
     if (filters.instituteId) {
       sanitizedFilters.instituteId = filters.instituteId;
     }

@@ -17,7 +17,6 @@ interface UpdateEventParams {
   price?: number;
   ageRange?: AGE_ENUM;
   eventDate?: Date;
-  districtId?: string;
   instituteId?: string;
   eventStatus?: STATUS;
   musicType?: MUSIC_TYPE[];
@@ -58,11 +57,10 @@ export class UpdateEventUseCase {
       eventId: existingEvent.getEventId,
       name: existingEvent.getEventName,
       description: existingEvent.getEventDescription,
-      address: existingEvent.getEventAddress,
+      location: existingEvent.getEventAddress,
       price: existingEvent.getEventPrice,
       ageRange: existingEvent.getEventAgeRange,
       eventDate: existingEvent.getEventDate,
-      districtId: existingEvent.getEventDistrictId,
       instituteId: existingEvent.getInstituteId,
       eventStatus: existingEvent.getEventStatus,
       musicType: existingEvent.getMusicType,
@@ -93,9 +91,6 @@ export class UpdateEventUseCase {
     }
     if (updatedFields.eventDate) {
       eventToUpdate.setEventDate = updatedFields.eventDate;
-    }
-    if (updatedFields.districtId) {
-      eventToUpdate.setEventDistrictId = updatedFields.districtId;
     }
     if (updatedFields.instituteId) {
       eventToUpdate.setInstituteId = updatedFields.instituteId;
@@ -135,7 +130,6 @@ export class UpdateEventUseCase {
       price: eventToUpdate.getEventPrice,
       ageRange: eventToUpdate.getEventAgeRange,
       eventDate: eventToUpdate.getEventDate,
-      districtId: eventToUpdate.getEventDistrictId,
       instituteId: eventToUpdate.getInstituteId,
       eventStatus: eventToUpdate.getEventStatus,
       musicType: eventToUpdate.getMusicType,

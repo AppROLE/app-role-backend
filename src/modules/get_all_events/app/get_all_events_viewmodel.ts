@@ -4,7 +4,6 @@ export class EventViewModel {
   private eventId?: string;
   private name: string;
   private eventDate: Date;
-  private districtId: string;;
   private eventPhotoLink?: string;
   private category?: string;
   private reviews?: ReviewProps[];
@@ -13,7 +12,6 @@ export class EventViewModel {
     this.eventId = event.getEventId;
     this.name = event.getEventName;
     this.eventDate = event.getEventDate;
-    this.districtId = event.getEventDistrictId;
     this.eventPhotoLink = event.getEventPhotoLink;
     this.category = event.getCategoryType;
     this.reviews = event.getReviews;
@@ -23,11 +21,14 @@ export class EventViewModel {
     return {
       eventId: this.eventId,
       name: this.name,
-      districtId: this.districtId,
       eventDate: this.eventDate,
       eventPhotoLink: this.eventPhotoLink,
       category: this.category,
-      rating: this.reviews != undefined ? this.reviews?.reduce((acc, review) => acc + review.star, 0) / this.reviews?.length : 0,
+      rating:
+        this.reviews != undefined
+          ? this.reviews?.reduce((acc, review) => acc + review.star, 0) /
+            this.reviews?.length
+          : 0,
     };
   }
 }

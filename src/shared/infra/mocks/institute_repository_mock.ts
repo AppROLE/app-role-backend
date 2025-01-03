@@ -4,6 +4,7 @@ import { IInstituteRepository } from "../../domain/repositories/institute_reposi
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
+import { LocationProps } from "src/shared/domain/entities/event";
 
 export class InstituteRepositoryMock implements IInstituteRepository {
   private institutes: Institute[];
@@ -73,8 +74,7 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
     name?: string,
-    address?: string,
-    district_id?: string,
+    location?: LocationProps,
     phone?: string
   ): Promise<Institute> {
     const institute = this.institutes.find(
@@ -96,11 +96,8 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     if (name) {
       institute.instituteName = name;
     }
-    if (address) {
-      institute.instituteAddress = address;
-    }
-    if (district_id) {
-      institute.instituteDistrictId = district_id;
+    if (location) {
+      institute.instituteLocation = location;
     }
     if (phone) {
       institute.institutePhone = phone;

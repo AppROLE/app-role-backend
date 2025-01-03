@@ -9,6 +9,7 @@ import {
 import { Collection, Connection } from "mongoose";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
+import { LocationProps } from "src/shared/domain/entities/event";
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
   private instituteCollection: Collection<IInstitute>;
@@ -113,8 +114,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
     name?: string,
-    address?: string,
-    district_id?: string,
+    location?: LocationProps,
     phone?: string
   ): Promise<Institute> {
     const updateFields: Partial<IInstitute> = {};
@@ -123,8 +123,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     if (institute_type) updateFields.institute_type = institute_type;
     if (partner_type) updateFields.partner_type = partner_type;
     if (name) updateFields.name = name;
-    if (address) updateFields.address = address;
-    if (district_id) updateFields.district_id = district_id;
+    if (location) updateFields.location = location;
     if (phone) updateFields.phone = phone;
 
     const updatedInstitute = await this.instituteCollection.findOneAndUpdate(

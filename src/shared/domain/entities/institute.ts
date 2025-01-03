@@ -1,6 +1,7 @@
 import { INSTITUTE_TYPE, toEnum } from "../enums/institute_type_enum";
 import { EntityError } from "../../helpers/errors/domain_errors";
 import { PARTNER_TYPE, toEnumPartnerType } from "../enums/partner_type_enum";
+import { LocationProps } from "./event";
 
 interface InstituteProps {
   institute_id?: string | undefined;
@@ -10,9 +11,8 @@ interface InstituteProps {
   partner_type: PARTNER_TYPE;
   phone?: string | undefined;
   logo_photo?: string;
-  address?: string | undefined;
+  location: LocationProps;
   price?: number | undefined;
-  district_id?: string | undefined;
   photos_url?: string[] | undefined;
   events_id?: string[] | undefined;
 }
@@ -25,9 +25,8 @@ export class Institute {
   private institute_type: INSTITUTE_TYPE;
   private partner_type: PARTNER_TYPE;
   private phone?: string;
-  private address?: string;
+  private location: LocationProps;
   private price?: number;
-  private district_id?: string;
   private photos_url?: string[];
   private events_id?: string[];
 
@@ -40,9 +39,8 @@ export class Institute {
     this.institute_type = toEnum(props.institute_type);
     this.partner_type = toEnumPartnerType(props.partner_type);
     this.phone = props.phone || undefined;
-    this.address = props.address || undefined;
+    this.location = props.location;
     this.price = props.price || 0;
-    this.district_id = props.district_id || undefined;
     this.photos_url = props.photos_url || undefined;
     this.events_id = props.events_id || undefined;
   }
@@ -63,14 +61,11 @@ export class Institute {
   get instituteInstituteType(): INSTITUTE_TYPE {
     return this.institute_type;
   }
-  get instituteAddress(): string | undefined {
-    return this.address;
+  get instituteLocation(): LocationProps {
+    return this.location;
   }
   get institutePrice(): number | undefined {
     return this.price;
-  }
-  get instituteDistrictId(): string | undefined {
-    return this.district_id;
   }
   get institutePhotosUrl(): string[] | undefined {
     return this.photos_url;
@@ -101,14 +96,11 @@ export class Institute {
   set instituteInstituteType(institute_type: string) {
     this.institute_type = toEnum(institute_type);
   }
-  set instituteAddress(address: string) {
-    this.address = address;
+  set instituteLocation(location: LocationProps) {
+    this.location = location;
   }
   set institutePrice(price: number) {
     this.price = price;
-  }
-  set instituteDistrictId(district_id: string) {
-    this.district_id = district_id;
   }
   set institutePhotosUrl(photos_url: string[]) {
     this.photos_url = photos_url;

@@ -32,7 +32,6 @@ export class CreateInstituteController {
         partner_type,
         name,
         address,
-        district_id,
         price,
         phone,
       } = req.data;
@@ -42,7 +41,6 @@ export class CreateInstituteController {
         "institute_type",
         "partner_type",
         "name",
-        "district_id",
       ];
 
       for (const param of requiredParams) {
@@ -81,19 +79,13 @@ export class CreateInstituteController {
           throw new WrongTypeParameters("address", "string", typeof address);
         }
       }
-      if (typeof district_id !== "string") {
-        throw new WrongTypeParameters(
-          "district_id",
-          "string",
-          typeof district_id
-        );
-      }
 
       if (price !== undefined) {
         if (typeof price !== "number") {
           throw new WrongTypeParameters("price", "number", typeof price);
         }
       }
+
       if (phone !== undefined) {
         if (typeof phone !== "string") {
           throw new WrongTypeParameters("phone", "string", typeof phone);
@@ -108,7 +100,6 @@ export class CreateInstituteController {
         partner_type: PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
         phone: phone,
         address: address,
-        district_id: district_id,
         price: price,
       });
 

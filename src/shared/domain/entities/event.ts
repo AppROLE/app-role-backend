@@ -15,15 +15,24 @@ export interface ReviewProps {
   reviewedAt?: Date;
 }
 
+export interface LocationProps {
+  latitude: number;
+  longitude: number;
+  address: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  cep: string;
+}
+
 interface EventProps {
   eventId?: string;
   name: string;
   description: string;
-  address: string;
+  location: LocationProps;
   price: number;
   ageRange: AGE_ENUM;
   eventDate: Date; // e.g., new Date('2023-10-01T00:00:00Z')
-  districtId: string;
   instituteId: string;
   eventStatus: STATUS;
   musicType?: MUSIC_TYPE[];
@@ -43,11 +52,10 @@ export class Event {
   private name: string;
   private description: string;
   private bannerUrl?: string;
-  private address: string;
+  private location: LocationProps;
   private price: number;
   private ageRange: AGE_ENUM;
   private eventDate: Date;
-  private districtId: string;
   private instituteId: string;
   private eventStatus: STATUS;
   private musicType?: MUSIC_TYPE[];
@@ -63,14 +71,13 @@ export class Event {
   constructor(props: EventProps) {
     this.validate(props);
 
-    this.eventId = props.eventId || '';
+    this.eventId = props.eventId || "";
     this.name = props.name;
     this.description = props.description;
-    this.address = props.address;
+    this.location = props.location;
     this.price = props.price;
     this.ageRange = props.ageRange;
     this.eventDate = props.eventDate;
-    this.districtId = props.districtId;
     this.instituteId = props.instituteId;
     this.eventStatus = props.eventStatus;
     this.musicType = props.musicType;
@@ -105,8 +112,8 @@ export class Event {
     return this.bannerUrl;
   }
 
-  get getEventAddress(): string {
-    return this.address;
+  get getEventLocation(): LocationProps {
+    return this.location;
   }
 
   get getEventPrice(): number {
@@ -119,10 +126,6 @@ export class Event {
 
   get getEventDate(): Date {
     return this.eventDate;
-  }
-
-  get getEventDistrictId(): string {
-    return this.districtId;
   }
 
   get getInstituteId(): string {
@@ -179,9 +182,8 @@ export class Event {
     this.bannerUrl = bannerUrl;
   }
 
-  set setEventAddress(address: string) {
-    this.validateAddress(address);
-    this.address = address;
+  set setEventLocation(location: LocationProps) {
+    this.location = location;
   }
 
   set setEventPrice(price: number) {
@@ -199,11 +201,6 @@ export class Event {
       throw new EntityError("Invalid event date");
     }
     this.eventDate = eventDate;
-  }
-
-  set setEventDistrictId(districtId: string) {
-    Event.validateDistrictId(districtId);
-    this.districtId = districtId;
   }
 
   set setInstituteId(instituteId: string) {
@@ -263,11 +260,9 @@ export class Event {
   private validate(props: EventProps): void {
     this.validateName(props.name);
     this.validateDescription(props.description);
-    this.validateAddress(props.address);
     Event.validatePrice(props.price);
     Event.validateAgeRange(props.ageRange);
     Event.validateEventDate(props.eventDate);
-    Event.validateDistrictId(props.districtId);
     Event.validateInstituteId(props.instituteId);
     Event.validateEventStatus(props.eventStatus);
 
@@ -305,16 +300,6 @@ export class Event {
     }
   }
 
-  private validateAddress(address: string): void {
-    if (
-      !address ||
-      address.trim().length === 0 ||
-      address.trim().length > 255
-    ) {
-      throw new EntityError("Invalid address");
-    }
-  }
-
   static validatePrice(price: number): void {
     if (price < 0 || price > 6) {
       throw new EntityError("preço");
@@ -334,12 +319,6 @@ export class Event {
         return false;
       }
       return true;
-    }
-  }
-
-  static validateDistrictId(districtId: string): void {
-    if (!districtId || districtId.trim().length === 0) {
-      throw new EntityError("district ID");
     }
   }
 

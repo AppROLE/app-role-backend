@@ -1,5 +1,9 @@
 import eventModel, { IEvent as EventDocument } from "../models/event.model";
-import { Event, ReviewProps } from "../../../domain/entities/event";
+import {
+  Event,
+  LocationProps,
+  ReviewProps,
+} from "../../../domain/entities/event";
 import { STATUS } from "../../../domain/enums/status_enum";
 import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
@@ -12,12 +16,11 @@ export interface EventMongoDTOProps {
   institute_id: string;
   name: string;
   banner_url: string | undefined;
-  address: string;
+  location: LocationProps;
   price: number;
   description: string;
   age_range: AGE_ENUM;
   event_date: Date;
-  district_id: string;
   features: string[];
   eventStatus: string;
   music_type: string[];
@@ -35,12 +38,11 @@ export class EventMongoDTO {
   private institute_id: string;
   private name: string;
   private banner_url: string;
-  private address: string;
+  private location: LocationProps;
   private price: number;
   private description: string;
   private age_range: AGE_ENUM;
   private event_date: Date;
-  private district_id: string;
   private features: string[];
   private eventStatus: string;
   private music_type: string[];
@@ -57,12 +59,11 @@ export class EventMongoDTO {
     this.institute_id = props.institute_id;
     this.name = props.name;
     this.banner_url = props.banner_url || "";
-    this.address = props.address;
+    this.location = props.location;
     this.price = props.price;
     this.description = props.description;
     this.age_range = props.age_range;
     this.event_date = props.event_date;
-    this.district_id = props.district_id;
     this.features = props.features;
     this.eventStatus = props.eventStatus;
     this.music_type = props.music_type || [];
@@ -81,12 +82,11 @@ export class EventMongoDTO {
       institute_id: eventDoc.institute_id,
       name: eventDoc.name,
       banner_url: eventDoc.banner_url,
-      address: eventDoc.address,
+      location: eventDoc.location,
       price: eventDoc.price,
       description: eventDoc.description,
       age_range: eventDoc.age_range,
       event_date: eventDoc.event_date,
-      district_id: eventDoc.district_id,
       features: eventDoc.features || [],
       eventStatus: eventDoc.eventStatus,
       music_type: eventDoc.music_type || [],
@@ -105,11 +105,10 @@ export class EventMongoDTO {
       eventId: eventMongoDTO._id,
       name: eventMongoDTO.name,
       description: eventMongoDTO.description,
-      address: eventMongoDTO.address,
+      location: eventMongoDTO.location,
       price: eventMongoDTO.price,
       ageRange: eventMongoDTO.age_range,
       eventDate: eventMongoDTO.event_date,
-      districtId: eventMongoDTO.district_id,
       features: (eventMongoDTO.features || [])
         .filter((feature) => feature !== null)
         .map((feature) => feature as FEATURE),
@@ -144,12 +143,11 @@ export class EventMongoDTO {
       institute_id: event.getInstituteId,
       name: event.getEventName,
       banner_url: event.getEventBannerUrl,
-      address: event.getEventAddress,
+      location: event.getEventLocation,
       price: event.getEventPrice,
       description: event.getEventDescription,
       age_range: event.getEventAgeRange,
       event_date: event.getEventDate,
-      district_id: event.getEventDistrictId,
       features: event.getFeatures,
       eventStatus: event.getEventStatus,
       music_type: event.getMusicType || [],
@@ -177,12 +175,11 @@ export class EventMongoDTO {
       institute_id: eventMongoDTO.institute_id,
       name: eventMongoDTO.name,
       banner_url: eventMongoDTO.banner_url,
-      address: eventMongoDTO.address,
+      location: eventMongoDTO.location,
       price: eventMongoDTO.price,
       description: eventMongoDTO.description,
       age_range: eventMongoDTO.age_range,
       event_date: eventMongoDTO.event_date,
-      district_id: eventMongoDTO.district_id,
       features: eventMongoDTO.features,
       eventStatus: eventMongoDTO.eventStatus,
       music_type: eventMongoDTO.music_type,

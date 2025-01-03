@@ -15,7 +15,6 @@ interface CreateEventParams {
   price: number;
   ageRange: AGE_ENUM;
   eventDate: Date;
-  districtId: string;
   instituteId: string;
   eventStatus: STATUS;
   musicType?: MUSIC_TYPE[];
@@ -43,11 +42,10 @@ export class CreateEventUseCase {
     const event = new Event({
       name: params.name,
       description: params.description,
-      address: params.address,
+      location: params.location,
       price: params.price,
       ageRange: params.ageRange,
       eventDate: params.eventDate,
-      districtId: params.districtId,
       instituteId: params.instituteId,
       eventStatus: params.eventStatus,
       musicType: params.musicType,

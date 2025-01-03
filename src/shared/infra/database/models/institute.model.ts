@@ -9,11 +9,21 @@ interface IFeature {
   name: string;
 }
 
+interface ILocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  cep: string;
+}
+
 interface IEvent {
   _id: string;
   name: string;
   banner_url: string;
-  address: string;
+  location: ILocation;
   price: number;
   phone: string;
   description: string;
@@ -29,10 +39,9 @@ export interface IInstitute extends Document {
   description: string;
   institute_type: string;
   partner_type: string;
-  address: string;
+  location: ILocation;
   price: number;
   phone: string;
-  district_id: string;
   photos: IPhoto[];
   events: IEvent[];
 }
@@ -45,11 +54,21 @@ const FeatureSchema = new Schema<IFeature>({
   name: { type: String, required: true },
 });
 
+const LocationSchema = new Schema<ILocation>({
+  latitude: { type: Number, required: true },
+  longitude: { type: Number, required: true },
+  address: { type: String, required: true },
+  neighborhood: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  cep: { type: String, required: true },
+});
+
 const EventSchema = new Schema<IEvent>({
   _id: { type: String, default: uuidv4 },
   name: { type: String, required: true },
   banner_url: { type: String },
-  address: { type: String, required: true },
+  location: { type: LocationSchema, required: true },
   price: { type: Number },
   phone: { type: String },
   description: { type: String },
@@ -65,10 +84,9 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   description: { type: String },
   institute_type: { type: String },
   partner_type: { type: String },
-  address: { type: String },
+  location: { type: LocationSchema, required: true },
   price: { type: Number },
   phone: { type: String },
-  district_id: { type: String, required: true },
   photos: [PhotoSchema],
   events: [EventSchema],
 });

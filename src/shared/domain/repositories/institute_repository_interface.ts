@@ -1,3 +1,4 @@
+import { LocationProps } from "../entities/event";
 import { Institute } from "../entities/institute";
 import { INSTITUTE_TYPE } from "../enums/institute_type_enum";
 import { PARTNER_TYPE } from "../enums/partner_type_enum";
@@ -17,8 +18,7 @@ export interface IInstituteRepository {
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
     name?: string,
-    address?: string,
-    district_id?: string,
+    location?: LocationProps,
     phone?: string
   ): Promise<Institute>;
 }

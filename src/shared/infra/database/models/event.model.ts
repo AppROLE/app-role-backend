@@ -9,17 +9,27 @@ interface IReview {
   photoUrl: string;
   reviewed_at?: Date;
 }
+
+interface ILocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  cep: string;
+}
+
 export interface IEvent extends Document {
   _id: string;
   institute_id: string;
   name: string;
   banner_url: string;
-  address: string;
+  location: ILocation;
   price: number;
   description: string;
   age_range: string;
   event_date: Date;
-  district_id: string;
   music_type: string[];
   menu_link: string;
   galery_link: string[];
@@ -30,6 +40,7 @@ export interface IEvent extends Document {
   reviews: IReview[];
   eventStatus: string;
 }
+
 const ReviewSchema = new Schema<IReview>({
   username: { type: String },
   name: { type: String },
@@ -39,17 +50,26 @@ const ReviewSchema = new Schema<IReview>({
   reviewed_at: { type: Date, default: Date.now },
 });
 
+const LocationSchema = new Schema<ILocation>({
+  latitude: { type: Number, required: true },
+  longitude: { type: Number, required: true },
+  address: { type: String, required: true },
+  neighborhood: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  cep: { type: String, required: true },
+});
+
 const EventSchema: Schema = new Schema<IEvent>({
   _id: { type: String, default: uuidv4 },
   institute_id: { type: String, ref: "institute", required: true },
   name: { type: String, required: true },
   banner_url: { type: String },
-  address: { type: String, required: true },
+  location: { type: LocationSchema, required: true },
   price: { type: Number },
   description: { type: String },
   age_range: { type: String },
   event_date: { type: Date, required: true },
-  district_id: { type: String, required: true },
   features: [{ type: String, ref: "feature" }],
   music_type: [{ type: String }],
   menu_link: { type: String },

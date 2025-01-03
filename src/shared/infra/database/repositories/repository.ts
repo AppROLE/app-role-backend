@@ -4,12 +4,10 @@ import { Environments, STAGE } from "src/shared/environments";
 import { EventRepositoryMock } from "../../mocks/event_repository_mock";
 import { EventRepositoryMongo } from "./event_repository_mongo";
 import { DatabaseException } from "src/shared/helpers/errors/base_error";
-import { IDistrictRepository } from "src/shared/domain/repositories/district_repository_interface";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
 import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
 import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
 import { InstituteRepositoryMongo } from "./institute_repository_mongo";
-import { DistrictRepositoryMongo } from "./district_repository_mongo";
 import { PresenceRepositoryMongo } from "./presence_repository_mongo";
 import { UserRepositoryMongo } from "./user_repository_mongo";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
@@ -17,7 +15,6 @@ import { FileRepositoryS3 } from "../../external-services/file_repository_s3";
 
 interface RepositoryConfig {
   event_repo?: boolean;
-  district_repo?: boolean;
   institute_repo?: boolean;
   presence_repo?: boolean;
   user_repo?: boolean;
@@ -26,7 +23,6 @@ interface RepositoryConfig {
 
 export class Repository {
   event_repo?: IEventRepository;
-  district_repo?: IDistrictRepository;
   institute_repo?: IInstituteRepository;
   presence_repo?: IPresenceRepository;
   user_repo?: IUserRepository;
@@ -35,7 +31,6 @@ export class Repository {
 
   constructor({
     event_repo = false,
-    district_repo = false,
     institute_repo = false,
     presence_repo = false,
     user_repo = false,
@@ -44,7 +39,6 @@ export class Repository {
     if (Environments.stage === STAGE.TEST) {
       this._initializeMockRepositories(
         event_repo,
-        district_repo,
         institute_repo,
         presence_repo,
         user_repo,
@@ -53,7 +47,6 @@ export class Repository {
     } else {
       this._initializeDatabaseRepositories(
         event_repo,
-        district_repo,
         institute_repo,
         presence_repo,
         user_repo,
@@ -64,7 +57,6 @@ export class Repository {
 
   private _initializeMockRepositories(
     event_repo: boolean = false,
-    district_repo: boolean = false,
     institute_repo: boolean = false,
     presence_repo: boolean = false,
     user_repo: boolean = false,
@@ -77,7 +69,6 @@ export class Repository {
 
   private async _initializeDatabaseRepositories(
     event_repo: boolean = false,
-    district_repo: boolean = false,
     institute_repo: boolean = false,
     presence_repo: boolean = false,
     user_repo: boolean = false,
@@ -87,9 +78,6 @@ export class Repository {
     console.log("✅ Conexão com MongoDB estabelecida com sucesso.");
     if (event_repo) {
       this.event_repo = new EventRepositoryMongo(this.connection);
-    }
-    if (district_repo) {
-      this.district_repo = new DistrictRepositoryMongo(this.connection);
     }
     if (institute_repo) {
       this.institute_repo = new InstituteRepositoryMongo(this.connection);

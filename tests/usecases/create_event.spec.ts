@@ -18,7 +18,6 @@ describe("CreateEventUseCase", () => {
       price: 2,
       ageRange: "18-20",
       eventDate: new Date("2025-09-15"),
-      districtId: "1",
       instituteId: "1",
       eventStatus: STATUS.ACTIVE,
       bannerUrl: "https://example.com/galleria_night.jpg",
@@ -30,8 +29,6 @@ describe("CreateEventUseCase", () => {
     // console.log("CARALHO" + typeof result);
     // console.log(result instanceof Event);
     // console.log("Result type:", result.constructor.name);
-    // console.log("FILHA DA PUTA DE ID " + result.districtId);
-    // console.log(typeof result.districtId);
     // console.log("FILHA DA PUTA DE url " + result.bannerUrl);
 
     // expect(result.name).toBe("Galleria Night");
@@ -42,7 +39,6 @@ describe("CreateEventUseCase", () => {
     // expect(result.price).toBe(2);
     // expect(result.ageRange).toBe("18-20");
     // expect(result.eventDate).toEqual(new Date("2025-09-15"));
-    // expect(result.districtId).toBe("1");
     // expect(result.instituteId).toBe("1");
     // expect(result.eventStatus).toBe(STATUS.ACTIVE);
     // expect(result.bannerUrl).toBe("https://example.com/galleria_night.jpg");
