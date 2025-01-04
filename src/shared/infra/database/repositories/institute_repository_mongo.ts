@@ -18,7 +18,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     this.instituteCollection = connection.collection<IInstitute>("Institute");
   }
 
-  async createInstitute(institute: Institute): Promise<string> {
+  async createInstitute(institute: Institute): Promise<Institute> {
     const dto = InstituteMongoDTO.fromEntity(institute);
     const instituteDoc = InstituteMongoDTO.toMongo(dto);
 
@@ -34,7 +34,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       throw new Error("Failed to create institute in MongoDB.");
     }
 
-    return result.insertedId.toString();
+    return institute;
   }
 
   async getInstituteById(instituteId: string): Promise<Institute> {

@@ -20,9 +20,8 @@ import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 export class CreateEventController {
   constructor(private readonly usecase: CreateEventUseCase) {}
 
-  async handle(req: IRequest) {
+  async handle(formData: Record<string, any>) {
     try {
-      let eventDate = req.data.eventDate;
       const {
         name,
         description,
@@ -39,13 +38,20 @@ export class CreateEventController {
         eventStatus,
         musicType,
         menuLink,
-        galeryLink,
-        bannerUrl,
         features,
         packageType,
         category,
         ticketUrl,
-      } = req.data;
+        eventDate,
+      } = formData.fields;
+
+      const banner = formData.files["banner"];
+
+      if (banner === undefined) {
+        throw new MissingParameters("banner");
+      }
+
+      const gallery = formData.files["gallery"] || [];
 
       const requiredParams = [
         "name",
@@ -59,7 +65,7 @@ export class CreateEventController {
       ];
 
       for (const param of requiredParams) {
-        if (req.data[param] === undefined) {
+        if (formData.fields[param] === undefined) {
           throw new MissingParameters(param);
         }
       }
@@ -105,11 +111,18 @@ export class CreateEventController {
       if (typeof ageRange !== "string") {
         throw new WrongTypeParameters("ageRange", "string", typeof ageRange);
       }
-      if (typeof eventDate === "string") {
-        eventDate = new Date(eventDate);
-      }
-      if (!(eventDate instanceof Date) || isNaN(eventDate.getTime())) {
-        throw new WrongTypeParameters("eventDate", "Date", typeof eventDate);
+
+      const eventDateFormated = new Date(eventDate);
+
+      if (
+        !(eventDateFormated instanceof Date) ||
+        isNaN(eventDateFormated.getTime())
+      ) {
+        throw new WrongTypeParameters(
+          "eventDateFormated",
+          "Date",
+          typeof eventDateFormated
+        );
       }
 
       if (typeof instituteId !== "string") {
@@ -142,8 +155,8 @@ export class CreateEventController {
         price,
         ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM)
           ? (ageRange as AGE_ENUM)
-          : AGE_ENUM.DEFAULT, // Replace 'DEFAULT' with an appropriate default value from AGE_ENUM
-        eventDate,
+          : AGE_ENUM.DEFAULT,
+        eventDate: eventDateFormated,
         instituteId,
         eventStatus: STATUS[eventStatus as keyof typeof STATUS],
         musicType: musicType
@@ -152,8 +165,8 @@ export class CreateEventController {
             )
           : undefined,
         menuLink: typeof menuLink === "string" ? menuLink : undefined,
-        galeryLink: typeof galeryLink === "string" ? [galeryLink] : undefined,
-        bannerUrl: typeof bannerUrl === "string" ? bannerUrl : undefined,
+        galery_images: gallery,
+        banner_image: banner,
         features: features
           ? (features as string[]).map(
               (feature) => FEATURE[feature as keyof typeof FEATURE]

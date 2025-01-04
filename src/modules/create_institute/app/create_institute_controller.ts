@@ -1,7 +1,3 @@
-import {
-  IRequest,
-  IResponse,
-} from "src/shared/helpers/external_interfaces/external_interface";
 import { CreateInstituteUseCase } from "./create_institute_usecase";
 import {
   INSTITUTE_TYPE,
@@ -11,7 +7,6 @@ import {
   MissingParameters,
   WrongTypeParameters,
 } from "src/shared/helpers/errors/controller_errors";
-import { CreateInstituteViewModel } from "./create_institute_viewmodel";
 import {
   BadRequest,
   Created,
@@ -24,7 +19,7 @@ import { DuplicatedItem } from "src/shared/helpers/errors/usecase_errors";
 export class CreateInstituteController {
   constructor(private readonly usecase: CreateInstituteUseCase) {}
 
-  async handle(req: IRequest) {
+  async handle(formData: Record<string, any>) {
     try {
       const {
         description,
@@ -40,7 +35,15 @@ export class CreateInstituteController {
         cep,
         price,
         phone,
-      } = req.data;
+      } = formData.fields;
+
+      const logo = formData.files["logo_photo"];
+
+      if (logo === undefined) {
+        throw new MissingParameters("logo_photo");
+      }
+
+      const photos = formData.files["photos"] || [];
 
       const requiredParams = [
         "description",
@@ -50,7 +53,7 @@ export class CreateInstituteController {
       ];
 
       for (const param of requiredParams) {
-        if (req.data[param] === undefined) {
+        if (formData.fields[param] === undefined) {
           throw new MissingParameters(param);
         }
       }
@@ -118,11 +121,11 @@ export class CreateInstituteController {
         }
       }
 
-      const instituteId = await this.usecase.execute({
+      const institute = await this.usecase.execute({
+        name: name,
         description: description,
         institute_type:
           INSTITUTE_TYPE[institute_type as keyof typeof INSTITUTE_TYPE],
-        name: name,
         partner_type: PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
         phone: phone,
         location: {
@@ -135,13 +138,14 @@ export class CreateInstituteController {
           cep: cep,
         },
         price: price,
+        logo_photo: logo,
+        photos: photos,
       });
 
-      const viewmodel = new CreateInstituteViewModel(
-        "Instituição criada com sucesso",
-        String(instituteId)
-      );
-      return new Created(viewmodel.toJSON());
+      return new Created({
+        message: "Instituição criada com sucesso",
+        id: institute.instituteId,
+      });
     } catch (error) {
       if (
         error instanceof MissingParameters ||

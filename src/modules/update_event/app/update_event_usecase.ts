@@ -8,6 +8,7 @@ import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
 import { Repository } from "src/shared/infra/database/repositories/repository";
+import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 
 interface UpdateEventParams {
   eventId: string;
@@ -21,8 +22,14 @@ interface UpdateEventParams {
   eventStatus?: STATUS;
   musicType?: MUSIC_TYPE[];
   menuLink?: string;
-  galeryLink?: string[];
-  bannerUrl?: string;
+  galery_images?: {
+    image: Buffer;
+    mimetype: string;
+  }[];
+  banner_image?: {
+    image: Buffer;
+    mimetype: string;
+  };
   features?: FEATURE[];
   packageType?: PACKAGE_TYPE[];
   category?: CATEGORY;
@@ -32,15 +39,18 @@ interface UpdateEventParams {
 export class UpdateEventUseCase {
   repository: Repository;
   private readonly event_repo: IEventRepository;
+  private readonly file_repo: IFileRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
+      file_repo: true,
     });
     this.event_repo = this.repository.event_repo!;
+    this.file_repo = this.repository.file_repo!;
   }
 
-  async execute(params: UpdateEventParams): Promise<void> {
+  async execute(params: UpdateEventParams): Promise<Event> {
     const { eventId, ...updatedFields } = params;
 
     if (!eventId) {
@@ -103,11 +113,37 @@ export class UpdateEventUseCase {
     if (updatedFields.menuLink) {
       eventToUpdate.setMenuLink = updatedFields.menuLink;
     }
-    if (updatedFields.galeryLink) {
-      eventToUpdate.setGaleryLink = updatedFields.galeryLink;
+    if (updatedFields.galery_images) {
+      let galeryUrls: string[] = [];
+      if (params.galery_images && params.galery_images.length > 0) {
+        for (let i = 0; i < params.galery_images.length; i++) {
+          const photo = params.galery_images[i];
+          const photoUrl = await this.file_repo.uploadImage(
+            `events/${existingEvent.getEventId}/galery/${i}.${
+              photo.mimetype.split("/")[1]
+            }`,
+            photo.image,
+            photo.mimetype,
+            true
+          );
+          galeryUrls.push(photoUrl);
+        }
+      }
+      eventToUpdate.setGaleryLink = galeryUrls;
     }
-    if (updatedFields.bannerUrl) {
-      eventToUpdate.setEventBannerUrl = updatedFields.bannerUrl;
+    if (updatedFields.banner_image) {
+      let bannerUrl = "";
+      if (params.banner_image) {
+        bannerUrl = await this.file_repo.uploadImage(
+          `events/${existingEvent.getEventId}/event-photo.${
+            params.banner_image.mimetype.split("/")[1]
+          }`,
+          params.banner_image.image,
+          params.banner_image.mimetype,
+          true
+        );
+      }
+      eventToUpdate.setEventBannerUrl = bannerUrl;
     }
     if (updatedFields.features) {
       eventToUpdate.setFeatures = updatedFields.features;
@@ -122,7 +158,7 @@ export class UpdateEventUseCase {
       eventToUpdate.setTicketUrl = updatedFields.ticketUrl;
     }
 
-    const updatedEvent = await this.event_repo.updateEvent(eventId, {
+    return await this.event_repo.updateEvent(eventId, {
       name: eventToUpdate.getEventName,
       description: eventToUpdate.getEventDescription,
       location: eventToUpdate.getEventLocation,
