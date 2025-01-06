@@ -11,13 +11,12 @@ export enum STAGE {
 
 export class Environments {
   static stage: STAGE = (process.env.STAGE as STAGE) || STAGE.TEST;
-  static s3BucketName: string =
-    (process.env.S3_BUCKET_NAME as string) || "bucket-test";
+  static bucketName: string =
+    (process.env.BUCKET_NAME as string) || "bucket-test";
   static region: string = (process.env.AWS_REGION as string) || "sa-east-1";
   static dbUrl: string = (process.env.MONGO_URI as string) || "";
-  static clientId: string = (process.env.COGNITO_CLIENT_ID as string) || "";
-  static userPoolId: string =
-    (process.env.COGNITO_USER_POOL_ID as string) || "";
-  static cloudFrontUrl: string = (process.env.CLOUD_FRONT_URL as string) || "";
-  static cloudFrontId: string = (process.env.CLOUDFRONT_ID as string) || "";
+  static userPoolArn: string = (process.env.USER_POOL_ARN as string) || "";
+  static userPoolName: string = (process.env.USER_POOL_NAME as string) || "";
+  static userPoolId: string = (process.env.USER_POOL_ID as string) || "";
+  static appClientId: string = (process.env.APP_CLIENT_ID as string) || "";
 }

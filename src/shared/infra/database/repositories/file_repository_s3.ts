@@ -16,11 +16,11 @@ import { S3Exception } from "src/shared/helpers/errors/base_error";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 
 export class FileRepositoryS3 implements IFileRepository {
-  s3BucketName: string;
+  bucketName: string;
   s3Client: S3Client;
 
   constructor() {
-    this.s3BucketName = Environments.s3BucketName;
+    this.bucketName = Environments.bucketName;
     this.s3Client = new S3Client({
       region: Environments.region,
     });
@@ -40,7 +40,7 @@ export class FileRepositoryS3 implements IFileRepository {
   async deleteImage(pathName: string): Promise<void> {
     try {
       const params: DeleteObjectCommandInput = {
-        Bucket: this.s3BucketName,
+        Bucket: this.bucketName,
         Key: pathName,
       };
 
@@ -62,7 +62,7 @@ export class FileRepositoryS3 implements IFileRepository {
       }
 
       const params: PutObjectCommandInput = {
-        Bucket: this.s3BucketName,
+        Bucket: this.bucketName,
         Key: imagePathName,
         Body: image,
         ContentType: mimetype,
@@ -70,7 +70,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
       await this.s3Client.send(new PutObjectCommand(params));
 
-      return `https://${this.s3BucketName}.s3.amazonaws.com/${imagePathName}`;
+      return `https://${this.bucketName}.s3.amazonaws.com/${imagePathName}`;
     } catch (error: any) {
       throw new S3Exception(`uploadProfilePhoto - ${error.message}`);
     }
@@ -82,7 +82,7 @@ export class FileRepositoryS3 implements IFileRepository {
   ): Promise<string | undefined> {
     try {
       const params: GetObjectCommandInput = {
-        Bucket: this.s3BucketName,
+        Bucket: this.bucketName,
         Key: pathName,
       };
 
@@ -93,7 +93,7 @@ export class FileRepositoryS3 implements IFileRepository {
       const bodyBuffer = await this.bodyToBuffer(Body as Readable);
 
       const paramsUpdate: PutObjectCommandInput = {
-        Bucket: this.s3BucketName,
+        Bucket: this.bucketName,
         Key: newPathName,
         Body: bodyBuffer,
       };
@@ -101,13 +101,13 @@ export class FileRepositoryS3 implements IFileRepository {
       await this.s3Client.send(new PutObjectCommand(paramsUpdate));
 
       const paramsDelete: DeleteObjectCommandInput = {
-        Bucket: this.s3BucketName,
+        Bucket: this.bucketName,
         Key: pathName,
       };
 
       await this.s3Client.send(new DeleteObjectCommand(paramsDelete));
 
-      return `https://${this.s3BucketName}.s3.amazonaws.com/${newPathName}`;
+      return `https://${this.bucketName}.s3.amazonaws.com/${newPathName}`;
     } catch (error: any) {
       throw new S3Exception(`updateKeyProfilePhoto - ${error.message}`);
     }
@@ -121,7 +121,7 @@ export class FileRepositoryS3 implements IFileRepository {
 
       const listedObjects = await this.s3Client.send(
         new ListObjectsV2Command({
-          Bucket: this.s3BucketName,
+          Bucket: this.bucketName,
           Prefix: folderPath,
         })
       );
@@ -132,7 +132,7 @@ export class FileRepositoryS3 implements IFileRepository {
       }
 
       const deleteParams = {
-        Bucket: this.s3BucketName,
+        Bucket: this.bucketName,
         Delete: {
           Objects: listedObjects.Contents.map((object) => ({
             Key: object.Key!,

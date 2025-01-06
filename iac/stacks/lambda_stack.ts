@@ -7,7 +7,6 @@ import {
 } from "aws-cdk-lib/aws-apigateway";
 import { Duration } from "aws-cdk-lib";
 import * as path from "path";
-import { envs } from "../../src/shared/helpers/envs/envs";
 import { stage } from "../get_stage_env";
 
 export class LambdaStack extends Construct {
@@ -53,22 +52,8 @@ export class LambdaStack extends Construct {
     environmentVariables: Record<string, any>,
     authorizer?: CognitoUserPoolsAuthorizer
   ): lambda.Function {
-    const modifiedModuleName = moduleName
-      .toLowerCase()
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-
-    console.log(
-      `Creating lambda function for ${modifiedModuleName} in stage ${stage}`
-    );
-    console.log(
-      `Environment variables for ${modifiedModuleName}: ${JSON.stringify(
-        environmentVariables
-      )}`
-    );
-    const lambdaFunction = new lambda.Function(this, modifiedModuleName, {
-      functionName: `${modifiedModuleName}-${envs.STACK_NAME}`,
+    const lambdaFunction = new lambda.Function(this, moduleName, {
+      functionName: moduleName,
       code: lambda.Code.fromAsset(
         path.join(__dirname, `../../dist/modules/${moduleName}`)
       ),
@@ -101,27 +86,22 @@ export class LambdaStack extends Construct {
     environmentVariables: Record<string, any>,
     authorizer?: CognitoUserPoolsAuthorizer
   ) {
-    super(scope, `${envs.STACK_NAME}-LambdaStack`);
+    const stackName = process.env.STACK_NAME as string;
+    super(scope, `${stackName}-LambdaStack`);
 
     this.lambdaLayer = new lambda.LayerVersion(
       this,
-      `${envs.STACK_NAME}-SharedLayer`,
+      `${stackName}-SharedLayer`,
       {
         code: lambda.Code.fromAsset(path.join(__dirname, "../shared")),
         compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
       }
     );
 
-    this.libLayer = new lambda.LayerVersion(
-      this,
-      `${envs.STACK_NAME}-LibLayer`,
-      {
-        code: lambda.Code.fromAsset(
-          path.join(__dirname, "../node_dependencies")
-        ),
-        compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
-      }
-    );
+    this.libLayer = new lambda.LayerVersion(this, `${stackName}-LibLayer`, {
+      code: lambda.Code.fromAsset(path.join(__dirname, "../node_dependencies")),
+      compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
+    });
 
     // event routes
     this.createEventFunction = this.createLambdaApiGatewayIntegration(
