@@ -46,8 +46,9 @@ export class LambdaStack extends Construct {
     environmentVariables: Record<string, any>,
     authorizer?: CognitoUserPoolsAuthorizer
   ): lambda.Function {
+    const stackName = process.env.STACK_NAME as string;
     const lambdaFunction = new lambda.Function(this, moduleName, {
-      functionName: moduleName,
+      functionName: `${stackName}-${moduleName}`,
       code: lambda.Code.fromAsset(
         path.join(__dirname, `../../dist/modules/${moduleName}`)
       ),
