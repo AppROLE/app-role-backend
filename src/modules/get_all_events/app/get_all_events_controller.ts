@@ -1,11 +1,11 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
+import { IRequest } from "../../../shared/helpers/external_interfaces/external_interface";
 import { GetAllEventsUseCase } from "./get_all_events_usecase";
 import { GetAllEventsViewModel } from "./get_all_events_viewmodel";
 import {
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
+} from "../../../shared/helpers/external_interfaces/http_codes";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 
 export class GetAllEventsController {
