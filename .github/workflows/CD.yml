@@ -21,11 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GithubActionsRole
-          role-session-name: github-action
+        run: |
+          echo "Configuring AWS Credentials"
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          aws configure set default.region ${{ secrets.AWS_REGION }}
+          aws configure set default.output json
 
       - name: Setting stage and stack name
         run: |
@@ -33,19 +34,24 @@ jobs:
           echo "STACK_NAME=AppRoleStack${{github.ref_name}}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-node@v3
         with:
-          python-version: "3.9"
+          node-version: 20
 
       - name: Installing Dependencies
         run: |
-          npm install -g aws-cdk
+          yarn
           cd iac
-          pip install -r requirements.txt
+          npm install -g aws-cdk ts-node
+          npm i
 
       - name: DeployWithCDK
         run: |
+          source $GITHUB_ENV
+          yarn build
           cd iac
+          ts-node node_modules_adjust.ts
+          ts-node adjust_shared_layer.ts
           cdk synth
           cdk bootstrap
           cdk deploy "${{env.STACK_NAME}}" --require-approval never
