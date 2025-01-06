@@ -1,6 +1,6 @@
-import { Event } from "../../../shared/domain/entities/event";
-import { IEventRepository } from "../../../shared/domain/repositories/event_repository_interface";
-import { Repository } from "../../../shared/infra/database/repositories/repository";
+import { Event } from "src/shared/domain/entities/event";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class GetAllEventsUseCase {
   repository: Repository;

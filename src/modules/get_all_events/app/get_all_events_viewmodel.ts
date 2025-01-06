@@ -1,4 +1,4 @@
-import { Event, ReviewProps } from "../../../shared/domain/entities/event";
+import { Event, ReviewProps } from "src/shared/domain/entities/event";
 
 export class EventViewModel {
   private eventId?: string;

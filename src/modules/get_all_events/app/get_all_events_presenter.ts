@@ -1,7 +1,7 @@
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
-} from "../../../shared/helpers/external_interfaces/http_lambda_requests";
+} from "src/shared/helpers/external_interfaces/http_lambda_requests";
 import { GetAllEventsUseCase } from "./get_all_events_usecase";
 import { GetAllEventsController } from "./get_all_events_controller";
 
