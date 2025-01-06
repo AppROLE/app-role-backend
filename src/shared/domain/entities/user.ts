@@ -10,7 +10,6 @@ interface UserProps {
   username: string;
   email: string;
   acceptedTerms: boolean;
-  acceptedTermsAt: Date;
   emailVerified: boolean;
   dateBirth?: Date;
   gender?: GENDER_TYPE;
