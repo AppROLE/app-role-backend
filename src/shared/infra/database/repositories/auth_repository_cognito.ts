@@ -210,7 +210,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
       const userAttributes = dto.toCognitoAttributes();
 
       const params: SignUpCommandInput = {
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         Password: password,
         Username: email,
         UserAttributes: userAttributes,
@@ -381,7 +381,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
       console.log("password", password);
 
       const paramsToRealSignUp: SignUpCommandInput = {
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         Password: password,
         Username: newUsername,
         UserAttributes: userCogAttrs,
@@ -473,7 +473,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
 
       const params: AdminInitiateAuthCommandInput = {
         UserPoolId: this.userPoolId,
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         AuthFlow: "ADMIN_USER_PASSWORD_AUTH",
         AuthParameters: {
           USERNAME: username,
@@ -530,7 +530,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
   }> {
     try {
       const params: InitiateAuthCommandInput = {
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         AuthFlow: "REFRESH_TOKEN_AUTH",
         AuthParameters: {
           REFRESH_TOKEN: refreshToken,
@@ -616,7 +616,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
 
       const authParams: AdminInitiateAuthCommandInput = {
         UserPoolId: this.userPoolId,
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         AuthFlow: "ADMIN_NO_SRP_AUTH",
         AuthParameters: {
           USERNAME: username,
@@ -689,7 +689,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
       );
 
       const paramsToRealSignUp: SignUpCommandInput = {
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         Password: password,
         Username: newUsername,
         UserAttributes: allAttributtesOfUser,
@@ -797,7 +797,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
       const userAttributes = dto.toCognitoAttributes();
 
       const params: SignUpCommandInput = {
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         Password: "Teste123!",
         Username: email,
         UserAttributes: userAttributes,
@@ -856,7 +856,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
 
       const params: AdminInitiateAuthCommandInput = {
         UserPoolId: this.userPoolId,
-        appClientId: this.appClientId,
+        ClientId: this.appClientId,
         AuthFlow: "ADMIN_USER_PASSWORD_AUTH",
         AuthParameters: {
           USERNAME: username,

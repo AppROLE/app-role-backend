@@ -13,21 +13,21 @@ const ProfileSearchSchema = new Schema<IProfileSearch>({
   profilePhoto: { type: String },
 });
 
-export interface SearchHistoryDocument extends Document {
+export interface ISearchHistoryDocument extends Document {
   _id: string;
   username: string;
   profileSearch: IProfileSearch;
   created_at: Date;
 }
 
-const SearchHistorySchema = new Schema<SearchHistoryDocument>({
+const SearchHistorySchema = new Schema<ISearchHistoryDocument>({
   _id: { type: String, default: uuidv4 },
   username: { type: String, required: true },
   profileSearch: { type: ProfileSearchSchema, required: true },
   created_at: { type: Date, default: Date.now },
 });
 
-export const SearchHistoryModel = mongoose.model<SearchHistoryDocument>(
+export const SearchHistoryModel = mongoose.model<ISearchHistoryDocument>(
   "SearchHistory",
   SearchHistorySchema
 );

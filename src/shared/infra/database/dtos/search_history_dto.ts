@@ -1,6 +1,6 @@
 import { SearchHistory } from "src/shared/domain/entities/search_history";
 import {
-  SearchHistoryDocument,
+  ISearchHistoryDocument,
   SearchHistoryModel,
 } from "../models/search_history.model";
 
@@ -29,26 +29,19 @@ export class SearchHistoryDTO {
     this.profileSearch = props.profileSearch;
   }
 
-  static fromMongo(
-    searchHistoryDoc: SearchHistoryDocument,
-    needToObj: boolean
-  ): SearchHistoryDTO {
-    const searchHistoryObject = needToObj
-      ? searchHistoryDoc.toObject()
-      : searchHistoryDoc;
-
+  static fromMongo(searchHistoryDoc: ISearchHistoryDocument): SearchHistoryDTO {
     return new SearchHistoryDTO({
-      _id: searchHistoryObject._id,
-      username: searchHistoryObject.username,
+      _id: searchHistoryDoc._id,
+      username: searchHistoryDoc.username,
       profileSearch: {
-        profileUsername: searchHistoryObject.profileSearch.profileUsername,
-        profileNickname: searchHistoryObject.profileSearch.profileNickname,
-        profilePhoto: searchHistoryObject.profileSearch.profilePhoto,
+        profileUsername: searchHistoryDoc.profileSearch.profileUsername,
+        profileNickname: searchHistoryDoc.profileSearch.profileNickname,
+        profilePhoto: searchHistoryDoc.profileSearch.profilePhoto,
       },
     });
   }
 
-  static toMongo(searchHistoryDTO: SearchHistoryDTO): SearchHistoryDocument {
+  static toMongo(searchHistoryDTO: SearchHistoryDTO): ISearchHistoryDocument {
     return new SearchHistoryModel({
       _id: searchHistoryDTO._id,
       username: searchHistoryDTO.username,

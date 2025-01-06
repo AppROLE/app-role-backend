@@ -1,5 +1,5 @@
-import { User } from "../entities/user";
-import { PRIVACY_TYPE } from "../enums/privacy_enum";
+import { User } from "src/shared/domain/entities/user";
+import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
 
 export class UserMock {
   public users: User[];

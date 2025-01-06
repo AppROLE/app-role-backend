@@ -1,121 +1,111 @@
-import { ISearchHistoryRepository } from "src/shared/domain/irepositories/search_history_repository_interface";
-import { connectDB } from "../../database/models";
-import { SearchHistoryDocument } from "../../database/models/search_history.model";
+import { ISearchHistoryRepository } from "src/shared/domain/repositories/search_history_repository_interface";
 import { SearchHistoryDTO } from "../../database/dtos/search_history_dto";
+import { Collection, Connection } from "mongoose";
+import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { ISearchHistoryDocument } from "../models/search_history.model";
 
 export class SearchHistoryRepositoryMongo implements ISearchHistoryRepository {
-  async addProfileSearch(username: string, profileSearch: { profileUsername: string; profileNickname: string; profilePhoto?: string; }): Promise<void> {
-    try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
+  private searchHistoryCollection: Collection<ISearchHistoryDocument>;
 
-      const searchHistoryMongoClient = db.connections[0].db?.collection<SearchHistoryDocument>("SearchHistory");
+  constructor(connection: Connection) {
+    this.searchHistoryCollection =
+      connection.collection<ISearchHistoryDocument>("SearchHistory");
+  }
 
-      const hasTenSearches = await searchHistoryMongoClient?.countDocuments({ username });
+  async addProfileSearch(
+    username: string,
+    profileSearch: {
+      profileUsername: string;
+      profileNickname: string;
+      profilePhoto?: string;
+    }
+  ): Promise<void> {
+    const hasTenSearches = await this.searchHistoryCollection.countDocuments({
+      username,
+    });
 
-      const dto = new SearchHistoryDTO({
-        username,
-        profileSearch,
-      });
+    const dto = new SearchHistoryDTO({
+      username,
+      profileSearch,
+    });
+    const searchHistory = SearchHistoryDTO.toMongo(dto);
 
-      const searchHistory = SearchHistoryDTO.toMongo(dto);
+    const searchHistoryDoc = await this.searchHistoryCollection.findOne({
+      username,
+      "profileSearch.profileUsername": profileSearch.profileUsername,
+    });
 
-      // validate if the profileSearch already exists
-      const searchHistoryDoc = await searchHistoryMongoClient?.findOne({ username, "profileSearch.profileUsername": profileSearch.profileUsername });
-      if (searchHistoryDoc) return;
+    if (searchHistoryDoc) return;
 
-      if (hasTenSearches !== 10) await searchHistoryMongoClient?.insertOne(searchHistory)
-
-      // If the user has 10 searches, remove the oldest by Date.now and add the new one
-      if (hasTenSearches === 10) {
-        const oldestSearch = await searchHistoryMongoClient?.findOne({ username }, { sort: { created_at: 1 } });
-        await searchHistoryMongoClient?.deleteOne({ _id: oldestSearch?._id });
-
-        await searchHistoryMongoClient?.insertOne(searchHistory);
+    if (hasTenSearches !== 10) {
+      const result = await this.searchHistoryCollection.insertOne(
+        searchHistory
+      );
+      if (!result.acknowledged) {
+        throw new Error("Failed to add profile search in MongoDB.");
+      }
+    } else {
+      const oldestSearch = await this.searchHistoryCollection.findOne(
+        { username },
+        { sort: { created_at: 1 } }
+      );
+      if (oldestSearch) {
+        await this.searchHistoryCollection.deleteOne({ _id: oldestSearch._id });
       }
 
-    } catch (error: any) {
-      throw new Error(`SearchHistoryRepositoryMongo, Error on addProfileSearch: ${error.message}`);
+      const result = await this.searchHistoryCollection.insertOne(
+        searchHistory
+      );
+      if (!result.acknowledged) {
+        throw new Error("Failed to replace oldest profile search in MongoDB.");
+      }
     }
   }
 
-  async removeProfileSearch(username: string, profileUsername: string): Promise<void> {
-    try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
+  async removeProfileSearch(
+    username: string,
+    profileUsername: string
+  ): Promise<void> {
+    const result = await this.searchHistoryCollection.deleteOne({
+      username,
+      "profileSearch.profileUsername": profileUsername,
+    });
 
-      const searchHistoryMongoClient = db.connections[0].db?.collection<SearchHistoryDocument>("SearchHistory");
-
-      await searchHistoryMongoClient?.deleteOne({ username, "profileSearch.profileUsername": profileUsername });
-
-    } catch (error: any) {
-      throw new Error(`SearchHistoryRepositoryMongo, Error on removeProfileSearch: ${error.message}`);
+    if (!result.deletedCount) {
+      throw new NoItemsFound("search history");
     }
   }
 
-  async clearProfileSearches(username: string) {
-    try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
-
-      const searchHistoryMongoClient = db.connections[0].db?.collection<SearchHistoryDocument>("SearchHistory");
-
-      await searchHistoryMongoClient?.deleteMany({ username });
-
-    } catch (error: any) {
-      throw new Error(`SearchHistoryRepositoryMongo, Error on clearProfileSearches: ${error.message}`);
-    }
+  async clearProfileSearches(username: string): Promise<void> {
+    await this.searchHistoryCollection.deleteMany({ username });
   }
 
-  async getAllProfilesSearches(username: string): Promise<{ profileUsername: string; profileNickname: string; profilePhoto?: string; }[]> {
-    try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
+  async getAllProfilesSearches(username: string): Promise<
+    {
+      profileUsername: string;
+      profileNickname: string;
+      profilePhoto?: string;
+    }[]
+  > {
+    const searchHistoryDocs = await this.searchHistoryCollection
+      .find({ username })
+      .toArray();
 
-      const searchHistoryMongoClient = db.connections[0].db?.collection<SearchHistoryDocument>("SearchHistory");
-
-      const searchHistoryDocs = await searchHistoryMongoClient?.find({ username }).toArray();
-
-      if (!searchHistoryDocs) return [];
-
-      const searchHistoryDTOs = searchHistoryDocs.map((searchHistoryDoc) => SearchHistoryDTO.fromMongo(searchHistoryDoc, false));
-
-      const entities = searchHistoryDTOs.map((searchHistoryDTO) => SearchHistoryDTO.toEntity(searchHistoryDTO));
-
-      return entities.map((entity) => entity.profileSearch);
-    } catch(error: any) {
-      throw new Error(`SearchHistoryRepositoryMongo, Error on getAllProfilesSearches: ${error.message}`);
+    if (!searchHistoryDocs || searchHistoryDocs.length === 0) {
+      return [];
     }
+
+    return searchHistoryDocs.map(
+      (doc) =>
+        SearchHistoryDTO.toEntity(SearchHistoryDTO.fromMongo(doc)).profileSearch
+    );
   }
 
-  async removeProfileSearchesWhenUserChangesUsername(oldUsername: string): Promise<void> {
-    try {
-      const db = await connectDB();
-      db.connections[0].on("error", () => {
-        console.error.bind(console, "connection error:");
-        throw new Error("Error connecting to MongoDB");
-      });
-
-      const searchHistoryMongoClient = db.connections[0].db?.collection<SearchHistoryDocument>("SearchHistory");
-
-      // everyone who has searched for the old username will have their searches removed
-
-      await searchHistoryMongoClient?.deleteMany({ "profileSearch.profileUsername": oldUsername });
-
-    } catch (error: any) {
-      throw new Error(`SearchHistoryRepositoryMongo, Error on removeProfileSearchesWhenUserChangesUsername: ${error.message}`);
-    }
+  async removeProfileSearchesWhenUserChangesUsername(
+    oldUsername: string
+  ): Promise<void> {
+    await this.searchHistoryCollection.deleteMany({
+      "profileSearch.profileUsername": oldUsername,
+    });
   }
 }
