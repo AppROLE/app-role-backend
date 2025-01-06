@@ -10,6 +10,7 @@ interface UserProps {
   username: string;
   email: string;
   acceptedTerms: boolean;
+  acceptedTermsAt: Date;
   emailVerified: boolean;
   dateBirth?: Date;
   gender?: GENDER_TYPE;
@@ -50,7 +51,7 @@ export class User {
   private dateBirth?: Date;
   private confirmationCode?: string;
   private cpf?: string;
-  private gender?: GENDER_TYPE
+  private gender?: GENDER_TYPE;
   private biography?: string;
   private roleType?: ROLE_TYPE;
   private phoneNumber?: string;
@@ -85,7 +86,7 @@ export class User {
     if (props.dateBirth && props.dateBirth > new Date()) {
       throw new EntityError("dateBirth");
     }
-    this.dateBirth = props.dateBirth
+    this.dateBirth = props.dateBirth;
     this.emailVerified = props.emailVerified;
     this.username = props.username;
     if (!User.validateEmail(props.email)) {
@@ -143,9 +144,9 @@ export class User {
     this.cpf = props.cpf;
 
     if (props.gender && !User.validateGender(props.gender)) {
-      throw new EntityError('gênero');
+      throw new EntityError("gênero");
     }
-    this.gender = props.gender
+    this.gender = props.gender;
 
     if (props.phoneNumber && !User.validatePhoneNumber(props.phoneNumber)) {
       throw new EntityError("phoneNumber");
@@ -198,7 +199,7 @@ export class User {
   }
 
   get userGender(): GENDER_TYPE | undefined {
-    return this.gender
+    return this.gender;
   }
 
   get userRoleType(): ROLE_TYPE | undefined {
@@ -286,7 +287,7 @@ export class User {
   }
 
   set setUserGender(gender: GENDER_TYPE | undefined) {
-    this.gender = gender
+    this.gender = gender;
   }
 
   set setUserEmailVerified(emailVerified: boolean) {

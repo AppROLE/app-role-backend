@@ -16,15 +16,7 @@ if (!stackName) {
   throw new Error("STACK_NAME is not defined in the environment variables.");
 }
 
-let stage = envs.STAGE || "TEST";
-
-if (stage.includes("prod")) {
-  stage = "PROD";
-} else if (stage.includes("homolog")) {
-  stage = "HOMOLOG";
-} else if (stage.includes("dev")) {
-  stage = "DEV";
-}
+let stage = envs.STAGE.toUpperCase() || "TEST";
 
 const tags = {
   project: "AppRole",

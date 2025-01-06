@@ -15,9 +15,11 @@ export class EventRepositoryMongo implements IEventRepository {
   constructor(connection: Connection) {
     this.eventCollection = connection.collection<IEvent>("Event");
   }
+
   getEventsByUpcomingDates(dates: Date[]): Promise<Event[]> {
     throw new Error("Method not implemented.");
   }
+
   createReview(
     star: number,
     review: string,

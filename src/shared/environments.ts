@@ -10,7 +10,8 @@ export enum STAGE {
 }
 
 export class Environments {
-  static stage: STAGE = (process.env.STAGE as STAGE) || STAGE.TEST;
+  static stage: STAGE =
+    ((process.env.STAGE as string).toUpperCase() as STAGE) || STAGE.TEST;
   static bucketName: string =
     (process.env.BUCKET_NAME as string) || "bucket-test";
   static region: string = (process.env.AWS_REGION as string) || "sa-east-1";
