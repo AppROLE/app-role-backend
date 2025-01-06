@@ -1,26 +1,32 @@
-import { Event } from "src/shared/domain/entities/event";
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { Event } from 'src/shared/domain/entities/event';
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllEventsUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
+  event_repo?: IEventRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
   }
 
   execute(): Promise<Event[]> {
-    console.log("repo: ", this.repository);
-    const events = this.event_repo.getAllEvents();
+    const events = this.event_repo!.getAllEvents();
     return events;
   }
 
   executeFromToday(page: number): Promise<Event[]> {
-    const events = this.event_repo.getAllEventsFromToday(page);
+    const events = this.event_repo!.getAllEventsFromToday(page);
     return events;
   }
 }

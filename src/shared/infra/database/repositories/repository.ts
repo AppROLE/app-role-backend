@@ -1,17 +1,17 @@
-import mongoose, { Connection } from "mongoose";
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { Environments, STAGE } from "src/shared/environments";
-import { EventRepositoryMock } from "../../mocks/event_repository_mock";
-import { EventRepositoryMongo } from "./event_repository_mongo";
-import { DatabaseException } from "src/shared/helpers/errors/base_error";
-import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
-import { InstituteRepositoryMongo } from "./institute_repository_mongo";
-import { PresenceRepositoryMongo } from "./presence_repository_mongo";
-import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
-import { FileRepositoryS3 } from "./file_repository_s3";
-import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
-import { UserRepositoryMongo } from "./user_repository_mongo";
+import mongoose, { Connection } from 'mongoose';
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { Environments, STAGE } from 'src/shared/environments';
+import { EventRepositoryMock } from '../../mocks/event_repository_mock';
+import { EventRepositoryMongo } from './event_repository_mongo';
+import { DatabaseException } from 'src/shared/helpers/errors/base_error';
+import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
+import { InstituteRepositoryMongo } from './institute_repository_mongo';
+import { PresenceRepositoryMongo } from './presence_repository_mongo';
+import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
+import { FileRepositoryS3 } from './file_repository_s3';
+import { IUserRepository } from 'src/shared/domain/repositories/user_repository_interface';
+import { UserRepositoryMongo } from './user_repository_mongo';
 
 interface RepositoryConfig {
   event_repo?: boolean;
@@ -30,70 +30,45 @@ export class Repository {
   private connection: Connection | null = null;
 
   constructor(private config: RepositoryConfig) {
-    const {
-      event_repo = false,
-      institute_repo = false,
-      presence_repo = false,
-      user_repo = false,
-      file_repo = false,
-    } = this.config;
-
-    console.log(this.config);
-    
-    console.log("STAGE: " + Environments.stage)
-    if (Environments.stage === STAGE.TEST) {
-      this._initializeMockRepositories(
-        event_repo,
-        institute_repo,
-        presence_repo,
-        user_repo,
-        file_repo
-      );
-    } else {
-      this._initializeDatabaseRepositories(
-        event_repo,
-        institute_repo,
-        presence_repo,
-        user_repo,
-        file_repo
-      );
-    }
-    console.log("usecase: ", this)
+    this.config.event_repo ??= false;
+    this.config.institute_repo ??= false;
+    this.config.presence_repo ??= false;
+    this.config.user_repo ??= false;
+    this.config.file_repo ??= false;
   }
 
-  private _initializeMockRepositories(
-    event_repo: boolean = false,
-    institute_repo: boolean = false,
-    presence_repo: boolean = false,
-    user_repo: boolean = false,
-    file_repo: boolean = false
-  ): void {
-    if (event_repo) {
+  async connectRepository() {
+    if (Environments.stage === STAGE.TEST) {
+      this._initializeMockRepositories();
+    } else {
+      await this._initializeDatabaseRepositories();
+    }
+  }
+
+  private _initializeMockRepositories(): void {
+    if (this.config.event_repo && !this.event_repo) {
       this.event_repo = new EventRepositoryMock();
     }
   }
 
-  private async _initializeDatabaseRepositories(
-    event_repo: boolean = false,
-    institute_repo: boolean = false,
-    presence_repo: boolean = false,
-    user_repo: boolean = false,
-    file_repo: boolean = false
-  ): Promise<void> {
-    this.connection = await this.__connectDb();
-    if (event_repo) {
+  private async _initializeDatabaseRepositories(): Promise<void> {
+    this.connection = this.connection || (await this.__connectDb());
+
+    console.log('✅ Conexão com MongoDB estabelecida com sucesso.');
+
+    if (this.config.event_repo && !this.event_repo) {
       this.event_repo = new EventRepositoryMongo(this.connection);
     }
-    if (institute_repo) {
+    if (this.config.institute_repo && !this.institute_repo) {
       this.institute_repo = new InstituteRepositoryMongo(this.connection);
     }
-    if (presence_repo) {
+    if (this.config.presence_repo && !this.presence_repo) {
       this.presence_repo = new PresenceRepositoryMongo(this.connection);
     }
-    if (user_repo) {
+    if (this.config.user_repo && !this.user_repo) {
       this.user_repo = new UserRepositoryMongo(this.connection);
     }
-    if (file_repo) {
+    if (this.config.file_repo && !this.file_repo) {
       this.file_repo = new FileRepositoryS3();
     }
   }
@@ -112,7 +87,7 @@ export class Repository {
     if (this.connection) {
       await this.connection.close();
       this.connection = null;
-      console.log("🛑 Conexão com MongoDB encerrada.");
+      console.log('🛑 Conexão com MongoDB encerrada.');
     }
   }
 }
