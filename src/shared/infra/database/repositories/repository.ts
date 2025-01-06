@@ -29,13 +29,17 @@ export class Repository {
   file_repo?: IFileRepository;
   private connection: Connection | null = null;
 
-  constructor({
-    event_repo = false,
-    institute_repo = false,
-    presence_repo = false,
-    user_repo = false,
-    file_repo = false,
-  }: RepositoryConfig) {
+  constructor(private config: RepositoryConfig) {
+    const {
+      event_repo = false,
+      institute_repo = false,
+      presence_repo = false,
+      user_repo = false,
+      file_repo = false,
+    } = this.config;
+
+    console.log(this.config);
+    
     console.log("STAGE: " + Environments.stage)
     if (Environments.stage === STAGE.TEST) {
       this._initializeMockRepositories(
