@@ -4,18 +4,25 @@ import { envs } from "./envs/envs";
 
 const app = new cdk.App();
 
-const awsRegion = envs.AWS_REGION as string;
-const awsAccountId = envs.AWS_ACCOUNT_ID as string;
-const stackName = envs.STACK_NAME as string;
-const github_ref_name = envs.GITHUB_REF_NAME as string;
+const awsRegion = envs.AWS_REGION;
 
-let stage = "TEST";
+if (!awsRegion) {
+  throw new Error("AWS_REGION is not defined in the environment variables.");
+}
 
-if (github_ref_name.includes("prod")) {
+const stackName = envs.STACK_NAME;
+
+if (!stackName) {
+  throw new Error("STACK_NAME is not defined in the environment variables.");
+}
+
+let stage = envs.STAGE || "TEST";
+
+if (stage.includes("prod")) {
   stage = "PROD";
-} else if (github_ref_name.includes("homolog")) {
+} else if (stage.includes("homolog")) {
   stage = "HOMOLOG";
-} else if (github_ref_name.includes("dev")) {
+} else if (stage.includes("dev")) {
   stage = "DEV";
 }
 
@@ -29,7 +36,6 @@ const tags = {
 new IacStack(app, stackName, {
   env: {
     region: awsRegion,
-    account: awsAccountId,
   },
   tags: tags,
 });

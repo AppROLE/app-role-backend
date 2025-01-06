@@ -32,8 +32,13 @@ jobs:
         run: |
           echo "STAGE=${{ github.ref_name }}" 
           echo "STACK_NAME=AppRoleStack${{github.ref_name}}" >> $GITHUB_ENV
+          echo AWS_REGION=${{ secrets.AWS_REGION }}>> $GITHUB_ENV
+          echo MONGO_URI=${{ secrets.MONGO_URI }} >> $GITHUB_ENV
+          echo BUCKET_NAME=${{ secrets.BUCKET_NAME }} >> $GITHUB_ENV
+          echo USER_POOL_ARN=${{ secrets.USER_POOL_ARN }} >> $GITHUB_ENV
+          echo USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> $GITHUB_ENV
+          echo APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID }} >> $GITHUB_ENV
 
-      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -44,6 +49,13 @@ jobs:
           cd iac
           npm install -g aws-cdk ts-node
           npm i
+
+      - name: CDK Bootstrap
+        run: |
+          echo "CDK Bootstrap"
+          cd iac
+          aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
+            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/sa-east-1
 
       - name: DeployWithCDK
         run: |
@@ -57,8 +69,8 @@ jobs:
           cdk deploy "${{env.STACK_NAME}}" --require-approval never
 
         env:
+          STAGE: ${{ github.ref_name }}
           STACK_NAME: ${{ env.STACK_NAME }}
-          GITHUB_REF_NAME: ${{ github.ref }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
