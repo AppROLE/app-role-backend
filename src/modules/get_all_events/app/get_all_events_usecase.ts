@@ -14,6 +14,7 @@ export class GetAllEventsUseCase {
   }
 
   execute(): Promise<Event[]> {
+    console.log("repo: ", this.repository);
     const events = this.event_repo.getAllEvents();
     return events;
   }

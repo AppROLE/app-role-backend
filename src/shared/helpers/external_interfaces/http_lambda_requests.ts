@@ -72,7 +72,6 @@ class LambdaHttpRequest extends HttpRequest {
   requesterUser: any
 
   constructor(data: Record<string, any> = {}) {
-    console.log("toma", data)
     const _headers = data.headers
     const _query_string_parameters = data.queryStringParameters
     let _body: any = null

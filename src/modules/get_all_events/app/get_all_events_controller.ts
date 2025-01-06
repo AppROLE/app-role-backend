@@ -22,12 +22,14 @@ export class GetAllEventsController {
           throw new InternalServerError("Invalid page number");
         }
 
+        
         const events = await this.usecase.executeFromToday(pageNumber);
         const viewModel = new GetAllEventsViewModel(events);
-
+        
         return new OK(viewModel.toJSON());
       }
-
+      
+      console.log("teste: ", this);
       const events = await this.usecase.execute();
       const viewModel = new GetAllEventsViewModel(events);
       return new OK(viewModel.toJSON());
