@@ -1,5 +1,5 @@
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
-import { Event } from "src/shared/domain/entities/event";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
+import { Event, LocationProps } from "src/shared/domain/entities/event";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 import { STATUS } from "src/shared/domain/enums/status_enum";
@@ -7,22 +7,29 @@ import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
+import { Repository } from "src/shared/infra/database/repositories/repository";
+import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 
 interface UpdateEventParams {
   eventId: string;
   name?: string;
   description?: string;
-  address?: string;
+  location?: LocationProps;
   price?: number;
   ageRange?: AGE_ENUM;
   eventDate?: Date;
-  districtId?: string;
   instituteId?: string;
   eventStatus?: STATUS;
   musicType?: MUSIC_TYPE[];
   menuLink?: string;
-  galeryLink?: string[];
-  bannerUrl?: string;
+  galery_images?: {
+    image: Buffer;
+    mimetype: string;
+  }[];
+  banner_image?: {
+    image: Buffer;
+    mimetype: string;
+  };
   features?: FEATURE[];
   packageType?: PACKAGE_TYPE[];
   category?: CATEGORY;
@@ -30,16 +37,27 @@ interface UpdateEventParams {
 }
 
 export class UpdateEventUseCase {
-  constructor(private repo: IEventRepository) {}
+  repository: Repository;
+  private readonly event_repo: IEventRepository;
+  private readonly file_repo: IFileRepository;
 
-  async execute(params: UpdateEventParams): Promise<void> {
+  constructor() {
+    this.repository = new Repository({
+      event_repo: true,
+      file_repo: true,
+    });
+    this.event_repo = this.repository.event_repo!;
+    this.file_repo = this.repository.file_repo!;
+  }
+
+  async execute(params: UpdateEventParams): Promise<Event> {
     const { eventId, ...updatedFields } = params;
 
     if (!eventId) {
       throw new EntityError("Event ID is required");
     }
 
-    const existingEvent = await this.repo.getEventById(eventId);
+    const existingEvent = await this.event_repo.getEventById(eventId);
     if (!existingEvent) {
       throw new EntityError(`Event with ID ${eventId} not found`);
     }
@@ -48,11 +66,10 @@ export class UpdateEventUseCase {
       eventId: existingEvent.getEventId,
       name: existingEvent.getEventName,
       description: existingEvent.getEventDescription,
-      address: existingEvent.getEventAddress,
+      location: existingEvent.getEventLocation,
       price: existingEvent.getEventPrice,
       ageRange: existingEvent.getEventAgeRange,
       eventDate: existingEvent.getEventDate,
-      districtId: existingEvent.getEventDistrictId,
       instituteId: existingEvent.getInstituteId,
       eventStatus: existingEvent.getEventStatus,
       musicType: existingEvent.getMusicType,
@@ -72,8 +89,8 @@ export class UpdateEventUseCase {
     if (updatedFields.description) {
       eventToUpdate.setEventDescription = updatedFields.description;
     }
-    if (updatedFields.address) {
-      eventToUpdate.setEventAddress = updatedFields.address;
+    if (updatedFields.location) {
+      eventToUpdate.setEventLocation = updatedFields.location;
     }
     if (updatedFields.price !== undefined) {
       eventToUpdate.setEventPrice = updatedFields.price;
@@ -83,9 +100,6 @@ export class UpdateEventUseCase {
     }
     if (updatedFields.eventDate) {
       eventToUpdate.setEventDate = updatedFields.eventDate;
-    }
-    if (updatedFields.districtId) {
-      eventToUpdate.setEventDistrictId = updatedFields.districtId;
     }
     if (updatedFields.instituteId) {
       eventToUpdate.setInstituteId = updatedFields.instituteId;
@@ -99,11 +113,37 @@ export class UpdateEventUseCase {
     if (updatedFields.menuLink) {
       eventToUpdate.setMenuLink = updatedFields.menuLink;
     }
-    if (updatedFields.galeryLink) {
-      eventToUpdate.setGaleryLink = updatedFields.galeryLink;
+    if (updatedFields.galery_images) {
+      let galeryUrls: string[] = [];
+      if (params.galery_images && params.galery_images.length > 0) {
+        for (let i = 0; i < params.galery_images.length; i++) {
+          const photo = params.galery_images[i];
+          const photoUrl = await this.file_repo.uploadImage(
+            `events/${existingEvent.getEventId}/galery/${i}.${
+              photo.mimetype.split("/")[1]
+            }`,
+            photo.image,
+            photo.mimetype,
+            true
+          );
+          galeryUrls.push(photoUrl);
+        }
+      }
+      eventToUpdate.setGaleryLink = galeryUrls;
     }
-    if (updatedFields.bannerUrl) {
-      eventToUpdate.setEventBannerUrl = updatedFields.bannerUrl;
+    if (updatedFields.banner_image) {
+      let bannerUrl = "";
+      if (params.banner_image) {
+        bannerUrl = await this.file_repo.uploadImage(
+          `events/${existingEvent.getEventId}/event-photo.${
+            params.banner_image.mimetype.split("/")[1]
+          }`,
+          params.banner_image.image,
+          params.banner_image.mimetype,
+          true
+        );
+      }
+      eventToUpdate.setEventBannerUrl = bannerUrl;
     }
     if (updatedFields.features) {
       eventToUpdate.setFeatures = updatedFields.features;
@@ -118,14 +158,13 @@ export class UpdateEventUseCase {
       eventToUpdate.setTicketUrl = updatedFields.ticketUrl;
     }
 
-    const updatedEvent = await this.repo.updateEvent(eventId, {
+    return await this.event_repo.updateEvent(eventId, {
       name: eventToUpdate.getEventName,
       description: eventToUpdate.getEventDescription,
-      address: eventToUpdate.getEventAddress,
+      location: eventToUpdate.getEventLocation,
       price: eventToUpdate.getEventPrice,
       ageRange: eventToUpdate.getEventAgeRange,
       eventDate: eventToUpdate.getEventDate,
-      districtId: eventToUpdate.getEventDistrictId,
       instituteId: eventToUpdate.getInstituteId,
       eventStatus: eventToUpdate.getEventStatus,
       musicType: eventToUpdate.getMusicType,

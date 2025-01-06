@@ -33,9 +33,7 @@ export class UpdateEventController {
         ...updatedFields,
       });
 
-      const viewmodel = new UpdateEventViewModel(
-        "ROLE atualizado com sucesso"
-      );
+      const viewmodel = new UpdateEventViewModel("ROLE atualizado com sucesso");
 
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
@@ -54,6 +52,8 @@ export class UpdateEventController {
       return new InternalServerError(
         `CreateEventController, Error on handle: ${error.message}`
       );
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

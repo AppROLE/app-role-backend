@@ -15,8 +15,6 @@ export class GetEventsByFilterController {
     try {
       const filters = this.validateAndSanitizeFilters(req.data);
 
-      console.log("Filtros recebidos - CONTROLLER:", filters);
-
       const events = await this.usecase.execute(filters);
 
       const viewModel = new GetAllEventsByFilterViewModel(events);
@@ -24,6 +22,8 @@ export class GetEventsByFilterController {
       return new OK(viewModel.toJSON());
     } catch (error: any) {
       return this.handleError(error);
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 
@@ -33,7 +33,7 @@ export class GetEventsByFilterController {
     if (filters.name && typeof filters.name === "string") {
       sanitizedFilters.name = filters.name.replace(/\+/g, " ");
     }
-    
+
     if (filters.price) {
       const price = Number(filters.price);
       if (!isNaN(price)) {
@@ -43,10 +43,6 @@ export class GetEventsByFilterController {
 
     if (filters.event_date && !isNaN(new Date(filters.event_date).getTime())) {
       sanitizedFilters.event_date = filters.event_date;
-    }
-
-    if (filters.district_id) {
-      sanitizedFilters.district_id = filters.district_id;
     }
 
     if (filters.instituteId) {
@@ -62,7 +58,6 @@ export class GetEventsByFilterController {
     }
 
     if (filters.category) {
-      console.log("Categoria recebida:", filters.category);
       sanitizedFilters.category = filters.category;
     }
 
@@ -73,8 +68,6 @@ export class GetEventsByFilterController {
     if (error instanceof NoItemsFound) {
       return new NotFound(error.message);
     }
-
-    console.error("Erro no controlador GetEventsByFilter:", error);
 
     return new InternalServerError(
       `GetEventsByFilterController, Error on handle: ${error.message}`

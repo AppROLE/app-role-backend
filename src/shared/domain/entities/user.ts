@@ -1,6 +1,7 @@
 import { EntityError } from "../../helpers/errors/domain_errors";
+import { GENDER_TYPE } from "../enums/gender_enum";
 import { PRIVACY_TYPE } from "../enums/privacy_enum";
-import { ROLE_TYPE } from "../enums/role_type";
+import { ROLE_TYPE } from "../enums/role_type_enum";
 
 interface UserProps {
   user_id?: string;
@@ -8,6 +9,12 @@ interface UserProps {
   nickname: string;
   username: string;
   email: string;
+  acceptedTerms: boolean;
+  emailVerified: boolean;
+  dateBirth?: Date;
+  gender?: GENDER_TYPE;
+  cpf?: string;
+  confirmationCode?: string;
   biography?: string;
   roleType?: ROLE_TYPE;
   phoneNumber?: string;
@@ -38,6 +45,12 @@ export class User {
   private nickname?: string;
   private username: string;
   private email: string;
+  private acceptedTerms: boolean;
+  private emailVerified: boolean;
+  private dateBirth?: Date;
+  private confirmationCode?: string;
+  private cpf?: string;
+  private gender?: GENDER_TYPE
   private biography?: string;
   private roleType?: ROLE_TYPE;
   private phoneNumber?: string;
@@ -60,14 +73,20 @@ export class User {
     if (!User.validateNickname(props.nickname)) {
       throw new EntityError("nickname");
     }
+
     if (!props.nickname) {
-      props.nickname = props.name;
+      props.nickname = props.name.split(" ")[0];
     } else {
       this.nickname = props.nickname;
     }
     if (!User.validateUsername(props.username)) {
       throw new EntityError("username");
     }
+    if (props.dateBirth && props.dateBirth > new Date()) {
+      throw new EntityError("dateBirth");
+    }
+    this.dateBirth = props.dateBirth
+    this.emailVerified = props.emailVerified;
     this.username = props.username;
     if (!User.validateEmail(props.email)) {
       throw new EntityError("email");
@@ -115,6 +134,24 @@ export class User {
       this.privacy = props.privacy;
     }
 
+    this.acceptedTerms = props.acceptedTerms;
+    this.confirmationCode = props.confirmationCode;
+
+    if (!User.validateCpf(props.cpf)) {
+      throw new EntityError("cpf");
+    }
+    this.cpf = props.cpf;
+
+    if (props.gender && !User.validateGender(props.gender)) {
+      throw new EntityError('gênero');
+    }
+    this.gender = props.gender
+
+    if (props.phoneNumber && !User.validatePhoneNumber(props.phoneNumber)) {
+      throw new EntityError("phoneNumber");
+    }
+    this.phoneNumber = props.phoneNumber;
+
     this.following = props.following || [];
     this.favorites = props.favorites || [];
     this.created_at = props.createdAt || new Date();
@@ -138,6 +175,30 @@ export class User {
 
   get userEmail(): string {
     return this.email;
+  }
+
+  get userDateBirth(): Date | undefined {
+    return this.dateBirth;
+  }
+
+  get userAcceptedTerms(): boolean {
+    return this.acceptedTerms;
+  }
+
+  get userConfirmationCode(): string | undefined {
+    return this.confirmationCode;
+  }
+
+  get userCpf(): string | undefined {
+    return this.cpf;
+  }
+
+  get userEmailVerified(): boolean {
+    return this.emailVerified;
+  }
+
+  get userGender(): GENDER_TYPE | undefined {
+    return this.gender
   }
 
   get userRoleType(): ROLE_TYPE | undefined {
@@ -206,6 +267,30 @@ export class User {
 
   set setUserEmail(email: string) {
     this.email = email;
+  }
+
+  set setUserAcceptedTerms(acceptedTerms: boolean) {
+    this.acceptedTerms = acceptedTerms;
+  }
+
+  set setUserConfirmationCode(confirmationCode: string | undefined) {
+    this.confirmationCode = confirmationCode;
+  }
+
+  set setUserCpf(cpf: string | undefined) {
+    this.cpf = cpf;
+  }
+
+  set setUserDateBirth(dateBirth: Date | undefined) {
+    this.dateBirth = dateBirth;
+  }
+
+  set setUserGender(gender: GENDER_TYPE | undefined) {
+    this.gender = gender
+  }
+
+  set setUserEmailVerified(emailVerified: boolean) {
+    this.emailVerified = emailVerified;
   }
 
   set setUserRoleType(roleType: ROLE_TYPE | undefined) {
@@ -292,6 +377,22 @@ export class User {
 
   static validateRoleType(roleType?: ROLE_TYPE): boolean {
     if (roleType && !Object.values(ROLE_TYPE).includes(roleType)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static validateCpf(cpf?: string): boolean {
+    if (cpf && cpf.trim().length > 14) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static validateGender(gender?: GENDER_TYPE): boolean {
+    if (gender && !Object.values(GENDER_TYPE).includes(gender)) {
       return false;
     }
 

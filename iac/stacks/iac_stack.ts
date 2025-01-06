@@ -1,22 +1,19 @@
+import * as cdk from "aws-cdk-lib";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
-import { stage } from "../get_stage_env";
 import { LambdaStack } from "./lambda_stack";
 import { Stack, StackProps } from "aws-cdk-lib";
-import { envs } from "../../src/shared/helpers/envs/envs";
-import {
-  Cors,
-  RestApi,
-  CognitoUserPoolsAuthorizer,
-} from "aws-cdk-lib/aws-apigateway";
+import { Cors, RestApi } from "aws-cdk-lib/aws-apigateway";
 import * as cognito from "aws-cdk-lib/aws-cognito";
-import * as iam from "aws-cdk-lib/aws-iam";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import { envs } from "../envs/envs";
 
 export class IacStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
     super(scope, constructId, props);
 
-    const restApi = new RestApi(this, `${envs.STACK_NAME}-RestAPI`, {
-      restApiName: `${envs.STACK_NAME}-RestAPI`,
+    const restApi = new RestApi(this, `${constructId}-RestAPI`, {
+      restApiName: `${constructId}-RestAPI`,
       description: "This is the REST API for the AppRole Event MSS Service.",
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
@@ -26,7 +23,7 @@ export class IacStack extends Stack {
       binaryMediaTypes: ["multipart/form-data"],
     });
 
-    const apigatewayResource = restApi.root.addResource("mss-role-event", {
+    const apigatewayResource = restApi.root.addResource("mss-role", {
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
         allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
@@ -34,40 +31,30 @@ export class IacStack extends Stack {
       },
     });
 
-    let userPoolId = "";
-
-    if (stage === "DEV") userPoolId = envs.AWS_COGNITO_USER_POOL_ID_DEV;
-    if (stage === "PROD") userPoolId = envs.AWS_COGNITO_USER_POOL_ID_PROD;
-    if (stage === "HOMOLOG") userPoolId = envs.AWS_COGNITO_USER_POOL_ID_HOMOLOG;
-
-    const userpool = cognito.UserPool.fromUserPoolId(
+    const userPool = cognito.UserPool.fromUserPoolId(
       this,
-      `${envs.STACK_NAME}-UserPool`,
-      userPoolId
+      `${constructId}-UserPool`,
+      envs.USER_POOL_ID
     );
 
-    const authorizer = new CognitoUserPoolsAuthorizer(
+    const authorizer = new cdk.aws_apigateway.CognitoUserPoolsAuthorizer(
       this,
-      `${envs.STACK_NAME}-Authorizer`,
+      `${constructId}-Authorizer`,
       {
-        cognitoUserPools: [userpool],
+        cognitoUserPools: [userPool],
         identitySource: "method.request.header.Authorization",
       }
     );
 
-    let cloudFrontUrl = "";
-    if (stage === "DEV") cloudFrontUrl = envs.CLOUD_FRONT_URL_DEV;
-    if (stage === "PROD") cloudFrontUrl = envs.CLOUD_FRONT_URL_PROD;
-    if (stage === "HOMOLOG") cloudFrontUrl = envs.CLOUD_FRONT_URL_HOMOLOG;
-
     const environmentVariables = {
-      STAGE: stage,
+      STAGE: envs.STAGE,
       NODE_PATH: "/var/task:/opt/nodejs",
-      EMAIL_LOGIN: envs.EMAIL_LOGIN,
-      EMAIL_PASSWORD: envs.EMAIL_PASSWORD,
+      REGION: envs.AWS_REGION,
       MONGO_URI: envs.MONGO_URI,
-      S3_BUCKET_NAME: envs.S3_BUCKET_NAME + stage.toLowerCase(),
-      CLOUD_FRONT_URL: cloudFrontUrl,
+      BUCKET_NAME: envs.BUCKET_NAME,
+      USER_POOL_ID: envs.USER_POOL_ID,
+      USER_POOL_ARN: envs.USER_POOL_ARN,
+      APP_CLIENT_ID: envs.APP_CLIENT_ID,
     };
 
     const lambdaStack = new LambdaStack(
@@ -77,21 +64,32 @@ export class IacStack extends Stack {
       authorizer
     );
 
+    const cognitoAdminPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["cognito-idp:*"],
+      resources: [envs.USER_POOL_ARN],
+    });
+
+    const existingBucket = s3.Bucket.fromBucketName(
+      this,
+      `${constructId}-ExistingBucket`,
+      envs.BUCKET_NAME
+    );
+
     const s3Policy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: [
-        "s3:ListBucket", // Listar o bucket
-        "s3:GetObject",  // Obter objetos do bucket
-        "s3:DeleteObject", // Deletar objetos do bucket
-        "s3:PutObject",  // Fazer upload de objetos no bucket (permite PUT)
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
       ],
-      resources: [
-        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}`,   // O bucket (sem o /*)
-        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}/*`, // Objetos dentro do bucket
-        `arn:aws:s3:::${envs.S3_BUCKET_NAME}${stage.toLowerCase()}/*/*`, // Objetos dentro do bucket
-      ],
+      resources: [existingBucket.bucketArn, `${existingBucket.bucketArn}/*`],
     });
-    
+
+    for (const fn of lambdaStack.functionsThatNeedCognitoPermissions) {
+      fn.addToRolePolicy(cognitoAdminPolicy);
+    }
 
     for (const fn of lambdaStack.functionsThatNeedS3Permissions) {
       fn.addToRolePolicy(s3Policy);

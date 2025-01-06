@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -6,11 +5,10 @@ import {
 import { GetEventByIdUseCase } from "./get_event_by_id_usecase";
 import { GetEventByIdController } from "./get_event_by_id_controller";
 
-const repo = Environments.getEventRepo();
-const usecase = new GetEventByIdUseCase(repo);
+const usecase = new GetEventByIdUseCase();
 const controller = new GetEventByIdController(usecase);
 
-export async function getEventByIdPresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
@@ -20,9 +18,4 @@ export async function getEventByIdPresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await getEventByIdPresenter(event);
-  return response;
 }

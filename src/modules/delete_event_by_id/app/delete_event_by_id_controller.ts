@@ -28,6 +28,8 @@ export class DeleteEventByIdController {
           `DeleteEventByIdController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

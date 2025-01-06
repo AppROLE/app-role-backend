@@ -13,4 +13,3 @@ export function toEnum(value: string): STATUS {
       throw new Error("Invalid value");
   }
 }
-

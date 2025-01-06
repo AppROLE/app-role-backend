@@ -1,10 +1,12 @@
+import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
+import { IUser } from "../models/user.model";
 import {
   FavoriteProps,
   FollowingProps,
   User,
 } from "src/shared/domain/entities/user";
-import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import { IUser, IUser as UserDocument } from "../models/user.model";
+import { IUser as UserDocument } from "../models/user.model";
+import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 
 export interface UserMongoDTOProps {
   _id: string;
@@ -12,6 +14,12 @@ export interface UserMongoDTOProps {
   email: string;
   nickname: string;
   username: string;
+  acceptedTerms: boolean;
+  emailVerified: boolean;
+  dateBirth?: Date;
+  cpf?: string;
+  confirmationCode?: string;
+  gender?: GENDER_TYPE;
   phoneNumber?: string;
   linkInstagram?: string;
   biography?: string;
@@ -29,6 +37,12 @@ export class UserMongoDTO {
   private email: string;
   private nickname: string;
   private username: string;
+  private acceptedTerms: boolean;
+  private emailVerified: boolean;
+  private dateBirth?: Date;
+  private cpf?: string;
+  private confirmationCode?: string;
+  private gender?: GENDER_TYPE;
   private biography?: string;
   private phoneNumber?: string;
   private linkInstagram?: string;
@@ -44,7 +58,13 @@ export class UserMongoDTO {
     this.name = props.name;
     this.email = props.email;
     this.nickname = props.nickname;
+    this.dateBirth = props.dateBirth;
     this.username = props.username;
+    this.acceptedTerms = props.acceptedTerms;
+    this.emailVerified = props.emailVerified;
+    this.cpf = props.cpf;
+    this.confirmationCode = props.confirmationCode;
+    this.gender = props.gender;
     this.phoneNumber = props.phoneNumber;
     this.linkInstagram = props.linkInstagram;
     this.biography = props.biography;
@@ -64,16 +84,28 @@ export class UserMongoDTO {
       name: userObject.name,
       email: userObject.email,
       nickname: userObject.nickname,
+      emailVerified: userObject.email_verified,
+      dateBirth: userObject.date_birth,
       username: userObject.username,
-      phoneNumber: userObject.phoneNumber,
+      acceptedTerms: userObject.accepted_terms,
+      cpf: userObject.cpf,
+      confirmationCode: userObject.confirmation_code,
+      gender: userObject.gender,
+      phoneNumber: userObject.phone_number,
       linkInstagram: userObject.lnk_instagram,
       linkTiktok: userObject.lnk_tiktok,
       backgroundPhoto: userObject.bg_photo,
       biography: userObject.biography,
       profilePhoto: userObject.profile_photo,
       privacy: userObject.privacy,
-      following: userObject.following,
-      favorites: userObject.favorites,
+      following: userObject.following.map((following: any) => ({
+        userFollowedId: following.user_followed_id,
+        followedAt: following.followed_at,
+      })),
+      favorites: userObject.favorites.map((favorite: any) => ({
+        instituteId: favorite.institute_id,
+        favoritedAt: favorite.favorited_at,
+      })),
     });
   }
 
@@ -84,6 +116,12 @@ export class UserMongoDTO {
       nickname: userMongoDTO.nickname,
       username: userMongoDTO.username,
       email: userMongoDTO.email,
+      emailVerified: userMongoDTO.emailVerified,
+      acceptedTerms: userMongoDTO.acceptedTerms,
+      dateBirth: userMongoDTO.dateBirth,
+      cpf: userMongoDTO.cpf,
+      confirmationCode: userMongoDTO.confirmationCode,
+      gender: userMongoDTO.gender,
       phoneNumber: userMongoDTO.phoneNumber,
       linkInstagram: userMongoDTO.linkInstagram,
       linkTiktok: userMongoDTO.linkTiktok,
@@ -109,6 +147,12 @@ export class UserMongoDTO {
       email: user.userEmail,
       nickname: user.userNickname as string,
       username: user.userUsername,
+      acceptedTerms: user.userAcceptedTerms,
+      emailVerified: user.userEmailVerified,
+      dateBirth: user.userDateBirth,
+      cpf: user.userCpf,
+      confirmationCode: user.userConfirmationCode,
+      gender: user.userGender,
       phoneNumber: user.userPhoneNumber,
       linkInstagram: user.userlinkInstagram,
       linkTiktok: user.userlinkTiktok,
@@ -134,6 +178,14 @@ export class UserMongoDTO {
       email: userMongoDTO.email,
       nickname: userMongoDTO.nickname,
       username: userMongoDTO.username,
+      accepted_terms: userMongoDTO.acceptedTerms,
+      cpf: userMongoDTO.cpf,
+      email_verified: userMongoDTO.emailVerified,
+      confirmation_code: userMongoDTO.confirmationCode,
+      date_birth: userMongoDTO.dateBirth,
+      biography: userMongoDTO.biography,
+      phone_number: userMongoDTO.phoneNumber,
+      gender: userMongoDTO.gender,
       lnk_instagram: userMongoDTO.linkInstagram,
       lnk_tiktok: userMongoDTO.linkTiktok,
       bg_photo: userMongoDTO.backgroundPhoto,

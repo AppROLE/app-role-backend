@@ -39,6 +39,8 @@ export class GetAllEventsController {
       return new InternalServerError(
         `GetAllEventsController, Error on handle: ${error.message}`
       );
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

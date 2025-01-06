@@ -7,13 +7,10 @@ import { FavoriteInstituteUseCase } from "./favorite_institute_usecase";
 import { FavoriteInstituteController } from "./favorite_institute_controller";
 import { getRequesterUser } from "src/shared/utils/get_requester_user";
 
-const userRepo = Environments.getUserRepo();
-const usecase = new FavoriteInstituteUseCase(userRepo);
+const usecase = new FavoriteInstituteUseCase();
 const controller = new FavoriteInstituteController(usecase);
 
-export async function favoriteInstitutePresenter(
-  event: Record<string, any>
-) {
+export async function favoriteInstitutePresenter(event: Record<string, any>) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -22,7 +19,6 @@ export async function favoriteInstitutePresenter(
     response?.statusCode,
     response?.headers
   );
-  
 
   return httpResponse.toJSON();
 }

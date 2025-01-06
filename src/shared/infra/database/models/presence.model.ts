@@ -13,8 +13,8 @@ export interface IPresence extends Document {
 
 const PresenceSchema: Schema = new Schema<IPresence>({
   _id: { type: String, default: uuidv4 },
-  event_id: { type: String, ref: "Event", required: true },
-  username: { type: String, ref: "User", required: true },
+  event_id: { type: String, ref: "event", required: true },
+  username: { type: String, ref: "user", required: true },
   nickname: { type: String, required: true },
   profile_photo: { type: String },
   promoter_code: { type: String },
@@ -23,4 +23,4 @@ const PresenceSchema: Schema = new Schema<IPresence>({
 
 PresenceSchema.index({ event_id: 1 });
 
-export default mongoose.model<IPresence>("Presence", PresenceSchema);
+export default mongoose.model<IPresence>("presence", PresenceSchema);

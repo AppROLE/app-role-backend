@@ -6,23 +6,17 @@ import {
 import { UpdateInstituteUseCase } from "./update_institute_usecase";
 import { UpdateInstituteController } from "./update_institute_controller";
 
-const repo = Environments.getInstituteRepo();
-const usecase = new UpdateInstituteUseCase(repo);
+const usecase = new UpdateInstituteUseCase();
 const controller = new UpdateInstituteController(usecase);
 
-export async function updateInstituteByIdPresenter(event: Record<string, any>) {
-    const httpRequest = new LambdaHttpRequest(event);
-    const response = await controller.handle(httpRequest);
-    const httpResponse = new LambdaHttpResponse(
-      response?.body,
-      response?.statusCode,
-      response?.headers
-    );
-  
-    return httpResponse.toJSON();
-  }
-  
-  export async function lambda_handler(event: any, context: any) {
-    const response = await updateInstituteByIdPresenter(event);
-    return response;
-  }
+export async function lambda_handler(event: any, context: any) {
+  const httpRequest = new LambdaHttpRequest(event);
+  const response = await controller.handle(httpRequest);
+  const httpResponse = new LambdaHttpResponse(
+    response?.body,
+    response?.statusCode,
+    response?.headers
+  );
+
+  return httpResponse.toJSON();
+}

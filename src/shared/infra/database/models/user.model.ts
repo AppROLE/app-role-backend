@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
+import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 
 interface IFollowing {
   user_followed_id: string;
@@ -25,6 +25,14 @@ export interface IUser extends Document {
   username: string;
   nickname: string;
   email: string;
+  accepted_terms: boolean;
+  email_verified: boolean;
+  is_oauth_user?: boolean;
+  date_birth?: Date;
+  phone_number?: string;
+  confirmation_code?: string;
+  cpf?: string;
+  gender?: GENDER_TYPE;
   biography?: string;
   created_at: Date;
   lnk_instagram?: string;
@@ -56,11 +64,19 @@ const ReviewSchema = new Schema<IReview>({
 });
 
 const UserSchema: Schema = new Schema<IUser>({
-  _id: { type: String, default: uuidv4 },
+  _id: { type: String, required: true },
   name: { type: String, required: true },
+  email_verified: { type: Boolean, default: false },
   username: { type: String, required: true, unique: true },
   nickname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  accepted_terms: { type: Boolean, required: true },
+  is_oauth_user: { type: Boolean, default: false },
+  phone_number: { type: String },
+  date_birth: { type: Date },
+  cpf: { type: String, unique: true },
+  confirmation_code: { type: String },
+  gender: { type: GENDER_TYPE },
   biography: { type: String },
   created_at: { type: Date, default: Date.now },
   lnk_instagram: { type: String },

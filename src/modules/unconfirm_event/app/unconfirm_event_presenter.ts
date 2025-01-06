@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -7,14 +6,10 @@ import { UnConfirmEventController } from "./unconfirm_event_controller";
 import { UnConfirmEventUseCase } from "./unconfirm_event_usecase";
 import { getRequesterUser } from "src/shared/utils/get_requester_user";
 
-const eventRepo = Environments.getEventRepo();
-const presenceRepo = Environments.getPresenceRepo();
-const usecase = new UnConfirmEventUseCase(eventRepo, presenceRepo);
+const usecase = new UnConfirmEventUseCase();
 const controller = new UnConfirmEventController(usecase);
 
-export async function unconfirmEventPresenter(
-  event: Record<string, any>
-) {
+export async function lambda_handler(event: any, context: any) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest, requesterUser);
@@ -25,10 +20,4 @@ export async function unconfirmEventPresenter(
   );
 
   return httpResponse.toJSON();
-}
-
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await unconfirmEventPresenter(event);
-  return response;
 }

@@ -6,13 +6,10 @@ import {
 import { DeleteInstituteByIdUseCase } from "./delete_institute_by_id_usecase";
 import { DeleteInstituteByIdController } from "./delete_institute_by_id_controller";
 
-const instituteRepository = Environments.getInstituteRepo();
-const eventRepository = Environments.getEventRepo();
-const fileRepository = Environments.getFileRepo();
-const usecase = new DeleteInstituteByIdUseCase(instituteRepository, eventRepository, fileRepository);
+const usecase = new DeleteInstituteByIdUseCase();
 const controller = new DeleteInstituteByIdController(usecase);
 
-export async function deleteInstituteByIdPresenter(event: Record<string, any>) {
+export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
@@ -22,9 +19,4 @@ export async function deleteInstituteByIdPresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await deleteInstituteByIdPresenter(event);
-  return response;
 }

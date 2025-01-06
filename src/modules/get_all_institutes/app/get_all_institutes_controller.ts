@@ -25,6 +25,8 @@ export class GetAllInstitutesController {
           `getAllInstitutesController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }

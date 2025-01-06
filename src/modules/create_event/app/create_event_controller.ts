@@ -1,7 +1,5 @@
-import { IEventRepository } from "src/shared/domain/irepositories/event_repository_interface";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { CreateEventUseCase } from "src/modules/create_event/app/create_event_usecase";
-import { CreateEventViewModel } from "./create_event_viewmodel"; // Supondo que você tenha um viewmodel similar
 import {
   MissingParameters,
   WrongTypeParameters,
@@ -22,42 +20,52 @@ import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 export class CreateEventController {
   constructor(private readonly usecase: CreateEventUseCase) {}
 
-  async handle(req: IRequest) {
+  async handle(formData: Record<string, any>) {
     try {
-      let eventDate = req.data.eventDate;
       const {
         name,
         description,
+        latitude,
+        longitude,
         address,
+        neighborhood,
+        city,
+        state,
+        cep,
         price,
         ageRange,
-        districtId,
         instituteId,
         eventStatus,
         musicType,
         menuLink,
-        galeryLink,
-        bannerUrl,
         features,
         packageType,
         category,
         ticketUrl,
-      } = req.data;
+        eventDate,
+      } = formData.fields;
+
+      const banner = formData.files["banner"];
+
+      if (banner === undefined) {
+        throw new MissingParameters("banner");
+      }
+
+      const gallery = formData.files["gallery"] || [];
 
       const requiredParams = [
         "name",
         "description",
-        "address",
+        "location",
         "price",
         "ageRange",
         "eventDate",
-        "districtId",
         "instituteId",
         "eventStatus",
       ];
 
       for (const param of requiredParams) {
-        if (req.data[param] === undefined) {
+        if (formData.fields[param] === undefined) {
           throw new MissingParameters(param);
         }
       }
@@ -72,8 +80,30 @@ export class CreateEventController {
           typeof description
         );
       }
+      if (typeof latitude !== "number") {
+        throw new WrongTypeParameters("latitude", "number", typeof latitude);
+      }
+      if (typeof longitude !== "number") {
+        throw new WrongTypeParameters("longitude", "number", typeof longitude);
+      }
       if (typeof address !== "string") {
         throw new WrongTypeParameters("address", "string", typeof address);
+      }
+      if (typeof neighborhood !== "string") {
+        throw new WrongTypeParameters(
+          "neighborhood",
+          "string",
+          typeof neighborhood
+        );
+      }
+      if (typeof city !== "string") {
+        throw new WrongTypeParameters("city", "string", typeof city);
+      }
+      if (typeof state !== "string") {
+        throw new WrongTypeParameters("state", "string", typeof state);
+      }
+      if (typeof cep !== "string") {
+        throw new WrongTypeParameters("cep", "string", typeof cep);
       }
       if (typeof price !== "number") {
         throw new WrongTypeParameters("price", "number", typeof price);
@@ -81,20 +111,20 @@ export class CreateEventController {
       if (typeof ageRange !== "string") {
         throw new WrongTypeParameters("ageRange", "string", typeof ageRange);
       }
-      if (typeof eventDate === "string") {
-        eventDate = new Date(eventDate);
-      }
-      if (!(eventDate instanceof Date) || isNaN(eventDate.getTime())) {
-        throw new WrongTypeParameters("eventDate", "Date", typeof eventDate);
-      }
 
-      if (typeof districtId !== "string") {
+      const eventDateFormated = new Date(eventDate);
+
+      if (
+        !(eventDateFormated instanceof Date) ||
+        isNaN(eventDateFormated.getTime())
+      ) {
         throw new WrongTypeParameters(
-          "districtId",
-          "string",
-          typeof districtId
+          "eventDateFormated",
+          "Date",
+          typeof eventDateFormated
         );
       }
+
       if (typeof instituteId !== "string") {
         throw new WrongTypeParameters(
           "instituteId",
@@ -113,11 +143,20 @@ export class CreateEventController {
       const eventId = await this.usecase.execute({
         name,
         description,
-        address,
+        location: {
+          latitude,
+          longitude,
+          address,
+          neighborhood,
+          city,
+          state,
+          cep,
+        },
         price,
-        ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM) ? (ageRange as AGE_ENUM) : AGE_ENUM.DEFAULT, // Replace 'DEFAULT' with an appropriate default value from AGE_ENUM
-        eventDate,
-        districtId,
+        ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM)
+          ? (ageRange as AGE_ENUM)
+          : AGE_ENUM.DEFAULT,
+        eventDate: eventDateFormated,
         instituteId,
         eventStatus: STATUS[eventStatus as keyof typeof STATUS],
         musicType: musicType
@@ -126,8 +165,8 @@ export class CreateEventController {
             )
           : undefined,
         menuLink: typeof menuLink === "string" ? menuLink : undefined,
-        galeryLink: typeof galeryLink === "string" ? [galeryLink] : undefined,
-        bannerUrl: typeof bannerUrl === "string" ? bannerUrl : undefined,
+        galery_images: gallery,
+        banner_image: banner,
         features: features
           ? (features as string[]).map(
               (feature) => FEATURE[feature as keyof typeof FEATURE]
@@ -143,10 +182,11 @@ export class CreateEventController {
           : undefined,
         ticketUrl: typeof ticketUrl === "string" ? ticketUrl : undefined,
       });
-    
-      const viewmodel = new CreateEventViewModel("Evento criado com sucesso", eventId);
 
-      return new Created(viewmodel.toJSON());
+      return new Created({
+        message: "Evento criado com sucesso",
+        id: eventId,
+      });
     } catch (error: any) {
       if (
         error instanceof MissingParameters ||
@@ -162,6 +202,8 @@ export class CreateEventController {
           `CreateEventController, Error on handle: ${error.message}`
         );
       }
+    } finally {
+      await this.usecase.repository.closeSession();
     }
   }
 }
