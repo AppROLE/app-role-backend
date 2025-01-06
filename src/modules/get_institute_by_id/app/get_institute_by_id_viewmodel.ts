@@ -41,6 +41,7 @@ export class GetInstituteByIdViewModel {
         latitude: this.location.latitude,
         longitude: this.location.longitude,
         address: this.location.address,
+        number: this.location.number,
         neighborhood: this.location.neighborhood,
         city: this.location.city,
         state: this.location.state,

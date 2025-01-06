@@ -7,7 +7,6 @@ import {
 } from "aws-cdk-lib/aws-apigateway";
 import { Duration } from "aws-cdk-lib";
 import * as path from "path";
-import { stage } from "../get_stage_env";
 
 export class LambdaStack extends Construct {
   functionsThatNeedCognitoPermissions: lambda.Function[] = [];
@@ -31,12 +30,7 @@ export class LambdaStack extends Construct {
   getInstituteByIdFunction: lambda.Function;
   getAllInstitutesByPartnerTypeFuntion: lambda.Function;
   deleteInstituteByIdFunction: lambda.Function;
-  uploadInstitutePhotoFunction: lambda.Function;
   updateInstituteFunction: lambda.Function;
-  deleteInstitutePhotoFunction: lambda.Function;
-
-  createDistrictFunction: lambda.Function;
-  getDistrictByIdFunction: lambda.Function;
 
   getAllPresencesByEventIdFunction: lambda.Function;
   confirmEventFunction: lambda.Function;
@@ -195,12 +189,6 @@ export class LambdaStack extends Construct {
         apiGatewayResource,
         environmentVariables
       );
-    this.uploadInstitutePhotoFunction = this.createLambdaApiGatewayIntegration(
-      "upload_institute_photo",
-      "POST",
-      apiGatewayResource,
-      environmentVariables
-    );
     this.updateInstituteFunction = this.createLambdaApiGatewayIntegration(
       "update_institute",
       "PUT",
@@ -221,12 +209,6 @@ export class LambdaStack extends Construct {
       apiGatewayResource,
       environmentVariables,
       authorizer
-    );
-    this.deleteInstitutePhotoFunction = this.createLambdaApiGatewayIntegration(
-      "delete_institute_photo",
-      "DELETE",
-      apiGatewayResource,
-      environmentVariables
     );
 
     // presence routes
@@ -252,24 +234,7 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
-    // district routes
-    this.createDistrictFunction = this.createLambdaApiGatewayIntegration(
-      "create_district",
-      "POST",
-      apiGatewayResource,
-      environmentVariables,
-      authorizer
-    );
-    this.getDistrictByIdFunction = this.createLambdaApiGatewayIntegration(
-      "get_district_by_id",
-      "GET",
-      apiGatewayResource,
-      environmentVariables,
-      authorizer
-    );
-
     this.functionsThatNeedS3Permissions = [
-      this.uploadInstitutePhotoFunction,
       this.deleteEventByIdFunction,
       this.deleteInstituteByIdFunction,
     ];

@@ -14,6 +14,7 @@ interface ILocation {
   latitude: number;
   longitude: number;
   address: string;
+  number: number;
   neighborhood: string;
   city: string;
   state: string;
@@ -54,6 +55,7 @@ const LocationSchema = new Schema<ILocation>({
   latitude: { type: Number, required: true },
   longitude: { type: Number, required: true },
   address: { type: String, required: true },
+  number: { type: Number, required: true },
   neighborhood: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },

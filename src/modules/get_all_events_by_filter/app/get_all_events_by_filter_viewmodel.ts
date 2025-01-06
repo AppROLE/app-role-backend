@@ -47,6 +47,7 @@ export class EventViewModel {
       bannerUrl: this.bannerUrl,
       location: {
         address: this.location.address,
+        number: this.location.number,
         cep: this.location.cep,
         city: this.location.city,
         neighborhood: this.location.neighborhood,

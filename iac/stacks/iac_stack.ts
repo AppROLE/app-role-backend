@@ -1,14 +1,12 @@
 import * as cdk from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
-import { stage } from "../get_stage_env";
 import { LambdaStack } from "./lambda_stack";
 import { Stack, StackProps } from "aws-cdk-lib";
 import { Cors, RestApi } from "aws-cdk-lib/aws-apigateway";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as s3 from "aws-cdk-lib/aws-s3";
-import { Distribution, OriginAccessIdentity } from "aws-cdk-lib/aws-cloudfront";
-import { Environments } from "../../src/shared/environments";
+import { envs } from "../envs/envs";
 
 export class IacStack extends Stack {
   constructor(scope: Construct, constructId: string, props?: StackProps) {
@@ -36,7 +34,7 @@ export class IacStack extends Stack {
     const userPool = cognito.UserPool.fromUserPoolId(
       this,
       `${constructId}-UserPool`,
-      Environments.userPoolId
+      envs.USER_POOL_ID
     );
 
     const authorizer = new cdk.aws_apigateway.CognitoUserPoolsAuthorizer(
@@ -49,14 +47,14 @@ export class IacStack extends Stack {
     );
 
     const environmentVariables = {
-      STAGE: stage,
+      STAGE: envs.STAGE,
       NODE_PATH: "/var/task:/opt/nodejs",
-      REGION: Environments.region,
-      MONGO_URI: Environments.dbUrl,
-      BUCKET_NAME: Environments.bucketName + stage.toLowerCase(),
-      USER_POOL_ID: Environments.userPoolId,
-      USER_POOL_ARN: Environments.userPoolArn,
-      APP_CLIENT_ID: Environments.appClientId,
+      REGION: envs.AWS_REGION,
+      MONGO_URI: envs.MONGO_URI,
+      BUCKET_NAME: envs.BUCKET_NAME,
+      USER_POOL_ID: envs.USER_POOL_ID,
+      USER_POOL_ARN: envs.USER_POOL_ARN,
+      APP_CLIENT_ID: envs.APP_CLIENT_ID,
     };
 
     const lambdaStack = new LambdaStack(
@@ -69,13 +67,13 @@ export class IacStack extends Stack {
     const cognitoAdminPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["cognito-idp:*"],
-      resources: [Environments.userPoolArn],
+      resources: [envs.USER_POOL_ARN],
     });
 
     const existingBucket = s3.Bucket.fromBucketName(
       this,
       `${constructId}-ExistingBucket`,
-      Environments.bucketName
+      envs.BUCKET_NAME
     );
 
     const s3Policy = new iam.PolicyStatement({

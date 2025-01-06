@@ -19,6 +19,7 @@ export interface LocationProps {
   latitude: number;
   longitude: number;
   address: string;
+  number: number;
   neighborhood: string;
   city: string;
   state: string;

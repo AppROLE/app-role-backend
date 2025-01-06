@@ -1,14 +1,13 @@
 import * as cdk from "aws-cdk-lib";
 import { IacStack } from "./stacks/iac_stack";
-
-console.log("Starting the CDK");
+import { envs } from "./envs/envs";
 
 const app = new cdk.App();
 
-const awsRegion = process.env.AWS_REGION as string;
-const awsAccountId = process.env.AWS_ACCOUNT_ID as string;
-const stackName = process.env.STACK_NAME as string;
-const github_ref_name = process.env.GITHUB_REF_NAME as string;
+const awsRegion = envs.AWS_REGION as string;
+const awsAccountId = envs.AWS_ACCOUNT_ID as string;
+const stackName = envs.STACK_NAME as string;
+const github_ref_name = envs.GITHUB_REF_NAME as string;
 
 let stage = "TEST";
 

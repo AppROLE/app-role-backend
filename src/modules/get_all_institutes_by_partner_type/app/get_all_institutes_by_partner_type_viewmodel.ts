@@ -11,7 +11,7 @@ export class InstituteViewModel {
   private institute_type: INSTITUTE_TYPE;
   private partner_type: PARTNER_TYPE;
   private phone?: string;
-  private location?: LocationProps;
+  private location: LocationProps;
   private price?: number;
   private photos_url?: string[];
   private events_id?: string[];
@@ -39,7 +39,16 @@ export class InstituteViewModel {
       instituteType: this.institute_type,
       partnerType: this.partner_type,
       phone: this.phone,
-      location: this.location,
+      location: {
+        latitude: this.location.latitude,
+        longitude: this.location.longitude,
+        address: this.location.address,
+        number: this.location.number,
+        neighborhood: this.location.neighborhood,
+        city: this.location.city,
+        state: this.location.state,
+        cep: this.location.cep,
+      },
       price: this.price,
       photosUrl: this.photos_url,
       eventsId: this.events_id,
