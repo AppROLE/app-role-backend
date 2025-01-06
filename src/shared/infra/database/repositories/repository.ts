@@ -36,6 +36,7 @@ export class Repository {
     user_repo = false,
     file_repo = false,
   }: RepositoryConfig) {
+    console.log("STAGE: " + Environments.stage)
     if (Environments.stage === STAGE.TEST) {
       this._initializeMockRepositories(
         event_repo,
@@ -53,6 +54,7 @@ export class Repository {
         file_repo
       );
     }
+    console.log("usecase: ", this)
   }
 
   private _initializeMockRepositories(
@@ -75,7 +77,6 @@ export class Repository {
     file_repo: boolean = false
   ): Promise<void> {
     this.connection = await this.__connectDb();
-    console.log("✅ Conexão com MongoDB estabelecida com sucesso.");
     if (event_repo) {
       this.event_repo = new EventRepositoryMongo(this.connection);
     }
@@ -96,6 +97,7 @@ export class Repository {
   private async __connectDb(): Promise<Connection> {
     try {
       await mongoose.connect(Environments.dbUrl);
+      console.log("✅ Conexão com MongoDB estabelecida com sucesso.");
       return mongoose.connection;
     } catch (error) {
       throw new DatabaseException(`${error}`);
