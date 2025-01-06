@@ -5,17 +5,24 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class GetEventByIdUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
+  private event_repo?: IEventRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
   }
 
   async execute(eventId: string): Promise<Event> {
-    const event = await this.event_repo.getEventById(eventId);
+    const event = await this.event_repo!.getEventById(eventId);
     if (!event) {
       throw new NoItemsFound("event");
     }

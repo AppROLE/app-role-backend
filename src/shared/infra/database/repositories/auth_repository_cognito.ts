@@ -30,7 +30,6 @@ import {
 } from "src/shared/helpers/errors/usecase_errors";
 import { ChangeUsernameReturnType } from "src/shared/helpers/types/change_username_return_type";
 import { UserCognitoDTO } from "../../dto/user_cognito_dto";
-import { Environments } from "src/shared/environments";
 import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
 
 export class AuthRepositoryCognito implements IAuthRepository {

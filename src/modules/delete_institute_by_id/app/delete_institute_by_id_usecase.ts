@@ -6,9 +6,9 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class DeleteInstituteByIdUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
-  private readonly file_repo: IFileRepository;
-  private readonly institute_repo: IInstituteRepository;
+  private event_repo?: IEventRepository;
+  private file_repo?: IFileRepository;
+  private institute_repo?: IInstituteRepository;
 
   constructor() {
     this.repository = new Repository({
@@ -16,29 +16,40 @@ export class DeleteInstituteByIdUseCase {
       file_repo: true,
       institute_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
-    this.file_repo = this.repository.file_repo!;
-    this.institute_repo = this.repository.institute_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+    this.file_repo = this.repository.file_repo;
+    this.institute_repo = this.repository.institute_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
+    if (!this.file_repo)
+      throw new Error('Expected to have an instance of the file repository');
+    if (!this.institute_repo)
+      throw new Error('Expected to have an instance of the institute repository');
   }
 
   async execute(instituteId: string): Promise<void> {
-    const institute = await this.institute_repo.getInstituteById(instituteId);
+    const institute = await this.institute_repo!.getInstituteById(instituteId);
     if (!institute) {
       throw new NoItemsFound("institute");
     }
 
     if (institute.instituteEventsId) {
       for (const eventId of institute.instituteEventsId) {
-        const event = await this.event_repo.getEventById(eventId);
+        const event = await this.event_repo!.getEventById(eventId);
 
         if (event) {
-          await this.event_repo.deleteEventById(eventId);
-          await this.file_repo.deleteFolder(`events/${eventId}`);
+          await this.event_repo!.deleteEventById(eventId);
+          await this.file_repo!.deleteFolder(`events/${eventId}`);
         }
       }
     }
 
-    await this.institute_repo.deleteInstituteById(instituteId);
-    await this.file_repo.deleteFolder(`institutes/${instituteId}`);
+    await this.institute_repo!.deleteInstituteById(instituteId);
+    await this.file_repo!.deleteFolder(`institutes/${instituteId}`);
   }
 }

@@ -37,16 +37,26 @@ interface CreateEventParams {
 
 export class CreateEventUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
-  private readonly file_repo: IFileRepository;
+  private event_repo?: IEventRepository;
+  private file_repo?: IFileRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       file_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
-    this.file_repo = this.repository.file_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+    this.file_repo = this.repository.file_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
+
+    if (!this.file_repo)
+      throw new Error('Expected to have an instance of the file repository');
   }
 
   async execute(params: CreateEventParams): Promise<string> {
@@ -54,7 +64,7 @@ export class CreateEventUseCase {
 
     let bannerUrl = "";
     if (params.banner_image) {
-      bannerUrl = await this.file_repo.uploadImage(
+      bannerUrl = await this.file_repo!.uploadImage(
         `events/${event_id}/event-photo.${
           params.banner_image.mimetype.split("/")[1]
         }`,
@@ -68,7 +78,7 @@ export class CreateEventUseCase {
     if (params.galery_images && params.galery_images.length > 0) {
       for (let i = 0; i < params.galery_images.length; i++) {
         const photo = params.galery_images[i];
-        const photoUrl = await this.file_repo.uploadImage(
+        const photoUrl = await this.file_repo!.uploadImage(
           `events/${event_id}/galery/${i}.${photo.mimetype.split("/")[1]}`,
           photo.image,
           photo.mimetype,
@@ -98,6 +108,6 @@ export class CreateEventUseCase {
       ticketUrl: params.ticketUrl,
     });
 
-    return await this.event_repo.createEvent(event);
+    return await this.event_repo!.createEvent(event);
   }
 }

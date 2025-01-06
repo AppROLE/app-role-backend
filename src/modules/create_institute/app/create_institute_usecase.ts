@@ -27,16 +27,25 @@ export interface CreateInstituteParams {
 
 export class CreateInstituteUseCase {
   repository: Repository;
-  private readonly institute_repo: IInstituteRepository;
-  private readonly file_repo: IFileRepository;
+  private institute_repo?: IInstituteRepository;
+  private file_repo?: IFileRepository;
 
   constructor() {
     this.repository = new Repository({
       institute_repo: true,
       file_repo: true,
     });
-    this.institute_repo = this.repository.institute_repo!;
-    this.file_repo = this.repository.file_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.institute_repo = this.repository.institute_repo;
+    this.file_repo = this.repository.file_repo;
+
+    if (!this.institute_repo)
+      throw new Error('Expected to have an instance of the institute repository');
+    if (!this.file_repo)
+      throw new Error('Expected to have an instance of the file repository');
   }
 
   async execute(params: CreateInstituteParams): Promise<Institute> {
@@ -44,7 +53,7 @@ export class CreateInstituteUseCase {
 
     let logoUrl = "";
     if (params.logo_photo) {
-      logoUrl = await this.file_repo.uploadImage(
+      logoUrl = await this.file_repo!.uploadImage(
         `institutes/${institute_id}/institute-photo.${
           params.logo_photo.mimetype.split("/")[1]
         }`,
@@ -58,7 +67,7 @@ export class CreateInstituteUseCase {
     if (params.photos && params.photos.length > 0) {
       for (let i = 0; i < params.photos.length; i++) {
         const photo = params.photos[i];
-        const photoUrl = await this.file_repo.uploadImage(
+        const photoUrl = await this.file_repo!.uploadImage(
           `institutes/${institute_id}/photos/${i}.${
             params.logo_photo.mimetype.split("/")[1]
           }`,
@@ -84,6 +93,6 @@ export class CreateInstituteUseCase {
       price: params.price || 0,
     });
 
-    return await this.institute_repo.createInstitute(institute);
+    return await this.institute_repo!.createInstitute(institute);
   }
 }

@@ -10,6 +10,7 @@ const controller = new UpdateEventController(usecase);
 
 export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
+  await usecase.connect();
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,

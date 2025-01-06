@@ -1,4 +1,3 @@
-import { Environments } from "src/shared/environments";
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
@@ -13,6 +12,7 @@ const controller = new CreateReviewController(usecase);
 export async function lambda_handler(event: any, context: any) {
   const requesterUser = getRequesterUser(event);
   const httpRequest = new LambdaHttpRequest(event);
+  await usecase.connect();
   const response = await controller.handle(httpRequest, requesterUser);
   const httpResponse = new LambdaHttpResponse(
     response?.body,

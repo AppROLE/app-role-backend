@@ -4,13 +4,20 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class CreateReviewUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
+  private event_repo?: IEventRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
   }
 
   async execute(
@@ -43,7 +50,7 @@ export class CreateReviewUseCase {
 
     const reviwedDate = new Date(reviewedAt);
 
-    await this.event_repo.createReview(
+    await this.event_repo!.createReview(
       star,
       review,
       reviwedDate,

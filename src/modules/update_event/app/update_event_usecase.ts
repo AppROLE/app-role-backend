@@ -38,16 +38,25 @@ interface UpdateEventParams {
 
 export class UpdateEventUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
-  private readonly file_repo: IFileRepository;
+  private event_repo?: IEventRepository;
+  private file_repo?: IFileRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       file_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
-    this.file_repo = this.repository.file_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+    this.file_repo = this.repository.file_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
+    if (!this.file_repo)
+      throw new Error('Expected to have an instance of the file repository');
   }
 
   async execute(params: UpdateEventParams): Promise<Event> {
@@ -57,7 +66,7 @@ export class UpdateEventUseCase {
       throw new EntityError("Event ID is required");
     }
 
-    const existingEvent = await this.event_repo.getEventById(eventId);
+    const existingEvent = await this.event_repo!.getEventById(eventId);
     if (!existingEvent) {
       throw new EntityError(`Event with ID ${eventId} not found`);
     }
@@ -118,7 +127,7 @@ export class UpdateEventUseCase {
       if (params.galery_images && params.galery_images.length > 0) {
         for (let i = 0; i < params.galery_images.length; i++) {
           const photo = params.galery_images[i];
-          const photoUrl = await this.file_repo.uploadImage(
+          const photoUrl = await this.file_repo!.uploadImage(
             `events/${existingEvent.getEventId}/galery/${i}.${
               photo.mimetype.split("/")[1]
             }`,
@@ -134,7 +143,7 @@ export class UpdateEventUseCase {
     if (updatedFields.banner_image) {
       let bannerUrl = "";
       if (params.banner_image) {
-        bannerUrl = await this.file_repo.uploadImage(
+        bannerUrl = await this.file_repo!.uploadImage(
           `events/${existingEvent.getEventId}/event-photo.${
             params.banner_image.mimetype.split("/")[1]
           }`,
@@ -158,7 +167,7 @@ export class UpdateEventUseCase {
       eventToUpdate.setTicketUrl = updatedFields.ticketUrl;
     }
 
-    return await this.event_repo.updateEvent(eventId, {
+    return await this.event_repo!.updateEvent(eventId, {
       name: eventToUpdate.getEventName,
       description: eventToUpdate.getEventDescription,
       location: eventToUpdate.getEventLocation,

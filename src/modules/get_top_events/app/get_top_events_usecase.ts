@@ -5,16 +5,25 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 import { getUpcomingWeekdays } from "src/shared/utils/date_utils";
 export class GetTopEventsUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
-  private readonly presence_repo: IPresenceRepository;
+  private event_repo?: IEventRepository;
+  private presence_repo?: IPresenceRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       presence_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
-    this.presence_repo = this.repository.presence_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+    this.presence_repo = this.repository.presence_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
+    if (!this.presence_repo)
+      throw new Error('Expected to have an instance of the presence repository');
   }
 
   async execute(): Promise<any> {
@@ -23,7 +32,7 @@ export class GetTopEventsUseCase {
     const dateLabels = ["Thursday", "Friday", "Saturday"];
 
     const events =
-      (await this.event_repo.getEventsByUpcomingDates(dates)) || [];
+      (await this.event_repo!.getEventsByUpcomingDates(dates)) || [];
 
     const eventsByDate = dates.map((date, index) => {
       const eventsForDate = events.filter(
@@ -59,7 +68,7 @@ export class GetTopEventsUseCase {
       .map((event) => event.getEventId)
       .filter((id): id is string => id !== undefined);
 
-    const presencesCount = await this.presence_repo.countPresencesByEvent(
+    const presencesCount = await this.presence_repo!.countPresencesByEvent(
       eventIds
     );
 

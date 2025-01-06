@@ -8,16 +8,26 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class ConfirmEventUseCase {
   repository: Repository;
-  private readonly event_repo: IEventRepository;
-  private readonly presence_repo: IPresenceRepository;
+  private event_repo?: IEventRepository;
+  private presence_repo?: IPresenceRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       presence_repo: true,
     });
-    this.event_repo = this.repository.event_repo!;
-    this.presence_repo = this.repository.presence_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.event_repo = this.repository.event_repo;
+    this.presence_repo = this.repository.presence_repo;
+
+    if (!this.event_repo)
+      throw new Error('Expected to have an instance of the event repository');
+
+    if (!this.presence_repo)
+      throw new Error('Expected to have an instance of the presence repository');
   }
 
   async execute(
@@ -27,18 +37,18 @@ export class ConfirmEventUseCase {
     profilePhoto?: string,
     promoterCode?: string
   ) {
-    const event = await this.event_repo.getEventById(eventId);
+    const event = await this.event_repo!.getEventById(eventId);
 
     if (!event) throw new NoItemsFound("eventId");
 
-    const alreadyConfirmed = await this.presence_repo.getPresenceByEventAndUser(
+    const alreadyConfirmed = await this.presence_repo!.getPresenceByEventAndUser(
       eventId,
       username
     );
 
     if (alreadyConfirmed) throw new UserAlreadyConfirmedEvent();
 
-    await this.presence_repo.confirmPresence(
+    await this.presence_repo!.confirmPresence(
       eventId,
       username,
       nickname,

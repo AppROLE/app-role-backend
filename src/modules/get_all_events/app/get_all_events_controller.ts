@@ -34,7 +34,6 @@ export class GetAllEventsController {
       const viewModel = new GetAllEventsViewModel(events);
       return new OK(viewModel.toJSON());
     } catch (error: any) {
-      console.log("Aqui ta o erro da bucetinha azul: ", error);
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message);
       }

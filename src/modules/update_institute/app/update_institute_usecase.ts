@@ -7,13 +7,20 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class UpdateInstituteUseCase {
   repository: Repository;
-  private readonly institute_repo: IInstituteRepository;
+  private institute_repo?: IInstituteRepository;
 
   constructor() {
     this.repository = new Repository({
       institute_repo: true,
     });
-    this.institute_repo = this.repository.institute_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.institute_repo = this.repository.institute_repo;
+
+    if (!this.institute_repo)
+      throw new Error('Expected to have an instance of the institute repository');
   }
 
   async execute(
@@ -51,7 +58,7 @@ export class UpdateInstituteUseCase {
       institute.institutePhone = phone;
     }
 
-    await this.institute_repo.updateInstitute(
+    await this.institute_repo!.updateInstitute(
       institute.instituteId,
       institute.instituteDescription,
       institute.instituteInstituteType,

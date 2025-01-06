@@ -4,7 +4,7 @@ import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllEventsUseCase {
   repository: Repository;
-  event_repo?: IEventRepository;
+  private event_repo?: IEventRepository;
 
   constructor() {
     this.repository = new Repository({

@@ -4,19 +4,26 @@ import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class FavoriteInstituteUseCase {
   repository: Repository;
-  private readonly user_repo: IUserRepository;
+  private user_repo?: IUserRepository;
 
   constructor() {
     this.repository = new Repository({
       user_repo: true,
     });
-    this.user_repo = this.repository.user_repo!;
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.user_repo = this.repository.user_repo;
+
+    if (!this.user_repo)
+      throw new Error('Expected to have an instance of the user repository');
   }
 
   async execute(username: string, instituteId: string): Promise<void> {
     if (!username) throw new EntityError("Usuário não encontrado");
     if (!instituteId) throw new EntityError("Instituto não encontrado");
 
-    await this.user_repo.favoriteInstitute(username, instituteId);
+    await this.user_repo!.favoriteInstitute(username, instituteId);
   }
 }
