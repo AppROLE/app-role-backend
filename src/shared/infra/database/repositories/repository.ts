@@ -12,6 +12,8 @@ import { IFileRepository } from 'src/shared/domain/repositories/file_repository_
 import { FileRepositoryS3 } from './file_repository_s3';
 import { IUserRepository } from 'src/shared/domain/repositories/user_repository_interface';
 import { UserRepositoryMongo } from './user_repository_mongo';
+import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
+import { AuthRepositoryCognito } from './auth_repository_cognito';
 
 interface RepositoryConfig {
   event_repo?: boolean;
@@ -19,6 +21,7 @@ interface RepositoryConfig {
   presence_repo?: boolean;
   user_repo?: boolean;
   file_repo?: boolean;
+  auth_repo?: boolean;
 }
 
 export class Repository {
@@ -27,6 +30,7 @@ export class Repository {
   presence_repo?: IPresenceRepository;
   user_repo?: IUserRepository;
   file_repo?: IFileRepository;
+  auth_repo?: IAuthRepository;
   private connection: Connection | null = null;
 
   constructor(private config: RepositoryConfig) {
@@ -35,6 +39,7 @@ export class Repository {
     this.config.presence_repo ??= false;
     this.config.user_repo ??= false;
     this.config.file_repo ??= false;
+    this.config.auth_repo ??= false;
   }
 
   async connectRepository() {
@@ -70,6 +75,10 @@ export class Repository {
     }
     if (this.config.file_repo && !this.file_repo) {
       this.file_repo = new FileRepositoryS3();
+    }
+
+    if (this.config.auth_repo && !this.auth_repo) {
+      this.auth_repo = new AuthRepositoryCognito();
     }
   }
 

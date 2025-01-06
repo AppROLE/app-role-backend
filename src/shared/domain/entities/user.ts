@@ -3,22 +3,20 @@ import { GENDER_TYPE } from "../enums/gender_enum";
 import { PRIVACY_TYPE } from "../enums/privacy_enum";
 import { ROLE_TYPE } from "../enums/role_type_enum";
 
-interface UserProps {
+interface ProfileProps {
   user_id?: string;
   name: string;
   nickname: string;
   username: string;
   email: string;
   acceptedTerms: boolean;
-  emailVerified: boolean;
+  acceptedTermsAt: Date;
   dateBirth?: Date;
   gender?: GENDER_TYPE;
   cpf?: string;
-  confirmationCode?: string;
   biography?: string;
-  roleType?: ROLE_TYPE;
+  role?: ROLE_TYPE;
   phoneNumber?: string;
-  password?: string;
   createdAt?: Date;
   linkInstagram?: string;
   linkTiktok?: string;
@@ -46,15 +44,13 @@ export class User {
   private username: string;
   private email: string;
   private acceptedTerms: boolean;
-  private emailVerified: boolean;
+  private acceptedTermsAt: Date;
   private dateBirth?: Date;
-  private confirmationCode?: string;
   private cpf?: string;
   private gender?: GENDER_TYPE;
   private biography?: string;
-  private roleType?: ROLE_TYPE;
+  private role?: ROLE_TYPE;
   private phoneNumber?: string;
-  private password?: string;
   private link_instagram?: string;
   private link_tiktok?: string;
   private bg_photo?: string;
@@ -64,62 +60,66 @@ export class User {
   private following: FollowingProps[];
   private favorites: FavoriteProps[];
 
-  constructor(props: UserProps) {
+  constructor(props: ProfileProps) {
     this.user_id = props.user_id;
     if (!User.validateName(props.name)) {
       throw new EntityError("name");
     }
     this.name = props.name;
+
     if (!User.validateNickname(props.nickname)) {
       throw new EntityError("nickname");
     }
-
     if (!props.nickname) {
       props.nickname = props.name.split(" ")[0];
     } else {
       this.nickname = props.nickname;
     }
+
     if (!User.validateUsername(props.username)) {
       throw new EntityError("username");
     }
+    this.username = props.username;
+
     if (props.dateBirth && props.dateBirth > new Date()) {
       throw new EntityError("dateBirth");
     }
     this.dateBirth = props.dateBirth;
-    this.emailVerified = props.emailVerified;
-    this.username = props.username;
+    
     if (!User.validateEmail(props.email)) {
       throw new EntityError("email");
     }
     this.email = props.email;
-    if (!props.roleType) {
-      this.roleType = ROLE_TYPE.COMMON;
+
+    if (!props.role) {
+      this.role = ROLE_TYPE.COMMON;
     } else {
-      if (!User.validateRoleType(props.roleType)) {
-        throw new EntityError("roleType");
+      if (!User.validaterole(props.role)) {
+        throw new EntityError("role");
       }
-      this.roleType = props.roleType;
+      this.role = props.role;
     }
-    if (props.password && !User.validatePassword(props.password)) {
-      throw new EntityError("password");
-    }
-    this.password = props.password;
+
     if (props.linkInstagram && !User.validateInstagram(props.linkInstagram)) {
       throw new EntityError("linkInstagram");
     }
     this.link_instagram = props.linkInstagram;
+
     if (props.linkTiktok && !User.validateTiktok(props.linkTiktok)) {
       throw new EntityError("linkTiktok");
     }
     this.link_tiktok = props.linkTiktok;
+
     if (props.biography && !User.validateBiography(props.biography)) {
       throw new EntityError("biography");
     }
     this.biography = props.biography;
+
     if (props.bgPhoto && !User.validateBgPhoto(props.bgPhoto)) {
       throw new EntityError("bgPhoto");
     }
     this.bg_photo = props.bgPhoto;
+
     if (props.profilePhoto && !User.validateProfilePhoto(props.profilePhoto)) {
       throw new EntityError("profilePhoto");
     }
@@ -135,7 +135,7 @@ export class User {
     }
 
     this.acceptedTerms = props.acceptedTerms;
-    this.confirmationCode = props.confirmationCode;
+    this.acceptedTermsAt = props.acceptedTermsAt;
 
     if (!User.validateCpf(props.cpf)) {
       throw new EntityError("cpf");
@@ -185,24 +185,16 @@ export class User {
     return this.acceptedTerms;
   }
 
-  get userConfirmationCode(): string | undefined {
-    return this.confirmationCode;
-  }
-
   get userCpf(): string | undefined {
     return this.cpf;
-  }
-
-  get userEmailVerified(): boolean {
-    return this.emailVerified;
   }
 
   get userGender(): GENDER_TYPE | undefined {
     return this.gender;
   }
 
-  get userRoleType(): ROLE_TYPE | undefined {
-    return this.roleType;
+  get userrole(): ROLE_TYPE | undefined {
+    return this.role;
   }
 
   get userPhoneNumber(): string | undefined {
@@ -211,10 +203,6 @@ export class User {
 
   get userBiography(): string | undefined {
     return this.biography;
-  }
-
-  get userPassword(): string | undefined {
-    return this.password;
   }
 
   get userCreatedAt(): Date {
@@ -273,10 +261,6 @@ export class User {
     this.acceptedTerms = acceptedTerms;
   }
 
-  set setUserConfirmationCode(confirmationCode: string | undefined) {
-    this.confirmationCode = confirmationCode;
-  }
-
   set setUserCpf(cpf: string | undefined) {
     this.cpf = cpf;
   }
@@ -289,12 +273,8 @@ export class User {
     this.gender = gender;
   }
 
-  set setUserEmailVerified(emailVerified: boolean) {
-    this.emailVerified = emailVerified;
-  }
-
-  set setUserRoleType(roleType: ROLE_TYPE | undefined) {
-    this.roleType = roleType;
+  set setUserrole(role: ROLE_TYPE | undefined) {
+    this.role = role;
   }
 
   set setUserPhoneNumber(phoneNumber: string | undefined) {
@@ -337,10 +317,6 @@ export class User {
     this.favorites = favorites;
   }
 
-  set setUserPassword(password: string | undefined) {
-    this.password = password;
-  }
-
   static validateName(name: string): boolean {
     if (!name || name.trim().length === 0 || name.trim().length > 100) {
       return false;
@@ -375,8 +351,8 @@ export class User {
     return true;
   }
 
-  static validateRoleType(roleType?: ROLE_TYPE): boolean {
-    if (roleType && !Object.values(ROLE_TYPE).includes(roleType)) {
+  static validaterole(role?: ROLE_TYPE): boolean {
+    if (role && !Object.values(ROLE_TYPE).includes(role)) {
       return false;
     }
 

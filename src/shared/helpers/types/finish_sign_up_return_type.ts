@@ -3,6 +3,6 @@ export type FinishSignUpReturnType = {
   newUsername: string;
   newNickname: string;
   acceptedTerms: string | undefined;
-  roleType: string | undefined;
+  role: string | undefined;
   name: string;
 }

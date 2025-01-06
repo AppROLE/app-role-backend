@@ -3,5 +3,5 @@ export type ChangeUsernameReturnType = {
   name: string | undefined,
   nickname: string | undefined,
   acceptedTerms: boolean | undefined,
-  roleType: string | undefined,
+  role: string | undefined,
 }

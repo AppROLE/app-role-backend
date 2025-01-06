@@ -31,17 +31,18 @@ import {
 import { ChangeUsernameReturnType } from "src/shared/helpers/types/change_username_return_type";
 import { UserCognitoDTO } from "../../dto/user_cognito_dto";
 import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
+import { Environments } from "src/shared/environments";
 
 export class AuthRepositoryCognito implements IAuthRepository {
   userPoolId: string;
   appClientId: string;
   client: CognitoIdentityProviderClient;
 
-  constructor(userPoolId: string, appClientId: string) {
-    this.userPoolId = userPoolId;
-    this.appClientId = appClientId;
+  constructor() {
+    this.userPoolId = Environments.userPoolId;
+    this.appClientId = Environments.appClientId;
     this.client = new CognitoIdentityProviderClient({
-      region: "sa-east-1",
+      region: Environments.region,
     });
   }
 
@@ -192,7 +193,12 @@ export class AuthRepositoryCognito implements IAuthRepository {
     email: string,
     password: string,
     acceptedTerms: boolean
-  ): Promise<User> {
+  ): Promise<{
+    userId: string,
+    name: string,
+    email: string,
+    role: string,
+  }> {
     try {
       const user = new User({
         name,
@@ -739,7 +745,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
         acceptedTerms: userEntity.userAcceptedTerms,
         name: userEntity.userName,
         nickname: userEntity.userNickname,
-        roleType: userEntity.userRoleType,
+        role: userEntity.userrole,
       };
     } catch (error: any) {
       throw new Error(

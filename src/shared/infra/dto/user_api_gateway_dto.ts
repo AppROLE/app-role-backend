@@ -1,28 +1,27 @@
 export class UserAPIGatewayDTO {
   userId: string;
-  username: string;
+  username?: string;
   email: string;
-  nickname: string;
+  name: string;
 
   constructor(
     userId: string,
-    username: string,
     email: string,
-    nickname: string
+    name: string,
+    username?: string,
   ) {
     this.userId = userId;
-    this.username = username;
     this.email = email;
-    this.nickname = nickname;
+    this.name = name;
+    this.username = username;
   }
 
   static fromAPIGateway(data: Record<string, any>): UserAPIGatewayDTO {
-    console.log("data FROM API GATEWAY ", data);
     return new UserAPIGatewayDTO(
       data["sub"],
-      data["cognito:username"],
+      data["username"],
       data["email"],
-      data["nickname"] || ""
+      data["name"]
     );
   }
 
@@ -31,7 +30,7 @@ export class UserAPIGatewayDTO {
       userId: this.userId,
       username: this.username,
       email: this.email,
-      nickname: this.nickname,
+      name: this.name,
     };
   }
 }
