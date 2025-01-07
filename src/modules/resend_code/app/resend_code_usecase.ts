@@ -1,4 +1,4 @@
-import { User } from "src/shared/domain/entities/user";
+import { Profile } from "src/shared/domain/entities/profile";
 import { IMailRepository } from "src/shared/domain/irepositories/mail_repository_interface";
 import { IAuthRepository } from "src/shared/domain/irepositories/auth_repository_interface";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
@@ -11,7 +11,7 @@ export class ResendCodeUseCase {
   ) {}
 
   async execute(email: string) {
-    if (!User.validateEmail(email)) {
+    if (!Profile.validateEmail(email)) {
       throw new EntityError("email");
     }
 

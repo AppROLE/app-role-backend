@@ -1,7 +1,12 @@
-import { User } from "src/shared/domain/entities/user";
+import { Profile } from "src/shared/domain/entities/profile";
 import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { DuplicatedItem, RequestUserToForgotPassword, UserAlreadyExists, UserNotConfirmed } from "src/shared/helpers/errors/usecase_errors";
+import {
+  DuplicatedItem,
+  RequestUserToForgotPassword,
+  UserAlreadyExists,
+  UserNotConfirmed,
+} from "src/shared/helpers/errors/usecase_errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class SignUpUseCase {
@@ -19,39 +24,33 @@ export class SignUpUseCase {
     this.auth_repo = this.repository.auth_repo;
 
     if (!this.auth_repo)
-      throw new Error('Expected to have an instance of the auth repository');
+      throw new Error("Expected to have an instance of the auth repository");
   }
 
-  async execute(
-    name: string,
-    email: string,
-    password: string,
-  ) {
-    if (User.validateEmail(email) === false) {
+  async execute(name: string, email: string, password: string) {
+    if (Profile.validateEmail(email) === false) {
       throw new EntityError("email");
     }
 
-    if (User.validateName(name) === false) {
+    if (Profile.validateName(name) === false) {
       throw new EntityError("name");
     }
 
-    if (User.validatePassword(password) === false) {
+    if (Profile.validatePassword(password) === false) {
       throw new EntityError("password");
     }
 
-    const emailRegex = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
+    const emailRegex = new RegExp(
+      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+    );
 
     const userAlreadyExists = await this.auth_repo!.getUserByEmail(email);
-    
+
     if (userAlreadyExists) {
-      throw new UserNotConfirmed()
+      throw new UserNotConfirmed();
     }
 
-    const createdUser = await this.auth_repo!.signUp(
-      name,
-      email,
-      password,
-    );
+    const createdUser = await this.auth_repo!.signUp(name, email, password);
 
     return createdUser;
   }

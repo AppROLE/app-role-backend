@@ -1,4 +1,4 @@
-import { User } from "src/shared/domain/entities/user";
+import { Profile } from "src/shared/domain/entities/profile";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
 import { IAuthRepository } from "src/shared/domain/irepositories/auth_repository_interface";
@@ -12,7 +12,7 @@ export class ForgotPasswordUseCase {
   ) {}
 
   async execute(email: string) {
-    if (!User.validateEmail(email)) {
+    if (!Profile.validateEmail(email)) {
       throw new EntityError("email");
     }
 

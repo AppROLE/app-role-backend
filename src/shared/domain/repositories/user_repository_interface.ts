@@ -1,17 +1,17 @@
 import { FindPersonReturnType } from "src/shared/helpers/types/find_person_return_type";
-import { User } from "../entities/user";
+import { Profile } from "../entities/profile";
 import { GENDER_TYPE } from "../enums/gender_enum";
 import { GetProfileReturnType } from "../types/get_profile_return_type";
 
 export interface IUserRepository {
-  createUser(user: User, isOAuth?: boolean): Promise<User>;
+  createUser(user: Profile, isOAuth?: boolean): Promise<Profile>;
   getProfile(
     username: string,
     isAnotherUser: boolean,
     requesterUsername?: string
   ): Promise<GetProfileReturnType>;
   deleteAccount(username: string, userId?: string): Promise<void>;
-  findByUsername(username: string): Promise<User | undefined>;
+  findByUsername(username: string): Promise<Profile | undefined>;
   createReview(
     star: number,
     review: string,
@@ -20,8 +20,8 @@ export interface IUserRepository {
     eventId: string,
     username: string
   ): Promise<void>;
-  getFriends(username: string): Promise<User[]>;
-  getAllReviewsByEvent(eventId: string): Promise<User[]>;
+  getFriends(username: string): Promise<Profile[]>;
+  getAllReviewsByEvent(eventId: string): Promise<Profile[]>;
   findPerson(searchTerm: string): Promise<FindPersonReturnType[]>;
   updateProfile(
     username: string,
@@ -35,26 +35,26 @@ export interface IUserRepository {
   ): Promise<boolean | null>;
   favoriteInstitute(username: string, instituteId: string): Promise<void>;
   followUser(username: string, followedUsername: string): Promise<void>;
-  getAllFollowers(username: string): Promise<User[]>;
-  getAllFollowing(username: string): Promise<User[]>;
+  getAllFollowers(username: string): Promise<Profile[]>;
+  getAllFollowing(username: string): Promise<Profile[]>;
   getAllFavoriteInstitutes(username: string): Promise<any>;
   changePrivacy(username: string, privacy: string): Promise<void>;
   updateEmail(username: string, newEmail: string): Promise<void>;
   updateAccount(
-    user_id: string,
+    userId: string,
     dateBirth?: Date,
     phoneNumber?: string,
     cpf?: string,
     gender?: GENDER_TYPE
-  ): Promise<User | undefined>;
+  ): Promise<Profile | undefined>;
   validateIsOAuthUser(email: string): Promise<boolean>;
   changeUserIdsFromFollowing(
     oldUserId: string,
     newUserId: string
   ): Promise<void>;
   removeAllFollowers(username: string): Promise<void>;
-  getAccountDetails(username: string): Promise<User>;
-  findByEmail(email: string): Promise<User | undefined>;
+  getAccountDetails(username: string): Promise<Profile>;
+  findByEmail(email: string): Promise<Profile | undefined>;
   getProfile(
     username: string,
     isAnotherUser: boolean,

@@ -1,63 +1,45 @@
-import { User } from "../entities/user";
-import { ChangeUsernameReturnType } from "src/shared/helpers/types/change_username_return_type";
-
 export interface IAuthRepository {
-  forgotPassword(email: string, code: string): Promise<string>;
-  getUserByEmail(email: string): Promise<User | undefined>;
   signUp(
     name: string,
     email: string,
-    password: string,
+    password: string
   ): Promise<{
-    userId: string,
-    name: string,
-    email: string,
-    role: string,
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
   }>;
-  setUserPassword(email: string, newPassword: string): Promise<void>;
-  resendCode(email: string): Promise<string>;
-  finishSignUp(
-    email: string,
-    newUsername: string,
-    password: string,
-    newNickname?: string
-  ): Promise<User | undefined>;
   signIn(
-    identifier: string,
+    email: string,
     password: string
   ): Promise<{
     accessToken: string;
     idToken: string;
     refreshToken: string;
   }>;
+  resendCode(email: string): Promise<string>;
+  getUserByEmail(email: string): Promise<
+    | {
+        userId: string;
+        email: string;
+        name: string;
+        username: string;
+        role: string;
+        emailVerified: boolean;
+      }
+    | undefined
+  >;
   refreshToken(refreshToken: string): Promise<{
     accessToken: string;
     idToken: string;
     refreshToken: string;
   }>;
-  deleteAccount(username: string, password: string): Promise<void>;
-  changeUsername(
+  forgotPassword(email: string): Promise<string>;
+  confirmForgotPassword(
     email: string,
-    username: string,
-    newUsername: string,
-    password: string
-  ): Promise<ChangeUsernameReturnType | null>
-  updateProfile(
-    username: string,
-    nickname: string
+    newPassword: string,
+    code: string
   ): Promise<void>;
-  findUserByUsername(username: string): Promise<User | undefined>;
-  updateEmail(email: string, newEmail: string): Promise<void>;
-  updatePassword(email: string, newPassword: string): Promise<void>;
-  signUpOAuth(
-    name: string,
-    email: string,
-  ): Promise<User>;
-  signInOAuth(
-    email: string
-  ): Promise<{
-    accessToken: string;
-    idToken: string;
-    refreshToken: string;
-  }>;
+  deleteAccount(username: string, password: string): Promise<void>;
+  adminUpdateUser(email: string, newRole: string): Promise<void>;
 }

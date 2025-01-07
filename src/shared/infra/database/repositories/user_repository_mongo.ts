@@ -8,7 +8,7 @@ import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
 import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
 import { GetProfileReturnType } from "src/shared/domain/types/get_profile_return_type";
 import { Collection, Connection } from "mongoose";
-import { User } from "src/shared/domain/entities/user";
+import { Profile } from "src/shared/domain/entities/profile";
 import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 import { FindPersonReturnType } from "src/shared/helpers/types/find_person_return_type";
 
@@ -112,7 +112,7 @@ export class UserRepositoryMongo implements IUserRepository {
     }
   }
 
-  async getAllFollowers(username: string): Promise<User[]> {
+  async getAllFollowers(username: string): Promise<Profile[]> {
     const userDoc = await this.userCollection.findOne({ username });
     if (!userDoc) {
       throw new NoItemsFound("username");
@@ -132,7 +132,7 @@ export class UserRepositoryMongo implements IUserRepository {
     });
   }
 
-  async getAllFollowing(username: string): Promise<User[]> {
+  async getAllFollowing(username: string): Promise<Profile[]> {
     const userDoc = await this.userCollection.findOne({ username });
     if (!userDoc) {
       throw new NoItemsFound("username");
@@ -178,13 +178,13 @@ export class UserRepositoryMongo implements IUserRepository {
   }
 
   async updateAccount(
-    user_id: string,
+    userId: string,
     dateBirth?: Date,
     phoneNumber?: string,
     cpf?: string,
     gender?: GENDER_TYPE
-  ): Promise<User | undefined> {
-    const userDoc = await this.userCollection.findOne({ _id: user_id });
+  ): Promise<Profile | undefined> {
+    const userDoc = await this.userCollection.findOne({ _id: userId });
 
     if (!userDoc) {
       return undefined;
@@ -198,7 +198,7 @@ export class UserRepositoryMongo implements IUserRepository {
     if (gender) updateFields.gender = gender;
 
     const result = await this.userCollection.updateOne(
-      { _id: user_id },
+      { _id: userId },
       { $set: updateFields }
     );
 
@@ -206,7 +206,7 @@ export class UserRepositoryMongo implements IUserRepository {
       throw new Error("Erro ao atualizar os dados do usuário.");
     }
 
-    const updatedUserDoc = await this.userCollection.findOne({ _id: user_id });
+    const updatedUserDoc = await this.userCollection.findOne({ _id: userId });
 
     if (!updatedUserDoc) {
       throw new Error("Erro ao buscar os dados atualizados do usuário.");
@@ -263,7 +263,7 @@ export class UserRepositoryMongo implements IUserRepository {
     );
   }
 
-  async getAccountDetails(username: string): Promise<User> {
+  async getAccountDetails(username: string): Promise<Profile> {
     const userDoc = await this.userCollection.findOne({ username });
 
     if (!userDoc) {
@@ -274,7 +274,7 @@ export class UserRepositoryMongo implements IUserRepository {
     return UserMongoDTO.toEntity(userDto);
   }
 
-  async createUser(user: User, isOAuth: boolean = false): Promise<User> {
+  async createUser(user: Profile, isOAuth: boolean = false): Promise<Profile> {
     const userAlreadyExists = await this.userCollection.findOne({
       email: user.userEmail,
     });
@@ -321,7 +321,7 @@ export class UserRepositoryMongo implements IUserRepository {
     }
   }
 
-  async findByUsername(username: string): Promise<User | undefined> {
+  async findByUsername(username: string): Promise<Profile | undefined> {
     const userDoc = await this.userCollection.findOne({ username });
 
     if (!userDoc) {
@@ -364,7 +364,7 @@ export class UserRepositoryMongo implements IUserRepository {
     }
   }
 
-  async getFriends(username: string): Promise<User[]> {
+  async getFriends(username: string): Promise<Profile[]> {
     const userDoc = await this.userCollection.findOne({ username });
 
     if (!userDoc) {
@@ -381,7 +381,7 @@ export class UserRepositoryMongo implements IUserRepository {
     );
   }
 
-  async getAllReviewsByEvent(eventId: string): Promise<User[]> {
+  async getAllReviewsByEvent(eventId: string): Promise<Profile[]> {
     const reviews = await this.userCollection
       .find({ "reviews.event_id": eventId })
       .toArray();
@@ -395,7 +395,7 @@ export class UserRepositoryMongo implements IUserRepository {
     );
   }
 
-  async findByEmail(email: string): Promise<User | undefined> {
+  async findByEmail(email: string): Promise<Profile | undefined> {
     const userDoc = await this.userCollection.findOne({ email });
 
     if (!userDoc) {

@@ -1,11 +1,16 @@
+import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
+import { USER_STATUS } from "src/shared/domain/enums/user_status";
+
 const TO_COGNITO_PARAMS = {
   email: "email",
+  username: "username",
   name: "name",
   role: "custom:role",
 };
 
 const FROM_COGNITO_PARAMS = {
   userId: "sub",
+  username: "username",
   email: "email",
   name: "name",
   role: "custom:role",
@@ -13,23 +18,32 @@ const FROM_COGNITO_PARAMS = {
 };
 
 export class UserCognitoDTO {
-  userId?: string;
   email: string;
+  username: string;
   name: string;
-  role: string;
-  emailVerified: boolean;
+  role: ROLE_TYPE;
+  userStatus: USER_STATUS;
+  enabled: boolean;
+  emailVerified?: boolean;
+  userId?: string;
 
   constructor(
     email: string,
+    username: string,
     name: string,
-    role: string,
-    emailVerified: boolean,
+    role: ROLE_TYPE,
+    userStatus: USER_STATUS,
+    enabled: boolean,
+    emailVerified?: boolean,
     userId?: string
   ) {
     this.userId = userId;
     this.email = email;
     this.name = name;
+    this.enabled = enabled;
+    this.userStatus = userStatus;
     this.emailVerified = emailVerified;
+    this.username = username;
     this.role = role;
   }
 
@@ -76,6 +90,7 @@ export class UserCognitoDTO {
     return new UserCognitoDTO(
       userAttrs.email ?? "",
       userAttrs.name ?? "",
+      userAttrs.username ?? "",
       userAttrs.role ?? "COMMON",
       userAttrs.emailVerified ?? false,
       userAttrs.userId

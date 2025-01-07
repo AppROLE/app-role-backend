@@ -3,8 +3,8 @@ import { IUser } from "../models/user.model";
 import {
   FavoriteProps,
   FollowingProps,
-  User,
-} from "src/shared/domain/entities/user";
+  Profile,
+} from "src/shared/domain/entities/profile";
 import { IUser as UserDocument } from "../models/user.model";
 import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 
@@ -109,9 +109,9 @@ export class UserMongoDTO {
     });
   }
 
-  static toEntity(userMongoDTO: UserMongoDTO): User {
-    return new User({
-      user_id: userMongoDTO._id,
+  static toEntity(userMongoDTO: UserMongoDTO): Profile {
+    return new Profile({
+      userId: userMongoDTO._id,
       name: userMongoDTO.name,
       nickname: userMongoDTO.nickname,
       username: userMongoDTO.username,
@@ -140,7 +140,7 @@ export class UserMongoDTO {
     });
   }
 
-  static fromEntity(user: User): UserMongoDTO {
+  static fromEntity(user: Profile): UserMongoDTO {
     return new UserMongoDTO({
       _id: user.userId as string,
       name: user.userName,

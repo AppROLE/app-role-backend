@@ -1,4 +1,4 @@
-import { User } from "src/shared/domain/entities/user";
+import { Profile } from "src/shared/domain/entities/profile";
 import { IAuthRepository } from "src/shared/domain/irepositories/auth_repository_interface";
 import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
@@ -7,7 +7,7 @@ export class ConfirmCodeUseCase {
   constructor(private readonly repo: IAuthRepository) {}
 
   async execute(email: string, code: string) {
-    if (!User.validateEmail(email)) {
+    if (!Profile.validateEmail(email)) {
       throw new EntityError("email");
     }
 
@@ -15,23 +15,20 @@ export class ConfirmCodeUseCase {
       throw new EntityError("code");
     }
 
-    const result = await this.repo.confirmCode(
-      email,
-      code
-    );
+    const result = await this.repo.confirmCode(email, code);
 
     if (!result) {
       throw new NoItemsFound("código");
     }
 
-    const codeFromCognito = result.code
-    const user = result.user
+    const codeFromCognito = result.code;
+    const user = result.user;
 
     return { message: "Código validado com sucesso!", user, codeFromCognito };
   }
 
   async getUser(username: string) {
-    if (!User.validateUsername(username)) {
+    if (!Profile.validateUsername(username)) {
       throw new EntityError("username");
     }
 

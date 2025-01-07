@@ -1,12 +1,12 @@
-import { User } from "../entities/user";
+import { Profile } from "../entities/profile";
 import { PRIVACY_TYPE } from "../enums/privacy_enum";
 
 export class UserMock {
-  public users: User[];
+  public users: Profile[];
 
   constructor() {
     this.users = [
-      new User({
+      new Profile({
         name: "Matue",
         nickname: "matue",
         username: "matue30praum",
@@ -28,7 +28,7 @@ export class UserMock {
           },
         ],
       }),
-      new User({
+      new Profile({
         name: "User",
         nickname: "user",
         username: "user",
@@ -49,7 +49,7 @@ export class UserMock {
           },
         ],
       }),
-      new User({
+      new Profile({
         name: "User",
         nickname: "user",
         username: "user",
