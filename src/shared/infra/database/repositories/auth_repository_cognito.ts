@@ -28,15 +28,14 @@ import {
   DuplicatedItem,
   NoItemsFound,
 } from "src/shared/helpers/errors/usecase_errors";
-import { ChangeUsernameReturnType } from "src/shared/helpers/types/change_username_return_type";
 import { UserCognitoDTO } from "../../dto/user_cognito_dto";
 import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
 import { Environments } from "src/shared/environments";
 
 export class AuthRepositoryCognito implements IAuthRepository {
-  userPoolId: string;
-  appClientId: string;
-  client: CognitoIdentityProviderClient;
+  private userPoolId: string;
+  private appClientId: string;
+  private client: CognitoIdentityProviderClient;
 
   constructor() {
     this.userPoolId = Environments.userPoolId;
@@ -44,6 +43,50 @@ export class AuthRepositoryCognito implements IAuthRepository {
     this.client = new CognitoIdentityProviderClient({
       region: Environments.region,
     });
+  }
+
+  async signUp(
+    name: string,
+    email: string,
+    password: string
+  ): Promise<{
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+  }> {
+    try {
+      const params: SignUpCommandInput = {
+        ClientId: this.appClientId,
+        Password: password,
+        Username: email,
+        UserAttributes: [
+          {
+            Name: "STRING_VALUE",
+            Value: "STRING_VALUE",
+          },
+        ],
+        // ValidationData: [
+        //   {
+        //     Name: 'SupressEmail',
+        //     Value: 'true'
+        //   },
+        //   {
+        //     Name: 'SupressSMS',
+        //     Value: 'true'
+        //   }
+        // ]
+      };
+
+      const command = new SignUpCommand(params);
+      const result = await this.client.send(command);
+
+      return user;
+    } catch (error: any) {
+      throw new Error(
+        "AuthRepositoryCognito, Error on signUp: " + error.message
+      );
+    }
   }
 
   async resendCode(email: string): Promise<string> {
@@ -118,10 +161,6 @@ export class AuthRepositoryCognito implements IAuthRepository {
           {
             Name: "email",
             Value: newEmail,
-          },
-          {
-            Name: "email_verified",
-            Value: "true",
           },
         ],
       };
@@ -218,50 +257,6 @@ export class AuthRepositoryCognito implements IAuthRepository {
     } catch (error: any) {
       throw new Error(
         "AuthRepositoryCognito, Error on getUserByEmail: " + error.message
-      );
-    }
-  }
-
-  async signUp(
-    name: string,
-    email: string,
-    password: string
-  ): Promise<{
-    userId: string;
-    name: string;
-    email: string;
-    role: string;
-  }> {
-    try {
-      const params: SignUpCommandInput = {
-        ClientId: this.appClientId,
-        Password: password,
-        Username: email,
-        UserAttributes: [
-          {
-            Name: "STRING_VALUE",
-            Value: "STRING_VALUE",
-          },
-        ],
-        // ValidationData: [
-        //   {
-        //     Name: 'SupressEmail',
-        //     Value: 'true'
-        //   },
-        //   {
-        //     Name: 'SupressSMS',
-        //     Value: 'true'
-        //   }
-        // ]
-      };
-
-      const command = new SignUpCommand(params);
-      const result = await this.client.send(command);
-
-      return user;
-    } catch (error: any) {
-      throw new Error(
-        "AuthRepositoryCognito, Error on signUp: " + error.message
       );
     }
   }

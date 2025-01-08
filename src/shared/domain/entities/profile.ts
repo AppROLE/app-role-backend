@@ -5,7 +5,7 @@ import { PRIVACY_TYPE } from "../enums/privacy_enum";
 import { ROLE_TYPE } from "../enums/role_type_enum";
 
 interface ProfileProps {
-  userId?: string;
+  userId: string;
   name: string;
   nickname: string;
   username: string;
@@ -39,30 +39,34 @@ export interface FavoriteProps {
 }
 
 export class Profile {
-  private userId?: string;
-  private name: string;
-  private nickname?: string;
-  private username: string;
-  private email: string;
-  private acceptedTerms: boolean;
-  private acceptedTermsAt: Date;
-  private dateBirth?: Date;
-  private cpf?: string;
-  private gender?: GENDER_TYPE;
-  private biography?: string;
-  private role?: ROLE_TYPE;
-  private phoneNumber?: string;
-  private link_instagram?: string;
-  private link_tiktok?: string;
-  private bg_photo?: string;
-  private profile_photo?: string;
-  private privacy?: PRIVACY_TYPE;
-  private created_at: Date;
-  private following: FollowingProps[];
-  private favorites: FavoriteProps[];
+  userId: string;
+  name: string;
+  nickname?: string;
+  username: string;
+  email: string;
+  acceptedTerms: boolean;
+  acceptedTermsAt: Date;
+  dateBirth?: Date;
+  cpf?: string;
+  gender?: GENDER_TYPE;
+  biography?: string;
+  role?: ROLE_TYPE;
+  phoneNumber?: string;
+  link_instagram?: string;
+  link_tiktok?: string;
+  bg_photo?: string;
+  profile_photo?: string;
+  privacy?: PRIVACY_TYPE;
+  created_at: Date;
+  following: FollowingProps[];
+  favorites: FavoriteProps[];
 
   constructor(props: ProfileProps) {
+    if (Validations.validateUserId(props.userId)) {
+      throw new EntityError("userId");
+    }
     this.userId = props.userId;
+
     if (Validations.validateName(props.name)) {
       throw new EntityError("name");
     }
@@ -158,174 +162,6 @@ export class Profile {
     this.following = props.following || [];
     this.favorites = props.favorites || [];
     this.created_at = props.createdAt || new Date();
-  }
-
-  get userId(): string | undefined {
-    return this.userId;
-  }
-
-  get userName(): string {
-    return this.name;
-  }
-
-  get userNickname(): string | undefined {
-    return this.nickname;
-  }
-
-  get userUsername(): string {
-    return this.username;
-  }
-
-  get userEmail(): string {
-    return this.email;
-  }
-
-  get userDateBirth(): Date | undefined {
-    return this.dateBirth;
-  }
-
-  get userAcceptedTerms(): boolean {
-    return this.acceptedTerms;
-  }
-
-  get userAcceptedTermsAt(): Date {
-    return this.acceptedTermsAt;
-  }
-
-  get userCpf(): string | undefined {
-    return this.cpf;
-  }
-
-  get userGender(): GENDER_TYPE | undefined {
-    return this.gender;
-  }
-
-  get userrole(): ROLE_TYPE | undefined {
-    return this.role;
-  }
-
-  get userPhoneNumber(): string | undefined {
-    return this.phoneNumber;
-  }
-
-  get userBiography(): string | undefined {
-    return this.biography;
-  }
-
-  get userCreatedAt(): Date {
-    return this.created_at;
-  }
-
-  get userlinkInstagram(): string | undefined {
-    return this.link_instagram;
-  }
-
-  get userlinkTiktok(): string | undefined {
-    return this.link_tiktok;
-  }
-
-  get userBgPhoto(): string | undefined {
-    return this.bg_photo;
-  }
-
-  get userProfilePhoto(): string | undefined {
-    return this.profile_photo;
-  }
-
-  get userPrivacy(): PRIVACY_TYPE | undefined {
-    return this.privacy;
-  }
-
-  get userFollowing(): FollowingProps[] {
-    return this.following;
-  }
-
-  get userFavorites(): FavoriteProps[] {
-    return this.favorites;
-  }
-
-  set setUserId(id: string | undefined) {
-    this.userId = id;
-  }
-
-  set setUserName(name: string) {
-    this.name = name;
-  }
-
-  set setUserNickname(nickname: string) {
-    this.nickname = nickname;
-  }
-
-  set setUserUsername(username: string) {
-    this.username = username;
-  }
-
-  set setUserEmail(email: string) {
-    this.email = email;
-  }
-
-  set setUserAcceptedTerms(acceptedTerms: boolean) {
-    this.acceptedTerms = acceptedTerms;
-  }
-
-  set setUserAcceptedTermsAt(acceptedTermsAt: Date) {
-    this.acceptedTermsAt = acceptedTermsAt;
-  }
-
-  set setUserCpf(cpf: string | undefined) {
-    this.cpf = cpf;
-  }
-
-  set setUserDateBirth(dateBirth: Date | undefined) {
-    this.dateBirth = dateBirth;
-  }
-
-  set setUserGender(gender: GENDER_TYPE | undefined) {
-    this.gender = gender;
-  }
-
-  set setUserrole(role: ROLE_TYPE | undefined) {
-    this.role = role;
-  }
-
-  set setUserPhoneNumber(phoneNumber: string | undefined) {
-    this.phoneNumber = phoneNumber;
-  }
-
-  set setUserBiography(biography: string | undefined) {
-    this.biography = biography;
-  }
-
-  set setUserCreatedAt(createdAt: Date) {
-    this.created_at = createdAt;
-  }
-
-  set setUserlinkInstagram(linkInstagram: string | undefined) {
-    this.link_instagram = linkInstagram;
-  }
-
-  set setUserlinkTiktok(linkTiktok: string | undefined) {
-    this.link_tiktok = linkTiktok;
-  }
-
-  set setUserBgPhoto(bgPhoto: string | undefined) {
-    this.bg_photo = bgPhoto;
-  }
-
-  set setUserProfilePhoto(profilePhoto: string | undefined) {
-    this.profile_photo = profilePhoto;
-  }
-
-  set setUserPrivacy(privacy: PRIVACY_TYPE | undefined) {
-    this.privacy = privacy;
-  }
-
-  set setUserFollowing(following: FollowingProps[]) {
-    this.following = following;
-  }
-
-  set setUserFavorites(favorites: FavoriteProps[]) {
-    this.favorites = favorites;
   }
 
   static validateNickname(nickname: string): boolean {

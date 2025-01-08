@@ -4,27 +4,32 @@ import { Validations } from "src/shared/helpers/utils/validations";
 import { USER_STATUS } from "../enums/user_status";
 
 interface UserProps {
+  userId: string;
   email: string;
   username: string;
   name: string;
   role: ROLE_TYPE;
   userStatus: USER_STATUS;
   enabled: boolean;
-  emailVerified?: boolean;
-  userId?: string;
+  emailVerified: boolean;
 }
 
 export class User {
+  userId: string;
   email: string;
   username: string;
   name: string;
   role: ROLE_TYPE;
   userStatus: USER_STATUS;
   enabled: boolean;
-  emailVerified?: boolean;
-  userId?: string;
+  emailVerified: boolean;
 
   constructor(props: UserProps) {
+    if (Validations.validateUserId(props.userId)) {
+      throw new EntityError("userId");
+    }
+    this.userId = props.userId;
+
     if (Validations.validateEmail(props.email)) {
       throw new EntityError("email");
     }
@@ -58,11 +63,9 @@ export class User {
     }
     this.enabled = props.enabled;
 
-    if (props.emailVerified && typeof props.emailVerified !== "boolean") {
+    if (typeof props.emailVerified !== "boolean") {
       throw new EntityError("emailVerified");
     }
     this.emailVerified = props.emailVerified;
-
-    this.userId = props.userId;
   }
 }

@@ -1,14 +1,13 @@
+import { User } from "../entities/user";
+import { ROLE_TYPE } from "../enums/role_type_enum";
+
 export interface IAuthRepository {
   signUp(
     name: string,
     email: string,
-    password: string
-  ): Promise<{
-    userId: string;
-    name: string;
-    email: string;
-    role: string;
-  }>;
+    password: string,
+    role: ROLE_TYPE
+  ): Promise<User>;
   signIn(
     email: string,
     password: string
@@ -18,17 +17,7 @@ export interface IAuthRepository {
     refreshToken: string;
   }>;
   resendCode(email: string): Promise<string>;
-  getUserByEmail(email: string): Promise<
-    | {
-        userId: string;
-        email: string;
-        name: string;
-        username: string;
-        role: string;
-        emailVerified: boolean;
-      }
-    | undefined
-  >;
+  getUserByEmail(email: string): Promise<User | undefined>;
   refreshToken(refreshToken: string): Promise<{
     accessToken: string;
     idToken: string;

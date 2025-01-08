@@ -1,6 +1,0 @@
-export enum ROLE_TYPE {
-    OWNER = "OWNER",
-    ORGANIZER = "ORGANIZER",
-    MODERATOR = "MODERATOR",
-    COMMON = "COMMON",
-  }

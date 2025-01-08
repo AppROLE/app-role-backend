@@ -1,21 +1,29 @@
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
-import { USER_STATUS } from "src/shared/domain/enums/user_status";
+import { User } from "../../domain/entities/user";
+import { roleToEnum, ROLE_TYPE } from "../../domain/enums/role_type_enum";
+import { userStatusToEnum, USER_STATUS } from "../../domain/enums/user_status";
 
 const TO_COGNITO_PARAMS = {
   email: "email",
-  username: "username",
   name: "name",
+  username: "custom:username",
   role: "custom:role",
 };
 
-const FROM_COGNITO_PARAMS = {
-  userId: "sub",
-  username: "username",
-  email: "email",
-  name: "name",
-  role: "custom:role",
-  emailVerified: "email_verified",
+type CognitoAttribute = {
+  Name: string;
+  Value: string;
 };
+
+interface UserCognitoProps {
+  userId: string;
+  email: string;
+  username: string;
+  name: string;
+  role: ROLE_TYPE;
+  userStatus: USER_STATUS;
+  enabled: boolean;
+  emailVerified: boolean;
+}
 
 export class UserCognitoDTO {
   email: string;
@@ -25,26 +33,30 @@ export class UserCognitoDTO {
   userStatus: USER_STATUS;
   enabled: boolean;
   emailVerified?: boolean;
-  userId?: string;
+  userId: string;
 
-  constructor(
-    email: string,
-    username: string,
-    name: string,
-    role: ROLE_TYPE,
-    userStatus: USER_STATUS,
-    enabled: boolean,
-    emailVerified?: boolean,
-    userId?: string
-  ) {
-    this.userId = userId;
-    this.email = email;
-    this.name = name;
-    this.enabled = enabled;
-    this.userStatus = userStatus;
-    this.emailVerified = emailVerified;
-    this.username = username;
-    this.role = role;
+  constructor(props: UserCognitoProps) {
+    this.userId = props.userId;
+    this.email = props.email;
+    this.name = props.name;
+    this.enabled = props.enabled;
+    this.userStatus = props.userStatus;
+    this.emailVerified = props.emailVerified;
+    this.username = props.username;
+    this.role = props.role;
+  }
+
+  static fromEntity(user: User) {
+    return new UserCognitoDTO({
+      email: user.email,
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      userStatus: user.userStatus,
+      enabled: user.enabled,
+      userId: user.userId,
+      emailVerified: user.emailVerified,
+    });
   }
 
   toCognitoAttributes() {
@@ -66,34 +78,28 @@ export class UserCognitoDTO {
     return attributes;
   }
 
-  static fromCognitoAttributes(
-    attrs: { [key: string]: any } | undefined
-  ): UserCognitoDTO {
-    const userAttrs: { [key: string]: any } = {};
+  static fromCognito(data: Record<string, any>): UserCognitoDTO {
+    const userAttributes: CognitoAttribute[] = data.UserAttributes || [];
 
-    if (attrs) {
-      for (const key in FROM_COGNITO_PARAMS) {
-        const typedKey = key as keyof typeof FROM_COGNITO_PARAMS;
-        const cognitoKey = FROM_COGNITO_PARAMS[typedKey];
-        const attribute = attrs.find((attr: any) => attr.Name === cognitoKey);
-
-        if (attribute?.Value === "true") {
-          userAttrs[typedKey] = true;
-        } else if (attribute?.Value === "false") {
-          userAttrs[typedKey] = false;
-        } else {
-          userAttrs[typedKey] = attribute?.Value || null;
-        }
-      }
+    const userData: Record<string, any> = {};
+    for (const att of userAttributes) {
+      userData[att.Name] = att.Value;
     }
 
-    return new UserCognitoDTO(
-      userAttrs.email ?? "",
-      userAttrs.name ?? "",
-      userAttrs.username ?? "",
-      userAttrs.role ?? "COMMON",
-      userAttrs.emailVerified ?? false,
-      userAttrs.userId
-    );
+    userData["enabled"] = data["Enabled"];
+    userData["status"] = data["UserStatus"] ?? "CONFIRMED";
+
+    console.log(userData["custom:role"]);
+
+    return new UserCognitoDTO({
+      userId: userData["sub"],
+      email: userData["email"],
+      username: userData["custom:username"],
+      name: userData["name"],
+      role: roleToEnum(userData["custom:role"]) as ROLE_TYPE,
+      userStatus: userStatusToEnum(userData["status"]) as USER_STATUS,
+      enabled: userData["enabled"],
+      emailVerified: userData["email_verified"] === "true",
+    });
   }
 }

@@ -1,6 +1,14 @@
 import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
 
 export class Validations {
+  static validateUserId(userId: string): boolean {
+    const USER_ID_LENGTH = 36;
+    if (!userId || userId.length !== USER_ID_LENGTH) {
+      return false;
+    }
+    return true;
+  }
+
   static validateEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
