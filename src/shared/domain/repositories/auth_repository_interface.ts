@@ -16,19 +16,19 @@ export interface IAuthRepository {
     idToken: string;
     refreshToken: string;
   }>;
-  resendCode(email: string): Promise<string>;
-  getUserByEmail(email: string): Promise<User | undefined>;
-  refreshToken(refreshToken: string): Promise<{
-    accessToken: string;
-    idToken: string;
-    refreshToken: string;
-  }>;
-  forgotPassword(email: string): Promise<string>;
+  resendCode(email: string): Promise<void>;
+  getUserByEmail(email: string): Promise<User | null>;
+  forgotPassword(email: string): Promise<void>;
   confirmForgotPassword(
     email: string,
     newPassword: string,
     code: string
   ): Promise<void>;
+  // refreshToken(refreshToken: string): Promise<{
+  //   accessToken: string;
+  //   idToken: string;
+  //   refreshToken: string;
+  // }>;
   deleteAccount(username: string, password: string): Promise<void>;
   adminUpdateUser(email: string, newRole: string): Promise<void>;
 }

@@ -5,7 +5,7 @@ import {
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { GetTopEventsUseCase } from "./get_top_events_usecase";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 
 export class GetTopEventsController {
   constructor(private readonly usecase: GetTopEventsUseCase) {}

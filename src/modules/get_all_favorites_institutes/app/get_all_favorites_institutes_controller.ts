@@ -7,11 +7,11 @@ import {
 import {
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
-import { MissingParameters } from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
+import { MissingParameters } from "src/shared/helpers/errors/errors";
 import { GetAllFavoriteInstitutesUseCase } from "./get_all_favorites_institutes_usecase";
 import { GetAllFavoriteInstitutesViewModel } from "./get_all_favorites_institutes_viewmodel";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 
 export class GetAllFavoriteInstitutesController {
   constructor(private readonly usecase: GetAllFavoriteInstitutesUseCase) {}

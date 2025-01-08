@@ -1,6 +1,6 @@
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class UnConfirmEventUseCase {

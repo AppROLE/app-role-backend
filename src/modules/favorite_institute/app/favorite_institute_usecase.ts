@@ -1,10 +1,10 @@
-import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { IProfileRepository } from "src/shared/domain/repositories/profile_repository_interface";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class FavoriteInstituteUseCase {
   repository: Repository;
-  private user_repo?: IUserRepository;
+  private user_repo?: IProfileRepository;
 
   constructor() {
     this.repository = new Repository({
@@ -14,7 +14,7 @@ export class FavoriteInstituteUseCase {
 
   async connect() {
     await this.repository.connectRepository();
-    this.user_repo = this.repository.user_repo;
+    this.user_repo = this.repository.profile_repo;
 
     if (!this.user_repo)
       throw new Error('Expected to have an instance of the user repository');

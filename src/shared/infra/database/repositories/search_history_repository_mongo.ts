@@ -1,7 +1,7 @@
 import { ISearchHistoryRepository } from "src/shared/domain/repositories/search_history_repository_interface";
 import { SearchHistoryDTO } from "../../database/dtos/search_history_dto";
 import { Collection, Connection } from "mongoose";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { ISearchHistoryDocument } from "../models/search_history.model";
 
 export class SearchHistoryRepositoryMongo implements ISearchHistoryRepository {
@@ -47,7 +47,7 @@ export class SearchHistoryRepositoryMongo implements ISearchHistoryRepository {
     } else {
       const oldestSearch = await this.searchHistoryCollection.findOne(
         { username },
-        { sort: { created_at: 1 } }
+        { sort: { createdAt: 1 } }
       );
       if (oldestSearch) {
         await this.searchHistoryCollection.deleteOne({ _id: oldestSearch._id });

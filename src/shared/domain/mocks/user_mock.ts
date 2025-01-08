@@ -13,7 +13,7 @@ export class UserMock {
         email: "matue@30praum.com",
         linkInstagram: "https://instagram.com/matue30praum",
         linkTiktok: "https://tiktok.com/matue30praum",
-        bgPhoto: "https://example.com/bgphoto1.jpg",
+        backgroundPhoto: "https://example.com/backgroundPhoto1.jpg",
         profilePhoto: "https://example.com/profile1.jpg",
         acceptedTerms: true,
         emailVerified: true,

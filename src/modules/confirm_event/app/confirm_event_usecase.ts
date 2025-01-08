@@ -3,7 +3,7 @@ import { IPresenceRepository } from "src/shared/domain/repositories/presence_rep
 import {
   NoItemsFound,
   UserAlreadyConfirmedEvent,
-} from "src/shared/helpers/errors/usecase_errors";
+} from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class ConfirmEventUseCase {

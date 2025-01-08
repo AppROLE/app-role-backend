@@ -7,16 +7,16 @@ import {
   OK,
   Unauthorized,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 import {
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+} from "src/shared/helpers/errors/errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import { GetAllConfirmedEventsViewModel } from "./get_all_confirmed_event_viewmodel";
 
 export class GetAllConfirmedEventsController {

@@ -1,6 +1,6 @@
 // import nodemailer from "nodemailer";
-// import { FailToSendEmail } from "../helpers/errors/usecase_errors";
-// import { InvalidCredentialsError } from "../helpers/errors/login_errors";
+// import { FailToSendEmail } from "../helpers/errors/errors";
+// import { InvalidCredentialsError } from "../helpers/errors/errors";
 
 // const transporter = nodemailer.createTransport({
 //   host: "smtp.zoho.com",

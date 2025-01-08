@@ -1,6 +1,6 @@
-import { User } from "../../domain/entities/user";
-import { roleToEnum, ROLE_TYPE } from "../../domain/enums/role_type_enum";
-import { userStatusToEnum, USER_STATUS } from "../../domain/enums/user_status";
+import { User } from "src/shared/domain/entities/user";
+import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
+import { USER_STATUS } from "src/shared/domain/enums/user_status";
 
 const TO_COGNITO_PARAMS = {
   email: "email",
@@ -32,7 +32,7 @@ export class UserCognitoDTO {
   role: ROLE_TYPE;
   userStatus: USER_STATUS;
   enabled: boolean;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   userId: string;
 
   constructor(props: UserCognitoProps) {
@@ -89,17 +89,28 @@ export class UserCognitoDTO {
     userData["enabled"] = data["Enabled"];
     userData["status"] = data["UserStatus"] ?? "CONFIRMED";
 
-    console.log(userData["custom:role"]);
-
     return new UserCognitoDTO({
       userId: userData["sub"],
       email: userData["email"],
       username: userData["custom:username"],
       name: userData["name"],
-      role: roleToEnum(userData["custom:role"]) as ROLE_TYPE,
-      userStatus: userStatusToEnum(userData["status"]) as USER_STATUS,
+      role: userData["custom:role"],
+      userStatus: userData["status"],
       enabled: userData["enabled"],
       emailVerified: userData["email_verified"] === "true",
+    });
+  }
+
+  toEntity() {
+    return new User({
+      userId: this.userId,
+      email: this.email,
+      username: this.username,
+      name: this.name,
+      role: this.role,
+      userStatus: this.userStatus,
+      enabled: this.enabled,
+      emailVerified: this.emailVerified,
     });
   }
 }

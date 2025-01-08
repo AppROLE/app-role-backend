@@ -5,8 +5,8 @@ import {
   NotFound,
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
-import { MissingParameters } from "src/shared/helpers/errors/controller_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
+import { MissingParameters } from "src/shared/helpers/errors/errors";
 import { GetInstituteByIdViewModel } from "./get_institute_by_id_viewmodel";
 
 export class GetInstituteByIdController {

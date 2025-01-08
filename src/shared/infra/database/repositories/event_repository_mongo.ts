@@ -6,7 +6,7 @@ import {
   NoItemsFound,
   ConflictItems,
   FailedToAddToGallery,
-} from "../../../../../src/shared/helpers/errors/usecase_errors";
+} from "../../../../../src/shared/helpers/errors/errors";
 import { Collection, Connection } from "mongoose";
 
 export class EventRepositoryMongo implements IEventRepository {
@@ -21,9 +21,9 @@ export class EventRepositoryMongo implements IEventRepository {
   }
 
   createReview(
-    star: number,
+    rating: number,
     review: string,
-    reviewedAt: Date,
+    createdAt: Date,
     eventId: string,
     name: string,
     photoUrl: string,
@@ -105,13 +105,13 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new NoItemsFound("event");
     }
 
-    if (eventDoc.banner_url === bannerUrl) {
+    if (eventDoc.bannerUrl === bannerUrl) {
       return;
     }
 
     const result = await this.eventCollection.updateOne(
       { _id: eventId },
-      { $set: { banner_url: bannerUrl } }
+      { $set: { bannerUrl: bannerUrl } }
     );
 
     if (result.modifiedCount === 0) {
@@ -122,7 +122,7 @@ export class EventRepositoryMongo implements IEventRepository {
   async updateEventPhoto(eventId: string, eventPhoto: string): Promise<string> {
     const result = await this.eventCollection.updateOne(
       { _id: eventId },
-      { $set: { event_photo_link: eventPhoto } }
+      { $set: { eventPhotoLink: eventPhoto } }
     );
 
     if (!result.modifiedCount) {
@@ -135,7 +135,7 @@ export class EventRepositoryMongo implements IEventRepository {
   async updateGalleryArray(eventId: string, imageKey: string): Promise<void> {
     const result = await this.eventCollection.updateOne(
       { _id: eventId },
-      { $push: { galery_link: imageKey } }
+      { $push: { galeryLink: imageKey } }
     );
 
     if (!result.modifiedCount) {
@@ -150,7 +150,7 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new NoItemsFound("event");
     }
 
-    return eventDoc.galery_link ? eventDoc.galery_link.length : 0;
+    return eventDoc.galeryLink ? eventDoc.galeryLink.length : 0;
   }
 
   async getEventsByFilter(filter: any): Promise<Event[]> {
@@ -159,8 +159,8 @@ export class EventRepositoryMongo implements IEventRepository {
     if (filter.name) {
       query.name = { $regex: new RegExp(filter.name, "i") };
     }
-    if (filter.event_date) {
-      query.event_date = { $gte: new Date(filter.event_date) };
+    if (filter.eventDate) {
+      query.eventDate = { $gte: new Date(filter.eventDate) };
     }
 
     const eventDocs = await this.eventCollection.find(query).toArray();
@@ -179,8 +179,8 @@ export class EventRepositoryMongo implements IEventRepository {
     const limit = 20 * page;
 
     const eventDocs = await this.eventCollection
-      .find({ event_date: { $gte: today } })
-      .sort({ event_date: 1 })
+      .find({ eventDate: { $gte: today } })
+      .sort({ eventDate: 1 })
       .limit(limit)
       .toArray();
 

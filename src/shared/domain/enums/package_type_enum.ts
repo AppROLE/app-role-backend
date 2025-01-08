@@ -1,4 +1,4 @@
-import { EnumError } from "../../helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 
 export enum PACKAGE_TYPE {
   COMBO = "COMBO",
@@ -15,6 +15,6 @@ export function toEnum(value: string): PACKAGE_TYPE {
     case "CAMAROTE":
       return PACKAGE_TYPE.CAMAROTE;
     default:
-      throw new EnumError();
+      throw new EntityError("package type");
   }
 }

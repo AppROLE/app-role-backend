@@ -9,7 +9,7 @@ export class InstituteMock {
     this.institutes = [
       new Institute({
         name: "Galleria Club",
-        location: {
+        address: {
           address: "123 Main St",
           number: 123,
           cep: "12345-678",
@@ -19,14 +19,14 @@ export class InstituteMock {
           latitude: 0,
           longitude: 0,
         },
-        partner_type: PARTNER_TYPE.NO_PARTNER,
+        partnerType: PARTNER_TYPE.NO_PARTNER,
         description: "A melhor balada de São Paulo",
-        institute_type: INSTITUTE_TYPE.ESTABELECIMENTO_FIXO,
-        logo_photo: "https://example.com/galleria_club_logo.jpg",
+        instituteType: INSTITUTE_TYPE.ESTABELECIMENTO_FIXO,
+        logoPhoto: "https://example.com/galleria_club_logo.jpg",
       }),
       new Institute({
         name: "Galleria Club",
-        location: {
+        address: {
           address: "123 Main St",
           number: 123,
           cep: "12345-678",
@@ -36,14 +36,14 @@ export class InstituteMock {
           latitude: 0,
           longitude: 0,
         },
-        partner_type: PARTNER_TYPE.PROMOTER_PARTNER,
+        partnerType: PARTNER_TYPE.PROMOTER_PARTNER,
         description: "A melhor balada de São Paulo",
-        institute_type: INSTITUTE_TYPE.AGENCIA_DE_FESTAS,
-        logo_photo: "https://example.com/galleria_club_logo.jpg",
+        instituteType: INSTITUTE_TYPE.AGENCIA_DE_FESTAS,
+        logoPhoto: "https://example.com/galleria_club_logo.jpg",
       }),
       new Institute({
         name: "Galleria Club",
-        location: {
+        address: {
           address: "123 Main St",
           number: 123,
           cep: "12345-678",
@@ -53,10 +53,10 @@ export class InstituteMock {
           latitude: 0,
           longitude: 0,
         },
-        partner_type: PARTNER_TYPE.GLOBAL_PARTNER,
+        partnerType: PARTNER_TYPE.GLOBAL_PARTNER,
         description: "A melhor balada de São Paulo",
-        institute_type: INSTITUTE_TYPE.ESTABELECIMENTO_FIXO,
-        logo_photo: "https://example.com/galleria_club_logo.jpg",
+        instituteType: INSTITUTE_TYPE.ESTABELECIMENTO_FIXO,
+        logoPhoto: "https://example.com/galleria_club_logo.jpg",
       }),
     ];
   }

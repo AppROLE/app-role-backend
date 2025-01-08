@@ -9,12 +9,12 @@ import {
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { UpdateInstituteViewModel } from "./update_institute_viewmodel";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 
 export class UpdateInstituteController {
   constructor(private readonly usecase: UpdateInstituteUseCase) {}
@@ -22,7 +22,7 @@ export class UpdateInstituteController {
   async handle(req: IRequest) {
     try {
       const {
-        institute_id,
+        instituteId,
         description,
         institute_type,
         partner_type,
@@ -30,15 +30,15 @@ export class UpdateInstituteController {
         phone,
       } = req.data;
 
-      if (institute_id === undefined) {
-        throw new MissingParameters("institute_id");
+      if (instituteId === undefined) {
+        throw new MissingParameters("instituteId");
       }
 
-      if (typeof institute_id !== "string") {
+      if (typeof instituteId !== "string") {
         throw new WrongTypeParameters(
-          "institute_id",
+          "instituteId",
           "string",
-          typeof institute_id
+          typeof instituteId
         );
       }
 
@@ -82,7 +82,7 @@ export class UpdateInstituteController {
       }
 
       await this.usecase.execute(
-        institute_id,
+        instituteId,
         description,
         INSTITUTE_TYPE[institute_type as keyof typeof INSTITUTE_TYPE],
         PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],

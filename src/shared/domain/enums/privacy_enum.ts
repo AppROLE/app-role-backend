@@ -1,4 +1,4 @@
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 
 export enum PRIVACY_TYPE {
   PUBLIC = "PUBLIC",
@@ -12,6 +12,6 @@ export function toEnum(value: string): PRIVACY_TYPE {
     case "PRIVATE":
       return PRIVACY_TYPE.PRIVATE;
     default:
-      throw new EntityError("privacidade")
+      throw new EntityError("privacy type");
   }
 }

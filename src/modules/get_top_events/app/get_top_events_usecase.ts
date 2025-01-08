@@ -52,7 +52,7 @@ export class GetTopEventsUseCase {
                 rating:
                   event.getReviews != undefined
                     ? event.getReviews?.reduce(
-                        (acc, review) => acc + review.star,
+                        (acc, review) => acc + review.rating,
                         0
                       ) / event.getReviews?.length
                     : 0,

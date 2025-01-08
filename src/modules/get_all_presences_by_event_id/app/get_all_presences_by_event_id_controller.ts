@@ -3,7 +3,7 @@ import { GetAllPresencesByEventIdUseCase } from "./get_all_presences_by_event_id
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import {
   BadRequest,
   InternalServerError,
@@ -12,12 +12,12 @@ import {
   Unauthorized,
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { GetAllPresencesByEventIdViewmodel } from "./get_all_presences_by_event_id_viewmodel";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+} from "src/shared/helpers/errors/errors";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 
 export class GetAllPresencesByEventIdController {
   constructor(private readonly usecase: GetAllPresencesByEventIdUseCase) {}

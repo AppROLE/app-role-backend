@@ -17,14 +17,14 @@ export interface ISearchHistoryDocument extends Document {
   _id: string;
   username: string;
   profileSearch: IProfileSearch;
-  created_at: Date;
+  createdAt: Date;
 }
 
 const SearchHistorySchema = new Schema<ISearchHistoryDocument>({
   _id: { type: String, default: uuidv4 },
   username: { type: String, required: true },
   profileSearch: { type: ProfileSearchSchema, required: true },
-  created_at: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
 });
 
 export const SearchHistoryModel = mongoose.model<ISearchHistoryDocument>(

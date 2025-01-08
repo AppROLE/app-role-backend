@@ -12,9 +12,9 @@ export interface IEventRepository {
   countGalleryEvent(eventId: string): Promise<Number>;
   getEventsByUpcomingDates(dates: Date[]): Promise<Event[]>;
   createReview(
-    star: number,
+    rating: number,
     review: string,
-    reviewedAt: Date,
+    createdAt: Date,
     eventId: string,
     name: string,
     photoUrl: string,

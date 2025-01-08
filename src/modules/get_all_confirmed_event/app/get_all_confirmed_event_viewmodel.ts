@@ -1,14 +1,13 @@
+import { Address } from "src/shared/domain/entities/address";
 import {
-  Event,
-  LocationProps,
-  ReviewProps,
+  Event
 } from "../../../shared/domain/entities/event";
 
 export class EventViewModel {
   private eventId?: string;
   private name: string;
   private bannerUrl?: string;
-  private location: LocationProps;
+  private address: Address;
   private price: number;
   private description: string;
   private ageRange: string;
@@ -28,7 +27,7 @@ export class EventViewModel {
     this.eventId = event.getEventId;
     this.name = event.getEventName;
     this.bannerUrl = event.getEventBannerUrl;
-    this.location = event.getEventLocation;
+    this.address = event.getEventLocation;
     this.price = event.getEventPrice;
     this.description = event.getEventDescription;
     this.ageRange = event.getEventAgeRange;
@@ -51,14 +50,14 @@ export class EventViewModel {
       name: this.name,
       bannerUrl: this.bannerUrl,
       location: {
-        address: this.location.address,
-        number: this.location.number,
-        cep: this.location.cep,
-        city: this.location.city,
-        neighborhood: this.location.neighborhood,
-        state: this.location.state,
-        latitude: this.location.latitude,
-        longitude: this.location.longitude,
+        address: this.address.address,
+        number: this.address.number,
+        cep: this.address.cep,
+        city: this.address.city,
+        neighborhood: this.address.neighborhood,
+        state: this.address.state,
+        latitude: this.address.latitude,
+        longitude: this.address.longitude,
       },
       price: this.price,
       description: this.description,
@@ -75,7 +74,7 @@ export class EventViewModel {
       ticketUrl: this.ticketUrl,
       rating:
         this.reviews != undefined
-          ? this.reviews?.reduce((acc, review) => acc + review.star, 0) /
+          ? this.reviews?.reduce((acc, review) => acc + review.rating, 0) /
             this.reviews?.length
           : 0,
     };

@@ -1,7 +1,7 @@
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class DeleteInstituteByIdUseCase {

@@ -4,7 +4,7 @@ import {
   NotFound,
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { DeleteInstituteByIdViewModel } from "./delete_institute_by_id_viewmodel";
 import { DeleteInstituteByIdUseCase } from "./delete_institute_by_id_usecase";
 

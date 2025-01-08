@@ -1,14 +1,14 @@
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { UnConfirmEventUseCase } from "./unconfirm_event_usecase";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 import {
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
+} from "src/shared/helpers/errors/errors";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import { UnConfirmEventViewmodel } from "./unconfirm_event_viewmodel";
 import {
   BadRequest,

@@ -3,19 +3,19 @@ import { Profile } from "../entities/profile";
 import { GENDER_TYPE } from "../enums/gender_enum";
 import { GetProfileReturnType } from "../types/get_profile_return_type";
 
-export interface IUserRepository {
-  createUser(user: Profile, isOAuth?: boolean): Promise<Profile>;
+export interface IProfileRepository {
+  createUser(profile: Profile, isOAuth?: boolean): Promise<Profile>;
   getProfile(
     username: string,
-    isAnotherUser: boolean,
+    isAnotherProfile: boolean,
     requesterUsername?: string
   ): Promise<GetProfileReturnType>;
   deleteAccount(username: string, userId?: string): Promise<void>;
   findByUsername(username: string): Promise<Profile | undefined>;
   createReview(
-    star: number,
+    rating: number,
     review: string,
-    reviewedAt: Date,
+    createdAt: Date,
     instituteId: string,
     eventId: string,
     username: string

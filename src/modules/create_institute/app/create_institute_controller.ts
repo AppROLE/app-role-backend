@@ -6,15 +6,15 @@ import {
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import {
   BadRequest,
   Created,
   InternalServerError,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
-import { DuplicatedItem } from "src/shared/helpers/errors/usecase_errors";
+import { DuplicatedItem } from "src/shared/helpers/errors/errors";
 
 export class CreateInstituteController {
   constructor(private readonly usecase: CreateInstituteUseCase) {}
@@ -38,10 +38,10 @@ export class CreateInstituteController {
         phone,
       } = formData.fields;
 
-      const logo = formData.files["logo_photo"];
+      const logo = formData.files["logoPhoto"];
 
       if (logo === undefined) {
-        throw new MissingParameters("logo_photo");
+        throw new MissingParameters("logoPhoto");
       }
 
       const photos = formData.files["photos"] || [];
@@ -129,7 +129,7 @@ export class CreateInstituteController {
           INSTITUTE_TYPE[institute_type as keyof typeof INSTITUTE_TYPE],
         partner_type: PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
         phone: phone,
-        location: {
+        address: {
           latitude: latitude,
           longitude: longitude,
           address: address,
@@ -140,7 +140,7 @@ export class CreateInstituteController {
           cep: cep,
         },
         price: price,
-        logo_photo: logo,
+        logoPhoto: logo,
         photos: photos,
       });
 

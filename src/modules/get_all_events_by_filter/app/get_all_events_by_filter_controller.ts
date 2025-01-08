@@ -6,7 +6,7 @@ import {
   NotFound,
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 
 export class GetEventsByFilterController {
   constructor(private readonly usecase: GetEventsByFilterUseCase) {}
@@ -41,16 +41,16 @@ export class GetEventsByFilterController {
       }
     }
 
-    if (filters.event_date && !isNaN(new Date(filters.event_date).getTime())) {
-      sanitizedFilters.event_date = filters.event_date;
+    if (filters.eventDate && !isNaN(new Date(filters.eventDate).getTime())) {
+      sanitizedFilters.eventDate = filters.eventDate;
     }
 
     if (filters.instituteId) {
       sanitizedFilters.instituteId = filters.instituteId;
     }
 
-    if (filters.music_type) {
-      sanitizedFilters.music_type = filters.music_type;
+    if (filters.musicType) {
+      sanitizedFilters.musicType = filters.musicType;
     }
 
     if (filters.features) {

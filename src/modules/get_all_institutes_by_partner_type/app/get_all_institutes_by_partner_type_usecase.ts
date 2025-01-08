@@ -1,6 +1,6 @@
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class GetAllInstitutesByPartnerTypeUseCase {

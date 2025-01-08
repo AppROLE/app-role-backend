@@ -1,7 +1,7 @@
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { ResendCodeUseCase } from "./resend_code_usecase";
 import {
@@ -10,9 +10,9 @@ import {
   NotFound,
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import { ResendCodeViewmodel } from "./resend_code_viewmodel";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 
 export class ResendCodeController {
   constructor(private readonly usecase: ResendCodeUseCase) {}

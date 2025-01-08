@@ -24,7 +24,7 @@ export class UpdateInstituteUseCase {
   }
 
   async execute(
-    institute_id: string,
+    instituteId: string,
     description?: string,
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
@@ -40,7 +40,7 @@ export class UpdateInstituteUseCase {
       institutePrice?: number;
       institutePhone?: string;
     } = {
-      instituteId: institute_id,
+      instituteId: instituteId,
     };
     if (description) {
       institute.instituteDescription = description;

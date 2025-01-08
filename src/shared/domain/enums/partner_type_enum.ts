@@ -1,3 +1,5 @@
+import { EntityError } from "src/shared/helpers/errors/errors";
+
 export enum PARTNER_TYPE {
     GLOBAL_PARTNER = "GLOBAL_PARTNER",
     PROMOTER_PARTNER = "PROMOTER_PARTNER",
@@ -13,6 +15,6 @@ export function toEnumPartnerType(partner_type: string){
         case "NO_PARTNER":
             return PARTNER_TYPE.NO_PARTNER;
         default:
-            throw new Error("Invalid partner type");
+            throw new EntityError("partner type");
     }
 }

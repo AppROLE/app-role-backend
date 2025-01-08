@@ -1,3 +1,5 @@
+import { EntityError } from "src/shared/helpers/errors/errors";
+
 export enum CATEGORY {
   BALADA = "BALADA",
   UNIVERSITARIO = "UNIVERSITARIO",
@@ -25,6 +27,6 @@ export function toEnum(value: string): CATEGORY {
     case "FESTA":
       return CATEGORY.FESTA;
     default:
-      throw new Error("Invalid value");
+      throw new EntityError("category");
   }
 }

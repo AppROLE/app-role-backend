@@ -15,7 +15,7 @@ export class EventMock {
               name: "Galleria Night",
               description:
                 "Galleria club. A melhor balada de São Paulo. Venha curtir com a gente!",
-              location: {
+              address: {
                 address: "123 Main St",
                 number: 123,
                 cep: "12345-678",
@@ -38,7 +38,7 @@ export class EventMock {
               name: "Vila Mix Festival",
               description:
                 "Vila Mix Festival. O maior festival de música sertaneja do Brasil.",
-              location: {
+              address: {
                 address: "123 Main St",
                 number: 123,
                 cep: "12345-678",
@@ -61,7 +61,7 @@ export class EventMock {
               name: "Modular",
               description:
                 "Modular. A melhor festa de música eletrônica de São Paulo.",
-              location: {
+              address: {
                 address: "123 Main St",
                 number: 123,
                 cep: "12345-678",

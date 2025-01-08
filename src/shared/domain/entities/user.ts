@@ -1,6 +1,6 @@
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "../../helpers/errors/errors";
 import { ROLE_TYPE } from "../enums/role_type_enum";
-import { Validations } from "src/shared/helpers/utils/validations";
+import { Validations } from "../../helpers/utils/validations";
 import { USER_STATUS } from "../enums/user_status";
 
 interface UserProps {
@@ -45,7 +45,7 @@ export class User {
     }
     this.name = props.name;
 
-    if (Validations.validaterole(props.role)) {
+    if (Validations.validateRole(props.role)) {
       throw new EntityError("role");
     }
     this.role = props.role;

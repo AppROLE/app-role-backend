@@ -1,7 +1,9 @@
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+  NoItemsFound,
+  EntityError,
+} from "src/shared/helpers/errors/errors";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import {
   OK,
@@ -10,8 +12,6 @@ import {
   InternalServerError,
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { ConfirmCodeUseCase } from "./confirm_code_usecase";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
 import { ConfirmCodeViewmodel } from "./confirm_code_viewmodel";
 
 export class ConfirmCodeController {

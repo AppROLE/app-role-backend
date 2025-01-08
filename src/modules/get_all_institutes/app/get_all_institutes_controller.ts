@@ -4,7 +4,7 @@ import {
   NotFound,
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { GetAllInstitutesUseCase } from "./get_all_institutes_usecase";
 import { GetAllInstitutesViewModel } from "./get_all_institutes_viewmodel";
 

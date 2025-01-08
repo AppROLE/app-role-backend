@@ -1,12 +1,12 @@
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { IProfileRepository } from "src/shared/domain/repositories/profile_repository_interface";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { Institute } from "src/shared/domain/entities/institute";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class GetAllFavoriteInstitutesUseCase {
   repository: Repository;
-  private user_repo?: IUserRepository;
+  private user_repo?: IProfileRepository;
   private institute_repo?: IInstituteRepository;
 
   constructor() {
@@ -18,7 +18,7 @@ export class GetAllFavoriteInstitutesUseCase {
 
   async connect() {
     await this.repository.connectRepository();
-    this.user_repo = this.repository.user_repo;
+    this.user_repo = this.repository.profile_repo;
     this.institute_repo = this.repository.institute_repo;
 
     if (!this.user_repo)
@@ -41,8 +41,8 @@ export class GetAllFavoriteInstitutesUseCase {
     }
 
     const favoriteInstitutes = await Promise.all(
-      userFavorites.map((favorite: { institute_id: string }) => {
-        return this.institute_repo!.getInstituteById(favorite.institute_id);
+      userFavorites.map((favorite: { instituteId: string }) => {
+        return this.institute_repo!.getInstituteById(favorite.instituteId);
       })
     );
 

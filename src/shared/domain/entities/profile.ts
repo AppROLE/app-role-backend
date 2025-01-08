@@ -1,5 +1,5 @@
 import { Validations } from "src/shared/helpers/utils/validations";
-import { EntityError } from "../../helpers/errors/domain_errors";
+import { EntityError } from "../../helpers/errors/errors";
 import { GENDER_TYPE } from "../enums/gender_enum";
 import { PRIVACY_TYPE } from "../enums/privacy_enum";
 import { ROLE_TYPE } from "../enums/role_type_enum";
@@ -10,22 +10,24 @@ interface ProfileProps {
   nickname: string;
   username: string;
   email: string;
+  role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt: Date;
+  acceptedTermsAt?: Date;
   dateBirth?: Date;
   gender?: GENDER_TYPE;
   cpf?: string;
   biography?: string;
-  role?: ROLE_TYPE;
   phoneNumber?: string;
-  createdAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
   linkInstagram?: string;
   linkTiktok?: string;
-  bgPhoto?: string;
+  backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy?: PRIVACY_TYPE;
-  following?: FollowingProps[];
-  favorites?: FavoriteProps[];
+  privacy: PRIVACY_TYPE;
+  following: FollowingProps[];
+  favorites: FavoriteProps[];
+  reviewsId: string[];
 }
 
 export interface FollowingProps {
@@ -41,25 +43,27 @@ export interface FavoriteProps {
 export class Profile {
   userId: string;
   name: string;
-  nickname?: string;
+  nickname: string;
   username: string;
   email: string;
+  role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt: Date;
+  acceptedTermsAt?: Date;
   dateBirth?: Date;
-  cpf?: string;
   gender?: GENDER_TYPE;
+  cpf?: string;
   biography?: string;
-  role?: ROLE_TYPE;
   phoneNumber?: string;
-  link_instagram?: string;
-  link_tiktok?: string;
-  bg_photo?: string;
-  profile_photo?: string;
-  privacy?: PRIVACY_TYPE;
-  created_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  linkInstagram?: string;
+  linkTiktok?: string;
+  backgroundPhoto?: string;
+  profilePhoto?: string;
+  privacy: PRIVACY_TYPE;
   following: FollowingProps[];
   favorites: FavoriteProps[];
+  reviewsId: string[];
 
   constructor(props: ProfileProps) {
     if (Validations.validateUserId(props.userId)) {
@@ -72,11 +76,8 @@ export class Profile {
     }
     this.name = props.name;
 
-    if (!Profile.validateNickname(props.nickname)) {
-      throw new EntityError("nickname");
-    }
     if (!props.nickname) {
-      props.nickname = props.name.split(" ")[0];
+      this.nickname = props.name.split(" ")[0];
     } else {
       this.nickname = props.nickname;
     }
@@ -96,46 +97,46 @@ export class Profile {
     }
     this.email = props.email;
 
-    if (Validations.validaterole(props.role)) {
+    if (Validations.validateRole(props.role)) {
       throw new EntityError("role");
     }
     this.role = props.role;
 
     if (
       props.linkInstagram &&
-      !Profile.validateInstagram(props.linkInstagram)
+      Validations.validateInstagram(props.linkInstagram)
     ) {
       throw new EntityError("linkInstagram");
     }
-    this.link_instagram = props.linkInstagram;
+    this.linkInstagram = props.linkInstagram;
 
-    if (props.linkTiktok && !Profile.validateTiktok(props.linkTiktok)) {
+    if (props.linkTiktok && Validations.validateTiktok(props.linkTiktok)) {
       throw new EntityError("linkTiktok");
     }
-    this.link_tiktok = props.linkTiktok;
+    this.linkTiktok = props.linkTiktok;
 
-    if (props.biography && !Profile.validateBiography(props.biography)) {
+    if (props.biography && Validations.validateBiography(props.biography)) {
       throw new EntityError("biography");
     }
     this.biography = props.biography;
 
-    if (props.bgPhoto && !Profile.validateBgPhoto(props.bgPhoto)) {
-      throw new EntityError("bgPhoto");
+    if (props.backgroundPhoto && Validations.validateBackgroundPhoto(props.backgroundPhoto)) {
+      throw new EntityError("backgroundPhoto");
     }
-    this.bg_photo = props.bgPhoto;
+    this.backgroundPhoto = props.backgroundPhoto;
 
     if (
       props.profilePhoto &&
-      !Profile.validateProfilePhoto(props.profilePhoto)
+      Validations.validateProfilePhoto(props.profilePhoto)
     ) {
       throw new EntityError("profilePhoto");
     }
-    this.profile_photo = props.profilePhoto;
+    this.profilePhoto = props.profilePhoto;
 
     if (!props.privacy) {
       this.privacy = PRIVACY_TYPE.PUBLIC;
     } else {
-      if (!Profile.validatePrivacy(props.privacy)) {
+      if (Validations.validatePrivacy(props.privacy)) {
         throw new EntityError("privacy");
       }
       this.privacy = props.privacy;
@@ -149,93 +150,30 @@ export class Profile {
     }
     this.cpf = props.cpf;
 
-    if (props.gender && !Profile.validateGender(props.gender)) {
+    if (props.gender && Validations.validateGender(props.gender)) {
       throw new EntityError("gênero");
     }
     this.gender = props.gender;
 
-    if (props.phoneNumber && !Profile.validatePhoneNumber(props.phoneNumber)) {
+    if (props.phoneNumber && Validations.validatePhoneNumber(props.phoneNumber)) {
       throw new EntityError("phoneNumber");
     }
     this.phoneNumber = props.phoneNumber;
 
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
+
+    if (!Profile.validateFollowing(props.following)) {
+      throw new EntityError("following");
+    }
     this.following = props.following || [];
+
+    if (!Profile.validateFavorites(props.favorites)) {
+      throw new EntityError("favorites");
+    }
     this.favorites = props.favorites || [];
-    this.created_at = props.createdAt || new Date();
-  }
 
-  static validateNickname(nickname: string): boolean {
-    if (nickname && nickname.trim().length > 50) {
-      return false;
-    }
-    return true;
-  }
-
-  static validateGender(gender?: GENDER_TYPE): boolean {
-    if (gender && !Object.values(GENDER_TYPE).includes(gender)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validateBiography(biography?: string): boolean {
-    if (biography && biography.trim().length > 1000) {
-      return false;
-    }
-    if (biography && biography.trim().length === 0) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validatePhoneNumber(phoneNumber?: string): boolean {
-    if (phoneNumber && phoneNumber.trim().length > 20) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validateInstagram(linkInstagram?: string): boolean {
-    if (linkInstagram && linkInstagram.trim().length > 255) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validateTiktok(linkTiktok?: string): boolean {
-    if (linkTiktok && linkTiktok.trim().length > 255) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validateBgPhoto(bgPhoto?: string): boolean {
-    if (bgPhoto && bgPhoto.trim().length > 255) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validateProfilePhoto(profilePhoto?: string): boolean {
-    if (profilePhoto && profilePhoto.trim().length > 255) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static validatePrivacy(privacy?: PRIVACY_TYPE): boolean {
-    if (!privacy || !Object.values(PRIVACY_TYPE).includes(privacy)) {
-      return false;
-    }
-
-    return true;
+    this.reviewsId = props.reviewsId || [];
   }
 
   static validateFollowing(following?: FollowingProps[]): boolean {
@@ -262,4 +200,5 @@ export class Profile {
     });
     return true;
   }
+
 }

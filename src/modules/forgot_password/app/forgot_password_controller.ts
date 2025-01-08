@@ -2,12 +2,12 @@ import { ForgotPasswordUseCase } from "./forgot_password_usecase";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import {
   BadRequest,
   InternalServerError,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import {
   NotFound,
@@ -18,7 +18,7 @@ import {
   ConflictItems,
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
+} from "src/shared/helpers/errors/errors";
 import { ForgotPasswordViewmodel } from "./forgot_password_viemodel";
 
 export class ForgotPasswordController {

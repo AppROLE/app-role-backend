@@ -1,9 +1,9 @@
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { Event, LocationProps } from "src/shared/domain/entities/event";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 import { STATUS } from "src/shared/domain/enums/status_enum";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
+import { musicType } from "src/shared/domain/enums/musicType_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
@@ -20,7 +20,7 @@ interface UpdateEventParams {
   eventDate?: Date;
   instituteId?: string;
   eventStatus?: STATUS;
-  musicType?: MUSIC_TYPE[];
+  musicType?: musicType[];
   menuLink?: string;
   galery_images?: {
     image: Buffer;
@@ -75,7 +75,7 @@ export class UpdateEventUseCase {
       eventId: existingEvent.getEventId,
       name: existingEvent.getEventName,
       description: existingEvent.getEventDescription,
-      location: existingEvent.getEventLocation,
+      address: existingEvent.getEventLocation,
       price: existingEvent.getEventPrice,
       ageRange: existingEvent.getEventAgeRange,
       eventDate: existingEvent.getEventDate,

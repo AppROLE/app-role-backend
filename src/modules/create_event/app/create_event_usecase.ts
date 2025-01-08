@@ -1,27 +1,28 @@
 import { v4 as uuidv4 } from "uuid";
-import { Event, LocationProps } from "src/shared/domain/entities/event";
+import { Event } from "src/shared/domain/entities/event";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
+import { musicType } from "src/shared/domain/enums/musicType_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { STATUS } from "src/shared/domain/enums/status_enum";
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
+import { Address } from "src/shared/domain/entities/address";
 
 interface CreateEventParams {
   name: string;
   description: string;
-  location: LocationProps;
+  address: Address;
   price: number;
   ageRange: AGE_ENUM;
   eventDate: Date;
   instituteId: string;
   eventStatus: STATUS;
-  musicType?: MUSIC_TYPE[];
+  musicType: musicType[];
   menuLink?: string;
-  galery_images?: {
+  galery_images: {
     image: Buffer;
     mimetype: string;
   }[];
@@ -29,8 +30,8 @@ interface CreateEventParams {
     image: Buffer;
     mimetype: string;
   };
-  features?: FEATURE[];
-  packageType?: PACKAGE_TYPE[];
+  features: FEATURE[];
+  packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
 }
@@ -92,7 +93,7 @@ export class CreateEventUseCase {
       eventId: event_id,
       name: params.name,
       description: params.description,
-      location: params.location,
+      address: params.address,
       price: params.price,
       ageRange: params.ageRange,
       eventDate: params.eventDate,

@@ -1,4 +1,4 @@
-import { EnumError } from "../../helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 
 export enum FEATURE {
   ESTACIONAMENTO = "ESTACIONAMENTO",
@@ -36,6 +36,6 @@ export function toEnum(value: string): FEATURE {
     case "AFTER":
       return FEATURE.AFTER;
     default:
-      throw new EnumError();
+      throw new EntityError("feature");
   }
 }

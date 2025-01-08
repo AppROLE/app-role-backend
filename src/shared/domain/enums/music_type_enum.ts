@@ -1,3 +1,5 @@
+import { EntityError } from "src/shared/helpers/errors/errors";
+
 export enum MUSIC_TYPE {
     FUNK = "FUNK",
     SERTANEJO = "SERTANEJO",
@@ -37,7 +39,7 @@ export enum MUSIC_TYPE {
       case "MPB":
         return MUSIC_TYPE.MPB;
       default:
-        throw new Error("Invalid value");
+        throw new EntityError("music type");
     }
   }
   

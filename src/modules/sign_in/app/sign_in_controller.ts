@@ -2,7 +2,7 @@ import { SignInUseCase } from "./sign_in_usecase";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 
 import { SignInViewModel } from "./sign_in_viewmodel";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
@@ -14,9 +14,9 @@ import {
   OK,
   Unauthorized,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { ForbiddenAction, NoItemsFound, UserNotConfirmed, UserSignUpNotFinished } from "src/shared/helpers/errors/usecase_errors";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { InvalidCredentialsError } from "src/shared/helpers/errors/login_errors";
+import { ForbiddenAction, NoItemsFound, UserNotConfirmed, UserSignUpNotFinished } from "src/shared/helpers/errors/errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
+import { InvalidCredentialsError } from "src/shared/helpers/errors/errors";
 
 export class SignInController {
   constructor(private readonly usecase: SignInUseCase) {}

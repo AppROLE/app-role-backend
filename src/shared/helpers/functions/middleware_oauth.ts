@@ -1,4 +1,4 @@
-import { ForbiddenAction } from "../errors/usecase_errors";
+import { ForbiddenAction } from "../errors/errors";
 
 export async function middlewareOAuth(accessToken: string) {
   try {

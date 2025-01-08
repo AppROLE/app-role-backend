@@ -26,7 +26,7 @@ export class EventViewModel {
       category: this.category,
       rating:
         this.reviews != undefined
-          ? this.reviews?.reduce((acc, review) => acc + review.star, 0) /
+          ? this.reviews?.reduce((acc, review) => acc + review.rating, 0) /
             this.reviews?.length
           : 0,
     };

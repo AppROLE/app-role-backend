@@ -1,3 +1,5 @@
+import { EntityError } from "src/shared/helpers/errors/errors";
+
 export enum STATUS {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
@@ -10,6 +12,6 @@ export function toEnum(value: string): STATUS {
     case "INACTIVE":
       return STATUS.INACTIVE;
     default:
-      throw new Error("Invalid value");
+      throw new EntityError("status");
   }
 }

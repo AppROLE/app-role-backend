@@ -12,13 +12,13 @@ import {
   ConflictItems,
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+} from "src/shared/helpers/errors/errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+} from "src/shared/helpers/errors/errors";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 import { CreateReviewViewModel } from "./create_review_viewmodel";
 
 export class CreateReviewController {
@@ -28,26 +28,28 @@ export class CreateReviewController {
     try {
       const parsedUserApiGateway =
         UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      if (!parsedUserApiGateway) throw new ForbiddenAction("usuário");
+      if (!parsedUserApiGateway) throw new ForbiddenAction("Usuário não encontrado");
 
-      const { star, review, reviewedAt, eventId, photoUrl, name } = req.data;
+      if(!parsedUserApiGateway.username) throw new ForbiddenAction("Usuário não encontrado");
 
-      if (!star) throw new MissingParameters("star");
+      const { rating, review, createdAt, eventId, photoUrl, name } = req.data;
+
+      if (!rating) throw new MissingParameters("rating");
       if (!review) throw new MissingParameters("review");
-      if (!reviewedAt) throw new MissingParameters("reviewedAt");
+      if (!createdAt) throw new MissingParameters("createdAt");
       if (!eventId) throw new MissingParameters("eventId");
       if (!photoUrl) throw new MissingParameters("photoUrl");
       if (!name) throw new MissingParameters("name");
 
-      if (typeof star !== "number")
-        throw new WrongTypeParameters("star", "number", typeof star);
+      if (typeof rating !== "number")
+        throw new WrongTypeParameters("rating", "number", typeof rating);
       if (typeof review !== "string")
         throw new WrongTypeParameters("review", "string", typeof review);
-      if (typeof reviewedAt !== "number")
+      if (typeof createdAt !== "number")
         throw new WrongTypeParameters(
-          "reviewedAt",
+          "createdAt",
           "number",
-          typeof reviewedAt
+          typeof createdAt
         );
       if (typeof eventId !== "string")
         throw new WrongTypeParameters("eventId", "string", typeof eventId);
@@ -57,9 +59,9 @@ export class CreateReviewController {
         throw new WrongTypeParameters("name", "string", typeof name);
 
       await this.usecase.execute(
-        star,
+        rating,
         review,
-        reviewedAt,
+        createdAt,
         eventId,
         parsedUserApiGateway.username,
         name.split(" ")[0],

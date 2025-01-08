@@ -1,15 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
-import { LocationProps } from "src/shared/domain/entities/event";
 import { Institute } from "src/shared/domain/entities/institute";
 import { toEnum } from "src/shared/domain/enums/institute_type_enum";
 import { toEnumPartnerType } from "src/shared/domain/enums/partner_type_enum";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
+import { Address } from "src/shared/domain/entities/address";
 
 export interface CreateInstituteParams {
   name: string;
-  logo_photo: {
+  logoPhoto: {
     image: Buffer;
     mimetype: string;
   };
@@ -17,7 +17,7 @@ export interface CreateInstituteParams {
   institute_type: string;
   partner_type: string;
   phone?: string;
-  location: LocationProps;
+  address: Address;
   price?: number;
   photos?: {
     image: Buffer;
@@ -49,16 +49,16 @@ export class CreateInstituteUseCase {
   }
 
   async execute(params: CreateInstituteParams): Promise<Institute> {
-    const institute_id = uuidv4();
+    const instituteId = uuidv4();
 
     let logoUrl = "";
-    if (params.logo_photo) {
+    if (params.logoPhoto) {
       logoUrl = await this.file_repo!.uploadImage(
-        `institutes/${institute_id}/institute-photo.${
-          params.logo_photo.mimetype.split("/")[1]
+        `institutes/${instituteId}/institute-photo.${
+          params.logoPhoto.mimetype.split("/")[1]
         }`,
-        params.logo_photo.image,
-        params.logo_photo.mimetype,
+        params.logoPhoto.image,
+        params.logoPhoto.mimetype,
         true
       );
     }
@@ -68,8 +68,8 @@ export class CreateInstituteUseCase {
       for (let i = 0; i < params.photos.length; i++) {
         const photo = params.photos[i];
         const photoUrl = await this.file_repo!.uploadImage(
-          `institutes/${institute_id}/photos/${i}.${
-            params.logo_photo.mimetype.split("/")[1]
+          `institutes/${instituteId}/photos/${i}.${
+            params.logoPhoto.mimetype.split("/")[1]
           }`,
           photo.image,
           photo.mimetype,
@@ -80,16 +80,16 @@ export class CreateInstituteUseCase {
     }
 
     const institute = new Institute({
-      institute_id: institute_id,
+      instituteId: instituteId,
       name: params.name,
       description: params.description,
-      institute_type: toEnum(params.institute_type),
-      partner_type: toEnumPartnerType(params.partner_type),
+      instituteType: toEnum(params.institute_type),
+      partnerType: toEnumPartnerType(params.partner_type),
       phone: params.phone || "",
-      location: params.location,
-      logo_photo: logoUrl,
-      photos_url: photosUrls,
-      events_id: [],
+      address: params.address,
+      logoPhoto: logoUrl,
+      photosUrl: photosUrls,
+      eventsId: [],
       price: params.price || 0,
     });
 

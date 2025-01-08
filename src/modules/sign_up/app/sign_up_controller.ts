@@ -1,11 +1,11 @@
-import { MissingParameters, WrongTypeParameters } from "src/shared/helpers/errors/controller_errors";
+import { MissingParameters, WrongTypeParameters } from "src/shared/helpers/errors/errors";
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { SignUpUseCase } from "./sign_up_usecase";
 import { SignUpViewmodel } from "./sign_up_viewmodel";
 import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
 import { BadRequest, Conflict, Created, Forbidden, InternalServerError } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { DuplicatedItem, RequestUserToForgotPassword, UserAlreadyExists, UserNotConfirmed } from "src/shared/helpers/errors/usecase_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
+import { DuplicatedItem, RequestUserToForgotPassword, UserAlreadyExists, UserNotConfirmed } from "src/shared/helpers/errors/errors";
 
 export class SignUpController {
   constructor(private readonly usecase: SignUpUseCase) {}

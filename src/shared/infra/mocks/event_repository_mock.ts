@@ -1,4 +1,4 @@
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { Event } from "../../domain/entities/event";
 import { IEventRepository } from "../../domain/repositories/event_repository_interface";
 import { EventMock } from "../../domain/mocks/event_mock";
@@ -25,7 +25,7 @@ export class EventRepositoryMock implements IEventRepository {
 
   async createEvent(event: Event): Promise<string> {
     this.events.push(event);
-    return event.getEventId;
+    return event.eventId;
   }
 
   async getAllEvents(): Promise<Event[]> {
@@ -40,41 +40,41 @@ export class EventRepositoryMock implements IEventRepository {
     const filteredEvents = this.events.filter((event) => {
       let matches = true;
 
-      if (filter.name && event.getEventName !== filter.name) {
+      if (filter.name && event.name !== filter.name) {
         matches = false;
       }
-      if (filter.institute_id && event.getInstituteId !== filter.institute_id) {
+      if (filter.instituteId && event.instituteId !== filter.instituteId) {
         matches = false;
       }
-      if (filter.price && event.getEventPrice !== filter.price) {
+      if (filter.price && event.price !== filter.price) {
         matches = false;
       }
-      if (filter.age_range && event.getEventAgeRange !== filter.age_range) {
+      if (filter.ageRange && event.ageRange !== filter.ageRange) {
         matches = false;
       }
       if (
-        filter.event_date &&
-        new Date(event.getEventDate).toISOString() !==
-          new Date(filter.event_date).toISOString()
+        filter.eventDate &&
+        new Date(event.eventDate).toISOString() !==
+          new Date(filter.eventDate).toISOString()
       ) {
         matches = false;
       }
       if (
-        filter.music_type &&
-        !event.getMusicType?.some((type) => filter.music_type.includes(type))
+        filter.musicType &&
+        !event.musicType?.some((type) => filter.musicType.includes(type))
       ) {
         matches = false;
       }
       if (
         filter.features &&
-        !event.getFeatures?.some((feature) => filter.features.includes(feature))
+        !event.features?.some((feature) => filter.features.includes(feature))
       ) {
         matches = false;
       }
-      if (filter.category && event.getCategoryType !== filter.category) {
+      if (filter.category && event.category !== filter.category) {
         matches = false;
       }
-      if (filter.ticket_url && event.getTicketUrl !== filter.ticket_url) {
+      if (filter.ticketUrl && event.ticketUrl !== filter.ticketUrl) {
         matches = false;
       }
 
@@ -89,7 +89,7 @@ export class EventRepositoryMock implements IEventRepository {
   }
 
   async getEventById(eventId: string): Promise<Event> {
-    const event = this.events.find((event) => event.getEventId === eventId);
+    const event = this.events.find((event) => event.eventId === eventId);
     if (!event) {
       throw new NoItemsFound("event");
     }
@@ -98,7 +98,7 @@ export class EventRepositoryMock implements IEventRepository {
 
   async deleteEventById(eventId: string): Promise<void> {
     const eventIndex = this.events.findIndex(
-      (event) => event.getEventId === eventId
+      (event) => event.eventId === eventId
     );
     if (eventIndex === -1) {
       throw new NoItemsFound("event");
@@ -110,49 +110,49 @@ export class EventRepositoryMock implements IEventRepository {
     eventId: string,
     profilePhoto: string
   ): Promise<string> {
-    const event = this.events.find((event) => event.getEventId === eventId);
+    const event = this.events.find((event) => event.eventId === eventId);
     if (!event) {
       throw new NoItemsFound("event");
     }
-    event.setEventPhotoLink = profilePhoto;
+    event.eventPhotoLink = profilePhoto;
     return profilePhoto;
   }
 
   async updateGalleryArray(eventId: string, imageKey: string): Promise<void> {
-    const event = this.events.find((event) => event.getEventId === eventId);
+    const event = this.events.find((event) => event.eventId === eventId);
     if (!event) {
       throw new NoItemsFound("event");
     }
-    if ((event.getGaleryLink?.length ?? 0) > 10) {
+    if ((event.galeryLink?.length ?? 0) > 10) {
       throw new Error("Event gallery is full");
     }
-    event.setGaleryLink.push(imageKey);
+    event.galeryLink?.push(imageKey);
   }
 
   async countGalleryEvent(eventId: string): Promise<Number> {
-    const event = this.events.find((event) => event.getEventId === eventId);
+    const event = this.events.find((event) => event.eventId === eventId);
     if (!event) {
       throw new NoItemsFound("event");
     }
-    return event.getGaleryLink ? event.getGaleryLink.length : 0;
+    return event.galeryLink ? event.galeryLink.length : 0;
   }
 
   async createReview(
-    star: number,
+    rating: number,
     review: string,
-    reviewedAt: Date,
+    createdAt: Date,
     eventId: string,
     username: string,
     name: string,
     photoUrl: string
   ): Promise<void> {
-    const event = this.events.find((event) => event.getEventId === eventId);
+    const event = this.events.find((event) => event.eventId === eventId);
     if (!event) {
       throw new NoItemsFound("event");
     }
   }
 
   async getAllConfirmedEvents(username: string): Promise<Event[]> {
-    return this.events.filter((event) => event.getEventId?.includes(username));
+    return this.events.filter((event) => event.eventId?.includes(username));
   }
 }

@@ -1,22 +1,22 @@
 import {
   DuplicatedItem,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
-import { IUser } from "../../database/models/user.model";
-import { UserMongoDTO } from "../../database/dtos/user_mongo_dto";
+} from "src/shared/helpers/errors/errors";
+import { IProfile } from "../models/profile.model";
+import { ProfileMongoDTO } from "../dtos/profile_mongo_dto";
 import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import { IUserRepository } from "src/shared/domain/repositories/user_repository_interface";
+import { IProfileRepository } from "src/shared/domain/repositories/profile_repository_interface";
 import { GetProfileReturnType } from "src/shared/domain/types/get_profile_return_type";
 import { Collection, Connection } from "mongoose";
 import { Profile } from "src/shared/domain/entities/profile";
 import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 import { FindPersonReturnType } from "src/shared/helpers/types/find_person_return_type";
 
-export class UserRepositoryMongo implements IUserRepository {
-  private userCollection: Collection<IUser>;
+export class ProfileRepositoryMongo implements IProfileRepository {
+  private userCollection: Collection<IProfile>;
 
   constructor(connection: Connection) {
-    this.userCollection = connection.collection<IUser>("user");
+    this.userCollection = connection.collection<IProfile>("user");
   }
   async findPerson(searchTerm: string): Promise<FindPersonReturnType[]> {
     const persons = await this.userCollection
@@ -35,12 +35,12 @@ export class UserRepositoryMongo implements IUserRepository {
     );
 
     return uniquePersons.map((personDoc) => {
-      const personDto = UserMongoDTO.fromMongo(personDoc, false);
-      const person = UserMongoDTO.toEntity(personDto);
+      const personDto = ProfileMongoDTO.fromMongo(personDoc, false);
+      const person = ProfileMongoDTO.toEntity(personDto);
       return {
-        profilePhoto: person.userProfilePhoto,
-        username: person.userUsername,
-        nickname: person.userNickname as string,
+        profilePhoto: person.profilePhoto,
+        username: person.username,
+        nickname: person.nickname as string,
       };
     });
   }
@@ -59,13 +59,13 @@ export class UserRepositoryMongo implements IUserRepository {
       return false;
     }
 
-    const updateFields: Partial<IUser> = {};
+    const updateFields: Partial<IProfile> = {};
 
     if (newUsername) updateFields.username = newUsername;
     if (nickname) updateFields.nickname = nickname;
     if (biography) updateFields.biography = biography;
-    if (instagramLink) updateFields.lnk_instagram = instagramLink;
-    if (tiktokLink) updateFields.lnk_tiktok = tiktokLink;
+    if (instagramLink) updateFields.linkInstagram = instagramLink;
+    if (tiktokLink) updateFields.linkTiktok = tiktokLink;
 
     const result = await this.userCollection.updateOne(
       { username },
@@ -93,14 +93,14 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     const userAlreadyFollows = userDoc.following.some(
-      (follow) => follow.user_followed_id === followedUserDoc._id
+      (follow) => follow.userFollowedId === followedUserDoc._id
     );
 
     const updatedFollowing = userAlreadyFollows
       ? userDoc.following.filter(
-          (follow) => follow.user_followed_id !== followedUserDoc._id
+          (follow) => follow.userFollowedId !== followedUserDoc._id
         )
-      : [...userDoc.following, { user_followed_id: followedUserDoc._id }];
+      : [...userDoc.following, { userFollowedId: followedUserDoc._id }];
 
     const result = await this.userCollection.updateOne(
       { username },
@@ -119,7 +119,7 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     const followersDocs = await this.userCollection
-      .find({ following: { $elemMatch: { user_followed_id: userDoc._id } } })
+      .find({ following: { $elemMatch: { userFollowedId: userDoc._id } } })
       .toArray();
 
     if (!followersDocs.length) {
@@ -127,8 +127,8 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     return followersDocs.map((followerDoc) => {
-      const followerDto = UserMongoDTO.fromMongo(followerDoc, false);
-      return UserMongoDTO.toEntity(followerDto);
+      const followerDto = ProfileMongoDTO.fromMongo(followerDoc, false);
+      return ProfileMongoDTO.toEntity(followerDto);
     });
   }
 
@@ -139,7 +139,7 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     const followingIds = userDoc.following.map(
-      (follow) => follow.user_followed_id
+      (follow) => follow.userFollowedId
     );
 
     if (!followingIds.length) {
@@ -155,8 +155,8 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     return followingDocs.map((followingDoc) => {
-      const followingDto = UserMongoDTO.fromMongo(followingDoc, false);
-      return UserMongoDTO.toEntity(followingDto);
+      const followingDto = ProfileMongoDTO.fromMongo(followingDoc, false);
+      return ProfileMongoDTO.toEntity(followingDto);
     });
   }
 
@@ -190,10 +190,10 @@ export class UserRepositoryMongo implements IUserRepository {
       return undefined;
     }
 
-    const updateFields: Partial<IUser> = {};
+    const updateFields: Partial<IProfile> = {};
 
-    if (dateBirth) updateFields.date_birth = dateBirth;
-    if (phoneNumber) updateFields.phone_number = phoneNumber;
+    if (dateBirth) updateFields.dateBirth = dateBirth;
+    if (phoneNumber) updateFields.phoneNumber = phoneNumber;
     if (cpf) updateFields.cpf = cpf;
     if (gender) updateFields.gender = gender;
 
@@ -212,8 +212,8 @@ export class UserRepositoryMongo implements IUserRepository {
       throw new Error("Erro ao buscar os dados atualizados do usuário.");
     }
 
-    const userDto = UserMongoDTO.fromMongo(updatedUserDoc, false);
-    return UserMongoDTO.toEntity(userDto);
+    const userDto = ProfileMongoDTO.fromMongo(updatedUserDoc, false);
+    return ProfileMongoDTO.toEntity(userDto);
   }
 
   async validateIsOAuthUser(email: string): Promise<boolean> {
@@ -231,11 +231,11 @@ export class UserRepositoryMongo implements IUserRepository {
     newUserId: string
   ): Promise<void> {
     const result = await this.userCollection.updateMany(
-      { "following.user_followed_id": oldUserId },
-      { $set: { "following.$[elem].user_followed_id": newUserId } },
+      { "following.userFollowedId": oldUserId },
+      { $set: { "following.$[elem].userFollowedId": newUserId } },
       {
         arrayFilters: [
-          { "elem.user_followed_id": { $exists: true, $ne: null } },
+          { "elem.userFollowedId": { $exists: true, $ne: null } },
         ],
       }
     );
@@ -258,8 +258,8 @@ export class UserRepositoryMongo implements IUserRepository {
     );
 
     await this.userCollection.updateMany(
-      { "following.user_followed_id": userDoc._id },
-      { $pull: { following: { user_followed_id: userDoc._id } } }
+      { "following.userFollowedId": userDoc._id },
+      { $pull: { following: { userFollowedId: userDoc._id } } }
     );
   }
 
@@ -270,21 +270,21 @@ export class UserRepositoryMongo implements IUserRepository {
       throw new NoItemsFound("username");
     }
 
-    const userDto = UserMongoDTO.fromMongo(userDoc, false);
-    return UserMongoDTO.toEntity(userDto);
+    const userDto = ProfileMongoDTO.fromMongo(userDoc, false);
+    return ProfileMongoDTO.toEntity(userDto);
   }
 
   async createUser(user: Profile, isOAuth: boolean = false): Promise<Profile> {
     const userAlreadyExists = await this.userCollection.findOne({
-      email: user.userEmail,
+      email: user.email,
     });
 
     if (userAlreadyExists) {
       throw new DuplicatedItem("email");
     }
 
-    const dto = UserMongoDTO.fromEntity(user);
-    const userDoc = UserMongoDTO.toMongo(dto);
+    const dto = ProfileMongoDTO.fromEntity(user);
+    const userDoc = ProfileMongoDTO.toMongo(dto);
     userDoc.is_oauth_user = isOAuth;
 
     const result = await this.userCollection.insertOne(userDoc);
@@ -328,14 +328,14 @@ export class UserRepositoryMongo implements IUserRepository {
       return undefined;
     }
 
-    const userDto = UserMongoDTO.fromMongo(userDoc, false);
-    return UserMongoDTO.toEntity(userDto);
+    const userDto = ProfileMongoDTO.fromMongo(userDoc, false);
+    return ProfileMongoDTO.toEntity(userDto);
   }
 
   async createReview(
-    star: number,
+    rating: number,
     review: string,
-    reviewedAt: Date,
+    createdAt: Date,
     instituteId: string,
     eventId: string,
     username: string
@@ -347,10 +347,10 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     const reviewDoc = {
-      star,
+      rating,
       review,
-      reviewedAt,
-      institute_id: instituteId,
+      createdAt,
+      instituteId: instituteId,
       event_id: eventId,
     };
 
@@ -371,13 +371,13 @@ export class UserRepositoryMongo implements IUserRepository {
       throw new NoItemsFound("username");
     }
 
-    const friendsIds = userDoc.following.map((f) => f.user_followed_id);
+    const friendsIds = userDoc.following.map((f) => f.userFollowedId);
     const friendsDocs = await this.userCollection
       .find({ _id: { $in: friendsIds } })
       .toArray();
 
     return friendsDocs.map((doc) =>
-      UserMongoDTO.toEntity(UserMongoDTO.fromMongo(doc, false))
+      ProfileMongoDTO.toEntity(ProfileMongoDTO.fromMongo(doc, false))
     );
   }
 
@@ -391,7 +391,7 @@ export class UserRepositoryMongo implements IUserRepository {
     }
 
     return reviews.map((doc) =>
-      UserMongoDTO.toEntity(UserMongoDTO.fromMongo(doc, false))
+      ProfileMongoDTO.toEntity(ProfileMongoDTO.fromMongo(doc, false))
     );
   }
 
@@ -402,8 +402,8 @@ export class UserRepositoryMongo implements IUserRepository {
       return undefined;
     }
 
-    const userDto = UserMongoDTO.fromMongo(userDoc, false);
-    return UserMongoDTO.toEntity(userDto);
+    const userDto = ProfileMongoDTO.fromMongo(userDoc, false);
+    return ProfileMongoDTO.toEntity(userDto);
   }
 
   async getProfile(
@@ -414,15 +414,15 @@ export class UserRepositoryMongo implements IUserRepository {
     const userDoc = await this.userCollection.findOne({ username });
     if (!userDoc) throw new NoItemsFound("username");
 
-    const userDto = UserMongoDTO.fromMongo(userDoc, false);
-    const user = UserMongoDTO.toEntity(userDto);
+    const userDto = ProfileMongoDTO.fromMongo(userDoc, false);
+    const user = ProfileMongoDTO.toEntity(userDto);
 
     let isFriend: boolean | undefined;
     let isFollowing: boolean | undefined;
 
-    const following: number = user.userFollowing.length;
+    const following: number = user.following.length;
     const followers = await this.userCollection.countDocuments({
-      following: { $elemMatch: { user_followed_id: user.userId } },
+      following: { $elemMatch: { userFollowedId: user.userId } },
     });
 
     if (isAnotherUser && requesterUsername) {
@@ -432,23 +432,23 @@ export class UserRepositoryMongo implements IUserRepository {
       if (!requesterUser) throw new NoItemsFound("requesterUser");
 
       isFriend = requesterUser.following.some(
-        (follow) => follow.user_followed_id === user.userId
+        (follow) => follow.userFollowedId === user.userId
       );
-      isFollowing = user.userFollowing.some(
+      isFollowing = user.following.some(
         (follow) => follow.userFollowedId === requesterUser._id
       );
     }
 
     return {
       userId: user.userId as string,
-      username: user.userUsername,
-      nickname: user.userNickname as string,
-      linkTiktok: user.userlinkTiktok,
-      backgroundPhoto: user.userBgPhoto,
-      profilePhoto: user.userProfilePhoto,
-      linkInstagram: user.userlinkInstagram,
-      biography: user.userBiography,
-      privacy: user.userPrivacy || PRIVACY_TYPE.PUBLIC,
+      username: user.username,
+      nickname: user.nickname as string,
+      linkTiktok: user.linkTiktok,
+      backgroundPhoto: user.backgroundPhoto,
+      profilePhoto: user.profilePhoto,
+      linkInstagram: user.linkInstagram,
+      biography: user.biography,
+      privacy: user.privacy || PRIVACY_TYPE.PUBLIC,
       following,
       followers,
       isFriend,
@@ -482,7 +482,7 @@ export class UserRepositoryMongo implements IUserRepository {
 
     const updatedFavorites = [
       ...userDoc.favorites,
-      { institute_id: instituteId },
+      { instituteId: instituteId },
     ];
 
     const result = await this.userCollection.updateOne(

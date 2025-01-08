@@ -5,7 +5,7 @@ import { InstituteMongoDTO } from "../dtos/institute_mongo_dto";
 import {
   NoItemsFound,
   DuplicatedItem,
-} from "../../../../../src/shared/helpers/errors/usecase_errors";
+} from "../../../../../src/shared/helpers/errors/errors";
 import { Collection, Connection } from "mongoose";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
@@ -99,7 +99,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
   ): Promise<string> {
     const result = await this.instituteCollection.updateOne(
       { _id: instituteId },
-      { $set: { logo_photo: institutePhoto } }
+      { $set: { logoPhoto: institutePhoto } }
     );
 
     if (!result.modifiedCount) {
@@ -123,7 +123,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     if (institute_type) updateFields.institute_type = institute_type;
     if (partner_type) updateFields.partner_type = partner_type;
     if (name) updateFields.name = name;
-    if (location) updateFields.location = location;
+    if (location) updateFields.address = location;
     if (phone) updateFields.phone = phone;
 
     const updatedInstitute = await this.instituteCollection.findOneAndUpdate(

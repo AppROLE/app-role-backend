@@ -1,69 +1,56 @@
-import { IAuthRepository } from "src/shared/domain/irepositories/auth_repository_interface";
 import { Profile } from "src/shared/domain/entities/profile";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { InvalidCredentialsError } from "src/shared/helpers/errors/login_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
+import { InvalidCredentialsError } from "src/shared/helpers/errors/errors";
 import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
 import {
   ForbiddenAction,
   UserNotConfirmed,
   UserSignUpNotFinished,
-} from "src/shared/helpers/errors/usecase_errors";
-import { IUserRepository } from "src/shared/domain/irepositories/user_repository_interface";
+} from "src/shared/helpers/errors/errors";
+import { Validations } from "src/shared/helpers/utils/validations";
+import { IProfileRepository } from "src/shared/domain/repositories/profile_repository_interface";
+import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class SignInUseCase {
-  constructor(
-    private readonly repo: IAuthRepository,
-    private readonly userRepo: IUserRepository
-  ) {}
+  repository: Repository;
+  private auth_repo?: IAuthRepository;
+  private profile_repo?: IProfileRepository;
 
-  async execute(indentifier: string, password: string, isWeb: boolean) {
-    let email = Profile.validateEmail(indentifier) ? indentifier : null;
-    let username = !email ? indentifier : null;
+  constructor() {
+    this.repository = new Repository({
+      auth_repo: true,
+      profile_repo: true,
+    });
+  }
 
-    if (!email && !username) {
-      throw new EntityError("identificator");
+  async connect() {
+    await this.repository.connectRepository();
+    this.auth_repo = this.repository.auth_repo;
+    this.profile_repo = this.repository.profile_repo;
+
+    if (!this.auth_repo)
+      throw new Error('Expected to have an instance of the auth repository');
+
+    if (!this.profile_repo)
+      throw new Error('Expected to have an instance of the user repository');
+  }
+
+  async execute(email: string, password: string) {
+    if (Validations.validateEmail(email)) {
+      throw new EntityError("email");
     }
 
-    const emailRegex = new RegExp(
-      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-    );
-    let session;
-    let user;
-    if (email) {
-      user = await this.repo.getUserByEmail(email);
-      if (!user) {
-        throw new InvalidCredentialsError();
-      }
-      if (user.userEmailVerified === false) throw new UserNotConfirmed();
-      const isOAuth = await this.userRepo.validateIsOAuthUser(email);
-      if (isOAuth) {
-        throw new ForbiddenAction("usuário");
-      }
-      session = await this.repo.signIn(email, password);
-    } else {
-      if (username) {
-        user = await this.repo.findUserByUsername(username);
-        if (!user) {
-          throw new InvalidCredentialsError();
-        }
-        const isOAuth = await this.userRepo.validateIsOAuthUser(user.userEmail);
-        if (isOAuth) {
-          throw new ForbiddenAction("usuário");
-        }
-        session = await this.repo.signIn(username, password);
-      }
+    if (Validations.validatePassword(password)) {
+      throw new EntityError("password");
     }
 
-    if (!session) {
+    const result = await this.auth_repo?.signIn(email, password);
+
+    if (!result) {
       throw new InvalidCredentialsError();
     }
 
-    if (session.accessToken && emailRegex.test(user?.userUsername as string))
-      throw new UserSignUpNotFinished();
-
-    // if (isWeb && user?.role !== ROLE_TYPE.OWNER) {
-    //   throw new ForbiddenAction('tipo de usuário');
-    // }
-    return session;
+    const user = await this.profile_repo?.(result.user_id);
   }
 }

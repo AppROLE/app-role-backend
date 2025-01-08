@@ -1,12 +1,9 @@
-import { IUserRepository } from "src/shared/domain/irepositories/user_repository_interface";
+import { IProfileRepository } from "src/shared/domain/repositories/profile_repository_interface";
 
 export class GetProfileUseCase {
-  constructor(private readonly mongoRepo: IUserRepository) {}
+  constructor(private readonly user_repo: IProfileRepository) {}
 
   async execute(username: string, isAnotherUser: boolean, requesterUsername?: string) {
-    console.log("GetProfileUseCase -> execute -> username", username)
-    console.log("GetProfileUseCase -> execute -> isAnotherUser", isAnotherUser)
-    console.log("GetProfileUseCase -> execute -> requesterUsername", requesterUsername)
-    return await this.mongoRepo.getProfile(username, isAnotherUser, requesterUsername);
+    return await this.user_repo.getProfile(username, isAnotherUser, requesterUsername);
   }
 }

@@ -1,7 +1,7 @@
 import { InstituteMock } from "src/shared/domain/mocks/institute_mock";
 import { Institute } from "../../domain/entities/institute";
 import { IInstituteRepository } from "../../domain/repositories/institute_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 import { LocationProps } from "src/shared/domain/entities/event";
@@ -69,7 +69,7 @@ export class InstituteRepositoryMock implements IInstituteRepository {
   }
 
   async updateInstitute(
-    institute_id: string,
+    instituteId: string,
     description?: string,
     institute_type?: INSTITUTE_TYPE,
     partner_type?: PARTNER_TYPE,
@@ -78,7 +78,7 @@ export class InstituteRepositoryMock implements IInstituteRepository {
     phone?: string
   ): Promise<Institute> {
     const institute = this.institutes.find(
-      (institute) => institute.instituteId === institute_id
+      (institute) => institute.instituteId === instituteId
     );
     if (!institute) {
       throw new NoItemsFound("institute");

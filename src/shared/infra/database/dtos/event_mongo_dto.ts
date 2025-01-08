@@ -1,102 +1,101 @@
 import eventModel, { IEvent as EventDocument } from "../models/event.model";
 import {
-  Event,
-  LocationProps,
-  ReviewProps,
+  Event
 } from "../../../domain/entities/event";
 import { STATUS } from "../../../domain/enums/status_enum";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
+import { Address } from "src/shared/domain/entities/address";
+import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 
 export interface EventMongoDTOProps {
   _id: string;
-  institute_id: string;
   name: string;
-  banner_url: string | undefined;
-  location: LocationProps;
-  price: number;
   description: string;
-  age_range: AGE_ENUM;
-  event_date: Date;
-  features: string[];
-  eventStatus: string;
-  music_type: string[];
-  menu_link: string;
-  event_photo_link?: string;
-  galery_link: string[];
-  package_type?: string[];
-  category?: string;
-  ticket_url?: string;
-  reviews: ReviewProps[];
+  address: Address;
+  price: number;
+  ageRange: AGE_ENUM;
+  eventDate: Date;
+  instituteId: string;
+  eventStatus: STATUS;
+  musicType: MUSIC_TYPE[];
+  menuLink?: string;
+  eventPhotoLink?: string;
+  galeryLink: string[];
+  bannerUrl?: string;
+  packageType: PACKAGE_TYPE[];
+  category?: CATEGORY;
+  ticketUrl?: string;
+  features: FEATURE[];
+  reviewsId: string[];
 }
 
 export class EventMongoDTO {
   private _id: string;
-  private institute_id: string;
   private name: string;
-  private banner_url: string;
-  private location: LocationProps;
-  private price: number;
   private description: string;
-  private age_range: AGE_ENUM;
-  private event_date: Date;
-  private features: string[];
-  private eventStatus: string;
-  private music_type: string[];
-  private menu_link: string;
-  private event_photo_link?: string;
-  private galery_link: string[];
-  private package_type: string[];
-  private category?: string;
+  private address: Address;
+  private price: number;
+  private ageRange: AGE_ENUM;
+  private eventDate: Date;
+  private instituteId: string;
+  private eventStatus: STATUS;
+  private musicType: MUSIC_TYPE[];
+  private menuLink?: string;
+  private eventPhotoLink?: string;
+  private galeryLink: string[];
+  private bannerUrl?: string;
+  private package_type: PACKAGE_TYPE[];
+  private category?: CATEGORY;
   private ticketUrl?: string;
-  private reviews: ReviewProps[];
+  private features: FEATURE[];
+  private reviewsId: string[];
 
   constructor(props: EventMongoDTOProps) {
     this._id = props._id;
-    this.institute_id = props.institute_id;
+    this.instituteId = props.instituteId;
     this.name = props.name;
-    this.banner_url = props.banner_url || "";
-    this.location = props.location;
+    this.bannerUrl = props.bannerUrl;
+    this.address = props.address;
     this.price = props.price;
     this.description = props.description;
-    this.age_range = props.age_range;
-    this.event_date = props.event_date;
-    this.features = props.features;
+    this.ageRange = props.ageRange;
+    this.eventDate = props.eventDate;
     this.eventStatus = props.eventStatus;
-    this.music_type = props.music_type || [];
-    this.menu_link = props.menu_link;
-    this.event_photo_link = props.event_photo_link || "";
-    this.galery_link = props.galery_link;
-    this.package_type = props.package_type || [];
+    this.musicType = props.musicType || [];
+    this.menuLink = props.menuLink;
+    this.eventPhotoLink = props.eventPhotoLink;
+    this.galeryLink = props.galeryLink || [];
+    this.package_type = props.packageType || [];
     this.category = props.category;
-    this.ticketUrl = props.ticket_url || "";
-    this.reviews = props.reviews;
+    this.ticketUrl = props.ticketUrl;
+    this.features = props.features || [];
+    this.reviewsId = props.reviewsId || [];
   }
 
   static fromMongo(eventDoc: any): EventMongoDTO {
     return new EventMongoDTO({
       _id: eventDoc._id,
-      institute_id: eventDoc.institute_id,
+      instituteId: eventDoc.instituteId,
       name: eventDoc.name,
-      banner_url: eventDoc.banner_url,
-      location: eventDoc.location,
+      bannerUrl: eventDoc.bannerUrl,
+      address: eventDoc.location,
       price: eventDoc.price,
       description: eventDoc.description,
-      age_range: eventDoc.age_range,
-      event_date: eventDoc.event_date,
-      features: eventDoc.features || [],
+      ageRange: eventDoc.ageRange,
+      eventDate: eventDoc.eventDate,
+      features: eventDoc.features,
       eventStatus: eventDoc.eventStatus,
-      music_type: eventDoc.music_type || [],
-      menu_link: eventDoc.menu_link,
-      event_photo_link: eventDoc.event_photo_link,
-      galery_link: eventDoc.galery_link || [],
-      package_type: eventDoc.package_type || [],
+      musicType: eventDoc.musicType,
+      menuLink: eventDoc.menuLink,
+      eventPhotoLink: eventDoc.eventPhotoLink,
+      galeryLink: eventDoc.galeryLink,
+      packageType: eventDoc.package_type,
       category: eventDoc.category,
-      ticket_url: eventDoc.ticket_url || "",
-      reviews: eventDoc.reviews || [],
+      ticketUrl: eventDoc.ticketUrl,
+      reviewsId: eventDoc.reviewsId,
     });
   }
 
@@ -105,97 +104,78 @@ export class EventMongoDTO {
       eventId: eventMongoDTO._id,
       name: eventMongoDTO.name,
       description: eventMongoDTO.description,
-      location: eventMongoDTO.location,
+      address: eventMongoDTO.address,
       price: eventMongoDTO.price,
-      ageRange: eventMongoDTO.age_range,
-      eventDate: eventMongoDTO.event_date,
+      ageRange: eventMongoDTO.ageRange,
+      eventDate: eventMongoDTO.eventDate,
       features: (eventMongoDTO.features || [])
         .filter((feature) => feature !== null)
         .map((feature) => feature as FEATURE),
       eventStatus: eventMongoDTO.eventStatus as STATUS,
-      musicType: (eventMongoDTO.music_type || []).map(
+      musicType: (eventMongoDTO.musicType || []).map(
         (type) => type as MUSIC_TYPE
       ),
-      menuLink: eventMongoDTO.menu_link,
-      eventPhotoLink: eventMongoDTO.event_photo_link,
-      galeryLink: eventMongoDTO.galery_link || [],
-      instituteId: eventMongoDTO.institute_id,
-      bannerUrl: eventMongoDTO.banner_url,
+      menuLink: eventMongoDTO.menuLink,
+      eventPhotoLink: eventMongoDTO.eventPhotoLink,
+      galeryLink: eventMongoDTO.galeryLink || [],
+      instituteId: eventMongoDTO.instituteId,
+      bannerUrl: eventMongoDTO.bannerUrl,
       packageType: (eventMongoDTO.package_type || []).map(
         (type) => type as PACKAGE_TYPE
       ),
       category: eventMongoDTO.category as CATEGORY,
       ticketUrl: eventMongoDTO.ticketUrl,
-      reviews: (eventMongoDTO.reviews || []).map((review) => ({
-        username: review.username,
-        name: review.name,
-        star: review.star,
-        photoUrl: review.photoUrl,
-        review: review.review,
-        reviewedAt: review.reviewedAt,
-      })),
+      reviewsId: eventMongoDTO.reviewsId
     });
   }
 
   static fromEntity(event: Event): EventMongoDTO {
     return new EventMongoDTO({
-      _id: event.getEventId as string,
-      institute_id: event.getInstituteId,
-      name: event.getEventName,
-      banner_url: event.getEventBannerUrl,
-      location: event.getEventLocation,
-      price: event.getEventPrice,
-      description: event.getEventDescription,
-      age_range: event.getEventAgeRange,
-      event_date: event.getEventDate,
-      features: event.getFeatures,
-      eventStatus: event.getEventStatus,
-      music_type: event.getMusicType || [],
-      menu_link: event.getMenuLink || "",
-      event_photo_link: event.getEventPhotoLink || "",
-      galery_link: event.getGaleryLink || [],
-      package_type: event.getPackageType || [],
-      category: event.getCategoryType,
-      ticket_url: event.getTicketUrl || "",
-      reviews:
-        event.getReviews?.map((review) => ({
-          username: review.username,
-          name: review.name,
-          photoUrl: review.photoUrl,
-          star: review.star,
-          review: review.review,
-          reviewedAt: review.reviewedAt,
-        })) || [],
+      _id: event.eventId,
+      instituteId: event.instituteId,
+      name: event.name,
+      bannerUrl: event.bannerUrl,
+      address: event.address,
+      price: event.price,
+      description: event.description,
+      ageRange: event.ageRange,
+      eventDate: event.eventDate,
+      features: event.features,
+      eventStatus: event.eventStatus,
+      musicType: event.musicType,
+      menuLink: event.menuLink || "",
+      eventPhotoLink: event.eventPhotoLink || "",
+      galeryLink: event.galeryLink || [],
+      packageType: event.packageType || [],
+      category: event.category,
+      ticketUrl: event.ticketUrl || "",
+      reviewsId:
+        event.reviewsId,
     });
   }
 
   static toMongo(eventMongoDTO: EventMongoDTO): EventDocument {
     const eventDocument = new eventModel({
       _id: eventMongoDTO._id,
-      institute_id: eventMongoDTO.institute_id,
+      instituteId: eventMongoDTO.instituteId,
       name: eventMongoDTO.name,
-      banner_url: eventMongoDTO.banner_url,
-      location: eventMongoDTO.location,
+      bannerUrl: eventMongoDTO.bannerUrl,
+      location: eventMongoDTO.address,
       price: eventMongoDTO.price,
       description: eventMongoDTO.description,
-      age_range: eventMongoDTO.age_range,
-      event_date: eventMongoDTO.event_date,
+      ageRange: eventMongoDTO.ageRange,
+      eventDate: eventMongoDTO.eventDate,
       features: eventMongoDTO.features,
       eventStatus: eventMongoDTO.eventStatus,
-      music_type: eventMongoDTO.music_type,
-      menu_link: eventMongoDTO.menu_link,
-      event_photo_link: eventMongoDTO.event_photo_link,
-      galery_link: eventMongoDTO.galery_link,
+      musicType: eventMongoDTO.musicType,
+      menuLink: eventMongoDTO.menuLink,
+      eventPhotoLink: eventMongoDTO.eventPhotoLink,
+      galeryLink: eventMongoDTO.galeryLink,
       package_type: eventMongoDTO.package_type,
       category: eventMongoDTO.category,
-      ticket_url: eventMongoDTO.ticketUrl,
-      created_at: new Date(),
-      reviews: eventMongoDTO.reviews.map((review) => ({
-        username: review.username,
-        star: review.star,
-        review: review.review,
-        reviewed_at: review.reviewedAt,
-      })),
+      ticketUrl: eventMongoDTO.ticketUrl,
+      createdAt: eventMongoDTO.eventDate,
+      reviewsId: eventMongoDTO.reviewsId
     });
 
     return eventDocument as EventDocument;

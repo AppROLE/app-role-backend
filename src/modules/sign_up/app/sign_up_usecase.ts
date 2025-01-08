@@ -1,12 +1,12 @@
 import { Profile } from "src/shared/domain/entities/profile";
 import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   DuplicatedItem,
   RequestUserToForgotPassword,
   UserAlreadyExists,
   UserNotConfirmed,
-} from "src/shared/helpers/errors/usecase_errors";
+} from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class SignUpUseCase {

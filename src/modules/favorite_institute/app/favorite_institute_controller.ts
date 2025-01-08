@@ -7,16 +7,16 @@ import {
   OK,
   Unauthorized,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import {
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/usecase_errors";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+} from "src/shared/helpers/errors/errors";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 import { FavoriteInstituteViewModel } from "./favorite_institute_viewmodel";
 
 export class FavoriteInstituteController {

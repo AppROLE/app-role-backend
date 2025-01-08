@@ -2,7 +2,7 @@ import { Presence } from "../../../domain/entities/presence";
 import { IPresenceRepository } from "../../../domain/repositories/presence_repository_interface";
 import { IPresence } from "../models/presence.model";
 import { PresenceMongoDTO } from "../dtos/presence_mongo_dto";
-import { NoItemsFound } from "../../../../../src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "../../../../../src/shared/helpers/errors/errors";
 import { Collection, Connection } from "mongoose";
 
 export class PresenceRepositoryMongo implements IPresenceRepository {

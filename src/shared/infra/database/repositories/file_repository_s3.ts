@@ -12,7 +12,7 @@ import {
 import { Environments } from "src/shared/environments";
 import { Readable } from "stream";
 import sharp from "sharp";
-import { S3Exception } from "src/shared/helpers/errors/base_error";
+import { S3Exception } from "src/shared/helpers/errors/errors";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 
 export class FileRepositoryS3 implements IFileRepository {

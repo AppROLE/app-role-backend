@@ -6,12 +6,12 @@ import {
   InternalServerError,
   NotFound,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+} from "src/shared/helpers/errors/errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { UpdateEventViewModel } from "./update_event_viewmodel";
 
 export class UpdateEventController {

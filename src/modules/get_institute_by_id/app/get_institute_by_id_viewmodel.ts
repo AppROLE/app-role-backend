@@ -2,37 +2,37 @@ import { LocationProps } from "src/shared/domain/entities/event";
 import { Institute } from "src/shared/domain/entities/institute";
 
 export class GetInstituteByIdViewModel {
-  private institute_id: string;
+  private instituteId: string;
   private name: string;
-  private logo_photo: string;
+  private logoPhoto: string;
   private description: string;
   private institute_type: string;
   private partner_type: string;
   private phone: string;
   private location: LocationProps;
   private price: number;
-  private photos_url: string[];
-  private events_id: string[];
+  private photosUrl: string[];
+  private eventsId: string[];
 
   constructor(institute: Institute) {
-    this.institute_id = institute.instituteId ?? "";
+    this.instituteId = institute.instituteId ?? "";
     this.name = institute.instituteName;
-    this.logo_photo = institute.instituteLogoPhoto ?? "";
+    this.logoPhoto = institute.instituteLogoPhoto ?? "";
     this.description = institute.instituteDescription;
     this.institute_type = institute.instituteInstituteType;
     this.partner_type = institute.institutePartnerType;
     this.phone = institute.institutePhone ?? "";
     this.location = institute.instituteLocation;
     this.price = institute.institutePrice ?? 0;
-    this.photos_url = institute.institutePhotosUrl ?? [];
-    this.events_id = institute.instituteEventsId ?? [];
+    this.photosUrl = institute.institutePhotosUrl ?? [];
+    this.eventsId = institute.instituteEventsId ?? [];
   }
 
   toJSON() {
     return {
-      institute_id: this.institute_id,
+      instituteId: this.instituteId,
       name: this.name,
-      logo_photo: this.logo_photo,
+      logoPhoto: this.logoPhoto,
       description: this.description,
       institute_type: this.institute_type,
       partner_type: this.partner_type,
@@ -48,8 +48,8 @@ export class GetInstituteByIdViewModel {
         cep: this.location.cep,
       },
       price: this.price,
-      photos_url: this.photos_url,
-      events_id: this.events_id,
+      photosUrl: this.photosUrl,
+      eventsId: this.eventsId,
     };
   }
 }

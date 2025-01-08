@@ -3,15 +3,15 @@ import { CreateEventUseCase } from "src/modules/create_event/app/create_event_us
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/controller_errors";
+} from "src/shared/helpers/errors/errors";
 import {
   BadRequest,
   Created,
   InternalServerError,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors";
 import { STATUS } from "src/shared/domain/enums/status_enum";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
+import { musicType } from "src/shared/domain/enums/musicType_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
@@ -144,7 +144,7 @@ export class CreateEventController {
       const eventId = await this.usecase.execute({
         name,
         description,
-        location: {
+        address: {
           latitude,
           longitude,
           address,
@@ -163,7 +163,7 @@ export class CreateEventController {
         eventStatus: STATUS[eventStatus as keyof typeof STATUS],
         musicType: musicType
           ? (musicType as string[]).map(
-              (type) => MUSIC_TYPE[type as keyof typeof MUSIC_TYPE]
+              (type) => musicType[type as keyof typeof musicType]
             )
           : undefined,
         menuLink: typeof menuLink === "string" ? menuLink : undefined,

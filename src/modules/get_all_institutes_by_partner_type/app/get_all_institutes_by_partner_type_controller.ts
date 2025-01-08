@@ -1,6 +1,6 @@
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { GetAllInstitutesByPartnerTypeUseCase } from "./get_all_institutes_by_partner_type_usecase";
-import { WrongTypeParameters } from "src/shared/helpers/errors/controller_errors";
+import { WrongTypeParameters } from "src/shared/helpers/errors/errors";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { GetAllInstitutesByPartnerTypeViewModel } from "./get_all_institutes_by_partner_type_viewmodel";
 import {
@@ -8,7 +8,7 @@ import {
   NotFound,
   OK,
 } from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 
 export class GetAllInstitutesByPartnerTypeController {
   constructor(private readonly usecase: GetAllInstitutesByPartnerTypeUseCase) {}

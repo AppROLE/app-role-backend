@@ -1,13 +1,14 @@
 import { Profile } from "src/shared/domain/entities/profile";
-import { IAuthRepository } from "src/shared/domain/irepositories/auth_repository_interface";
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
+import { EntityError } from "src/shared/helpers/errors/errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
+import { Validations } from "src/shared/helpers/utils/validations";
 
 export class ConfirmCodeUseCase {
   constructor(private readonly repo: IAuthRepository) {}
 
   async execute(email: string, code: string) {
-    if (!Profile.validateEmail(email)) {
+    if (!Validations.validateEmail(email)) {
       throw new EntityError("email");
     }
 

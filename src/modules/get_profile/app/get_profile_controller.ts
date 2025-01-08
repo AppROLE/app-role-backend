@@ -1,10 +1,10 @@
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
 import { GetProfileUseCase } from "./get_profile_usecase";
 import { BadRequest, InternalServerError, NotFound, OK, Unauthorized } from "src/shared/helpers/external_interfaces/http_codes";
-import { UserAPIGatewayDTO } from "src/shared/infra/dto/user_api_gateway_dto";
+import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
 import { GetProfileViewmodel } from "./get_profile_viewmodel";
-import { ForbiddenAction, NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
-import { WrongTypeParameters } from "src/shared/helpers/errors/controller_errors";
+import { ForbiddenAction, NoItemsFound } from "src/shared/helpers/errors/errors";
+import { WrongTypeParameters } from "src/shared/helpers/errors/errors";
 
 export class GetProfileController {
   constructor(private readonly usecase: GetProfileUseCase) {}

@@ -4,37 +4,37 @@ import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 
 export class InstituteViewModel {
-  private institute_id?: string;
+  private instituteId?: string;
   private name: string;
-  private logo_photo?: string;
+  private logoPhoto?: string;
   private description: string;
   private institute_type: INSTITUTE_TYPE;
   private partner_type: PARTNER_TYPE;
   private phone?: string;
   private location: LocationProps;
   private price?: number;
-  private photos_url?: string[];
-  private events_id?: string[];
+  private photosUrl?: string[];
+  private eventsId?: string[];
 
   constructor(institute: Institute) {
-    this.institute_id = institute.instituteId;
+    this.instituteId = institute.instituteId;
     this.name = institute.instituteName;
-    this.logo_photo = institute.instituteLogoPhoto;
+    this.logoPhoto = institute.instituteLogoPhoto;
     this.description = institute.instituteDescription;
     this.institute_type = institute.instituteInstituteType;
     this.partner_type = institute.institutePartnerType;
     this.phone = institute.institutePhone;
     this.location = institute.instituteLocation;
     this.price = institute.institutePrice;
-    this.photos_url = institute.institutePhotosUrl;
-    this.events_id = institute.instituteEventsId;
+    this.photosUrl = institute.institutePhotosUrl;
+    this.eventsId = institute.instituteEventsId;
   }
 
   toJSON() {
     return {
-      instituteId: this.institute_id,
+      instituteId: this.instituteId,
       name: this.name,
-      logoPhoto: this.logo_photo,
+      logoPhoto: this.logoPhoto,
       description: this.description,
       instituteType: this.institute_type,
       partnerType: this.partner_type,
@@ -50,8 +50,8 @@ export class InstituteViewModel {
         cep: this.location.cep,
       },
       price: this.price,
-      photosUrl: this.photos_url,
-      eventsId: this.events_id,
+      photosUrl: this.photosUrl,
+      eventsId: this.eventsId,
     };
   }
 }

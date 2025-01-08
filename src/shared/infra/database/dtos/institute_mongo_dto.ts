@@ -1,81 +1,81 @@
-import { toEnumPartnerType } from "src/shared/domain/enums/partner_type_enum";
+import { PARTNER_TYPE, toEnumPartnerType } from "src/shared/domain/enums/partner_type_enum";
 import { Institute } from "../../../domain/entities/institute";
 import { INSTITUTE_TYPE } from "../../../domain/enums/institute_type_enum";
 import instituteModel, {
   IInstitute as InstituteDocument,
 } from "../models/institute.model";
-import { LocationProps } from "src/shared/domain/entities/event";
+import { Address } from "src/shared/domain/entities/address";
 
 export interface InstituteMongoDTOProps {
   _id: string;
   name: string;
-  logo_photo: string;
+  logoPhoto: string;
   description: string;
-  institute_type: string;
-  partner_type: string;
-  phone: string;
-  location: LocationProps;
-  price: number;
-  photos: string[];
-  events: string[];
+  instituteType: INSTITUTE_TYPE;
+  partnerType: PARTNER_TYPE;
+  phone?: string;
+  address: Address;
+  price?: number;
+  photosUrl: string[];
+  eventsId: string[];
 }
 
 export class InstituteMongoDTO {
   private _id: string;
   private name: string;
-  private logo_photo: string;
+  private logoPhoto: string;
   private description: string;
-  private institute_type: INSTITUTE_TYPE;
-  private partner_type: string;
-  private phone: string;
-  private location: LocationProps;
-  private price: number;
-  private photos: string[];
-  private events: string[];
+  private instituteType: INSTITUTE_TYPE;
+  private partnerType: PARTNER_TYPE;
+  private phone?: string;
+  private address: Address;
+  private price?: number;
+  private photosUrl: string[];
+  private eventsId: string[];
 
   constructor(props: InstituteMongoDTOProps) {
     this._id = props._id;
     this.name = props.name;
-    this.logo_photo = props.logo_photo;
+    this.logoPhoto = props.logoPhoto;
     this.description = props.description;
-    this.institute_type = props.institute_type as INSTITUTE_TYPE;
-    this.partner_type = props.partner_type;
+    this.instituteType = props.instituteType;
+    this.partnerType = props.partnerType;
     this.phone = props.phone;
-    this.location = props.location;
+    this.address = props.address;
     this.price = props.price;
-    this.photos = props.photos;
-    this.events = props.events;
+    this.photosUrl = props.photosUrl;
+    this.eventsId = props.eventsId;
   }
 
   static toEntity(instituteMongoDTO: InstituteMongoDTO): Institute {
     return new Institute({
-      institute_id: instituteMongoDTO._id,
-      partner_type: toEnumPartnerType(instituteMongoDTO.partner_type),
+      instituteId: instituteMongoDTO._id,
+      partnerType: toEnumPartnerType(instituteMongoDTO.partnerType),
       name: instituteMongoDTO.name,
-      logo_photo: instituteMongoDTO.logo_photo,
+      logoPhoto: instituteMongoDTO.logoPhoto,
       description: instituteMongoDTO.description,
-      institute_type: instituteMongoDTO.institute_type,
+      instituteType: instituteMongoDTO.instituteType,
       phone: instituteMongoDTO.phone,
-      location: instituteMongoDTO.location,
+      address: instituteMongoDTO.address,
       price: instituteMongoDTO.price,
-      photos_url: instituteMongoDTO.photos,
-      events_id: instituteMongoDTO.events,
+      photosUrl: instituteMongoDTO.photosUrl,
+      eventsId: instituteMongoDTO.eventsId,
     });
   }
 
   static fromEntity(institute: Institute): InstituteMongoDTO {
     return new InstituteMongoDTO({
-      _id: institute.instituteId || "",
-      name: institute.instituteName,
-      logo_photo: institute.instituteLogoPhoto || "",
-      description: institute.instituteDescription,
-      institute_type: institute.instituteInstituteType,
-      partner_type: institute.institutePartnerType,
-      phone: institute.institutePhone || "",
-      location: institute.instituteLocation,
-      price: institute.institutePrice || 0,
-      photos: institute.institutePhotosUrl || [],
-      events: institute.instituteEventsId || [],
+      _id: institute.instituteId,
+      name: institute.name,
+      logoPhoto: institute.logoPhoto,
+      description: institute.description,
+      instituteType: institute.instituteType,
+      partnerType: institute.partnerType,
+      phone: institute.phone,
+      address: institute.address,
+      price: institute.price,
+      photosUrl: institute.photosUrl,
+      eventsId: institute.eventsId,
     });
   }
 
@@ -83,15 +83,15 @@ export class InstituteMongoDTO {
     const instituteDocument = new instituteModel({
       _id: instituteMongoDTO._id,
       name: instituteMongoDTO.name,
-      logo_photo: instituteMongoDTO.logo_photo,
+      logoPhoto: instituteMongoDTO.logoPhoto,
       description: instituteMongoDTO.description,
-      institute_type: instituteMongoDTO.institute_type,
-      partner_type: instituteMongoDTO.partner_type,
+      institute_type: instituteMongoDTO.instituteType,
+      partner_type: instituteMongoDTO.partnerType,
       phone: instituteMongoDTO.phone,
-      location: instituteMongoDTO.location,
+      location: instituteMongoDTO.address,
       price: instituteMongoDTO.price,
-      photos: instituteMongoDTO.photos,
-      events: instituteMongoDTO.events,
+      photosUrl: instituteMongoDTO.photosUrl,
+      eventsId: instituteMongoDTO.eventsId,
     });
 
     return instituteDocument as InstituteDocument;
@@ -101,15 +101,15 @@ export class InstituteMongoDTO {
     return new InstituteMongoDTO({
       _id: institute._id,
       name: institute.name,
-      logo_photo: institute.logo_photo,
+      logoPhoto: institute.logoPhoto,
       description: institute.description,
-      institute_type: institute.institute_type,
-      partner_type: institute.partner_type,
+      instituteType: institute.institute_type,
+      partnerType: institute.partner_type,
       phone: institute.phone,
-      location: institute.location,
+      address: institute.location,
       price: institute.price,
-      photos: institute.photos,
-      events: institute.events,
+      photosUrl: institute.photosUrl,
+      eventsId: institute.eventsId,
     });
   }
 }

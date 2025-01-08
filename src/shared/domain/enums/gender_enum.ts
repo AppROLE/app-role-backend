@@ -1,4 +1,4 @@
-import { EntityError } from "src/shared/helpers/errors/domain_errors";
+import { EntityError } from "src/shared/helpers/errors/errors"
 
 export enum GENDER_TYPE {
   MALE = "Masculino",
@@ -15,6 +15,6 @@ export function toEnum(value: string): GENDER_TYPE {
     case "Outro":
       return GENDER_TYPE.OTHER
     default:
-      throw new EntityError("gênero")
+      throw new EntityError("gender type")
   }
 }

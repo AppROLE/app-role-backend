@@ -1,5 +1,5 @@
 import { Institute } from "src/shared/domain/entities/institute";
-import { NoItemsFound } from "src/shared/helpers/errors/usecase_errors";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
