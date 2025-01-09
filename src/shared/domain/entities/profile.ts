@@ -78,9 +78,6 @@ export class Profile {
       this.nickname = props.nickname;
     }
 
-    if (!Validations.validateUsername(props.username)) {
-      throw new EntityError('username');
-    }
     this.username = props.username;
     this.dateBirth = props.dateBirth;
 

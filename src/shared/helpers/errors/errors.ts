@@ -47,7 +47,7 @@ export class WrongTypeParameters extends BaseError {
 
 export class NoItemsFound extends BaseError {
   constructor(message: string) {
-    super(`Nenhum item foi encontrado para ${message}`);
+    super(`Nenhum item encontrado: ${message}`);
   }
 }
 

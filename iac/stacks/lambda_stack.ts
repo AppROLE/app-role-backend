@@ -26,6 +26,7 @@ export class LambdaStack extends Construct {
   // profile routes
   favoriteInstituteFunction: lambda.Function;
   getMyProfileFunction: lambda.Function;
+  createProfileFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -180,6 +181,14 @@ export class LambdaStack extends Construct {
     this.getOtherProfileFunction = this.createLambdaApiGatewayIntegration(
       'get_other_profile',
       'GET',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.createProfileFunction = this.createLambdaApiGatewayIntegration(
+      'create_profile',
+      'POST',
       apiGatewayResource,
       environmentVariables,
       authorizer

@@ -33,4 +33,5 @@ export interface IAuthRepository {
     idToken: string;
     refreshToken: string;
   }>;
+  updateUser(email: string, newUsername?: string): Promise<void>;
 }

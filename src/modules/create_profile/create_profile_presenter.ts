@@ -1,13 +1,10 @@
-import {
-  LambdaHttpRequest,
-  LambdaHttpResponse,
-} from 'src/shared/helpers/external_interfaces/http_lambda_requests';
-import { CreateInstituteUseCase as CreateInstituteUsecase } from './create_institute_usecase';
-import { CreateInstituteController } from './create_institute_controller';
 import { parseMultipartFormData } from 'src/shared/helpers/functions/export_busboy';
+import { CreateProfileController } from './create_profile_controller';
+import { CreateProfileUsecase } from './create_profile_usecase';
+import { LambdaHttpResponse } from 'src/shared/helpers/external_interfaces/http_lambda_requests';
 
-const usecase = new CreateInstituteUsecase();
-const controller = new CreateInstituteController(usecase);
+const usecase = new CreateProfileUsecase();
+const controller = new CreateProfileController(usecase);
 
 export async function lambda_handler(event: any) {
   const formDataParsed = await parseMultipartFormData(event);

@@ -21,6 +21,7 @@ import {
   AdminUpdateUserAttributesCommand,
   AdminUpdateUserAttributesCommandInput,
   CognitoIdentityProviderServiceException,
+  UpdateUserAttributesCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
 
 import {
@@ -346,6 +347,21 @@ export class AuthRepositoryCognito implements IAuthRepository {
         idToken: IdToken || '',
         refreshToken: RefreshToken || '',
       };
+    } catch (error) {
+      this.handleError(error, 'refreshToken');
+    }
+  }
+
+  async updateUser(email: string, newUsername?: string): Promise<void> {
+    try {
+      const params: AdminUpdateUserAttributesCommandInput = {
+        UserPoolId: this.userPoolId,
+        Username: email,
+        UserAttributes: [{ Name: 'custom:username', Value: newUsername }],
+      };
+
+      const command = new AdminUpdateUserAttributesCommand(params);
+      await this.client.send(command);
     } catch (error) {
       this.handleError(error, 'refreshToken');
     }

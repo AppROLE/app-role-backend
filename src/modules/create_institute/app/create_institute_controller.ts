@@ -29,13 +29,13 @@ export class CreateInstituteController {
     formData: Record<string, any>,
     requesterUser: Record<string, any>
   ) {
-    const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-    if (!userApiGateway) throw new ForbiddenAction('Usuário');
-
-    if (userApiGateway.role === ROLE_TYPE.COMMON)
-      throw new ForbiddenAction('Usuário não tem permissão');
     try {
+      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
+
+      if (!userApiGateway) throw new ForbiddenAction('Usuário');
+
+      if (userApiGateway.role === ROLE_TYPE.COMMON)
+        throw new ForbiddenAction('Usuário não tem permissão');
       const {
         description,
         institute_type,
