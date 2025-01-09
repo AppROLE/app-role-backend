@@ -1,15 +1,15 @@
-import { Presence } from "../../../domain/entities/presence";
-import { IPresenceRepository } from "../../../domain/repositories/presence_repository_interface";
-import { IPresence } from "../models/presence.model";
-import { PresenceMongoDTO } from "../dtos/presence_mongo_dto";
-import { NoItemsFound } from "../../../../../src/shared/helpers/errors/errors";
-import { Collection, Connection } from "mongoose";
+import { Presence } from '../../../domain/entities/presence';
+import { IPresenceRepository } from '../../../domain/repositories/presence_repository_interface';
+import { IPresence } from '../models/presence.model';
+import { PresenceMongoDTO } from '../dtos/presence_mongo_dto';
+import { NoItemsFound } from '../../../../../src/shared/helpers/errors/errors';
+import { Collection, Connection } from 'mongoose';
 
 export class PresenceRepositoryMongo implements IPresenceRepository {
   private presenceCollection: Collection<IPresence>;
 
   constructor(connection: Connection) {
-    this.presenceCollection = connection.collection<IPresence>("Presence");
+    this.presenceCollection = connection.collection<IPresence>('Presence');
   }
 
   async createPresence(presence: Presence): Promise<Presence> {
@@ -18,7 +18,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
     const result = await this.presenceCollection.insertOne(presenceDoc);
 
     if (!result.acknowledged) {
-      throw new Error("Failed to create presence in MongoDB.");
+      throw new Error('Failed to create presence in MongoDB.');
     }
 
     const createdPresenceDoc = await this.presenceCollection.findOne({
@@ -26,7 +26,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
     });
 
     if (!createdPresenceDoc) {
-      throw new Error("Failed to find created presence in MongoDB.");
+      throw new Error('Failed to find created presence in MongoDB.');
     }
 
     return PresenceMongoDTO.fromMongo(createdPresenceDoc).toEntity();
@@ -39,8 +39,22 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
     });
 
     if (!result.deletedCount) {
-      throw new NoItemsFound("presence");
+      throw new NoItemsFound('presence');
     }
+  }
+
+  async getPresencesByIds(presencesIds: string[]): Promise<Presence[]> {
+    const presenceDocs = await this.presenceCollection
+      .find({ _id: { $in: presencesIds } })
+      .toArray();
+
+    if (!presenceDocs || presenceDocs.length === 0) {
+      return [];
+    }
+
+    return presenceDocs.map((presenceDoc) =>
+      PresenceMongoDTO.fromMongo(presenceDoc).toEntity()
+    );
   }
 
   async getPresencesByEvent(eventId: string): Promise<Presence[]> {

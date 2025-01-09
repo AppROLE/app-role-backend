@@ -1,48 +1,30 @@
-import { Profile } from "src/shared/domain/entities/profile";
+import { Profile } from 'src/shared/domain/entities/profile';
+import { STATUS } from 'src/shared/domain/enums/status_enum';
+import { ConfirmedEventsResponse } from './get_other_profile_usecase';
 
-export class GetProfileViewmodel {
+class ProfileViewmodel {
   userId: string;
-  name: string;
   nickname: string;
   username: string;
-  email: string;
-  role: ROLE_TYPE;
-  acceptedTerms: boolean;
-  acceptedTermsAt?: number;
-  dateBirth?: number;
-  gender?: GENDER_TYPE;
-  cpf?: string;
   biography?: string;
-  phoneNumber?: string;
-  createdAt: number;
-  updatedAt: number;
   linkInstagram?: string;
   linkTiktok?: string;
   backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy: PRIVACY_TYPE;
-  followers: string[];
-  following: string[];
-  favorites: string[];
-  reviewsId: string[];
-  searchHistory: string[];
-  presencesId: string[];
+  followers: number;
+  following: number;
 
   constructor(profile: Profile) {
-    this.userId = userId;
-    this.nickname = nickname;
-    this.username = username;
-    this.following = following;
-    this.privacy = privacy;
-    this.followers = followers;
-    this.linkTiktok = linkTiktok;
-    this.backgroundPhoto = backgroundPhoto;
-    this.profilePhoto = profilePhoto;
-    this.biography = biography;
-    this.linkInstagram = linkInstagram;
-    this.isFriend = isFriend;
-    this.isFollowing = isFollowing;
-    this.email = email;
+    this.userId = profile.userId;
+    this.nickname = profile.nickname;
+    this.username = profile.username;
+    this.biography = profile.biography;
+    this.linkInstagram = profile.linkInstagram;
+    this.linkTiktok = profile.linkTiktok;
+    this.backgroundPhoto = profile.backgroundPhoto;
+    this.profilePhoto = profile.profilePhoto;
+    this.followers = profile.followers.length;
+    this.following = profile.following.length;
   }
 
   toJSON() {
@@ -50,17 +32,64 @@ export class GetProfileViewmodel {
       userId: this.userId,
       nickname: this.nickname,
       username: this.username,
-      email: this.email,
-      linkTiktok: this.linkTiktok,
+      biography: this.biography,
       linkInstagram: this.linkInstagram,
+      linkTiktok: this.linkTiktok,
       backgroundPhoto: this.backgroundPhoto,
       profilePhoto: this.profilePhoto,
-      privacy: this.privacy,
-      biography: this.biography,
-      following: this.following,
       followers: this.followers,
-      isFriend: this.isFriend,
-      isFollowing: this.isFollowing,
+      following: this.following,
+    };
+  }
+}
+
+class ConfirmedEventsViewmodel {
+  eventId: string;
+  eventName: string;
+  instituteName: string;
+  neighborhood: string;
+  eventStatus: STATUS;
+  eventPhoto: string;
+  eventDate: number;
+
+  constructor(event: ConfirmedEventsResponse) {
+    this.eventId = event.eventId;
+    this.eventName = event.eventName;
+    this.instituteName = event.instituteName;
+    this.neighborhood = event.neighborhood;
+    this.eventStatus = event.eventStatus;
+    this.eventPhoto = event.eventPhoto;
+    this.eventDate = event.eventDate;
+  }
+
+  toJSON() {
+    return {
+      eventId: this.eventId,
+      eventName: this.eventName,
+      instituteName: this.instituteName,
+      neighborhood: this.neighborhood,
+      eventStatus: this.eventStatus,
+      eventPhoto: this.eventPhoto,
+      eventDate: this.eventDate,
+    };
+  }
+}
+
+export class GetOtherProfileViewmodel {
+  private profile: ProfileViewmodel;
+  private confirmedEvents: ConfirmedEventsViewmodel[];
+
+  constructor(profile: Profile, confirmedEvents: ConfirmedEventsResponse[]) {
+    this.profile = new ProfileViewmodel(profile);
+    this.confirmedEvents = confirmedEvents.map(
+      (event) => new ConfirmedEventsViewmodel(event)
+    );
+  }
+
+  toJSON() {
+    return {
+      profile: this.profile.toJSON(),
+      confirmedEvents: this.confirmedEvents.map((event) => event.toJSON()),
     };
   }
 }
