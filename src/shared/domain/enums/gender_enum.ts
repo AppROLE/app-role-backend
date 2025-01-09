@@ -1,20 +1,20 @@
-import { EntityError } from "src/shared/helpers/errors/errors"
+import { EntityError } from 'src/shared/helpers/errors/errors';
 
 export enum GENDER_TYPE {
-  MALE = "Masculino",
-  FEMALE = "Feminino",
-  OTHER = "Outro",
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
 }
 
 export function toEnum(value: string): GENDER_TYPE {
   switch (value) {
-    case "Masculino":
-      return GENDER_TYPE.MALE
-    case "Feminino":
-      return GENDER_TYPE.FEMALE
-    case "Outro":
-      return GENDER_TYPE.OTHER
+    case 'MALE':
+      return GENDER_TYPE.MALE;
+    case 'FEMALE':
+      return GENDER_TYPE.FEMALE;
+    case 'OTHER':
+      return GENDER_TYPE.OTHER;
     default:
-      throw new EntityError("gender type")
+      throw new EntityError('gender type');
   }
 }
