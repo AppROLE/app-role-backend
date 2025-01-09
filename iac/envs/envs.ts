@@ -12,5 +12,4 @@ export const envs = {
   MONGO_URI: process.env.MONGO_URI!,
   BUCKET_NAME: process.env.BUCKET_NAME!,
   STACK_NAME: process.env.STACK_NAME!,
-  CLIENT_SECRET: process.env.CLIENT_SECRET!,
 };

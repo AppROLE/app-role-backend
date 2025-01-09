@@ -55,7 +55,6 @@ export class IacStack extends Stack {
       USER_POOL_ID: envs.USER_POOL_ID,
       USER_POOL_ARN: envs.USER_POOL_ARN,
       APP_CLIENT_ID: envs.APP_CLIENT_ID,
-      CLIENT_SECRET: envs.CLIENT_SECRET,
     };
 
     const lambdaStack = new LambdaStack(

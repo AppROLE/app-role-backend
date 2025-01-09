@@ -1,5 +1,7 @@
 import {
   MissingParameters,
+  UserNotRegistered,
+  UserSignUpNotFinished,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
@@ -78,7 +80,13 @@ export class SignUpController {
       if (error instanceof UserAlreadyExists) {
         return new Conflict(error.message);
       }
-      if (error instanceof UserNotConfirmed) {
+      if (
+        error instanceof UserNotConfirmed ||
+        error instanceof UserSignUpNotFinished ||
+        error instanceof RequestUserToForgotPassword ||
+        error instanceof UserNotRegistered ||
+        error instanceof UserAlreadyExists
+      ) {
         return new Forbidden(error.message);
       }
       if (error instanceof RequestUserToForgotPassword) {

@@ -20,5 +20,4 @@ export class Environments {
   static userPoolName: string = (process.env.USER_POOL_NAME as string) || '';
   static userPoolId: string = (process.env.USER_POOL_ID as string) || '';
   static appClientId: string = (process.env.APP_CLIENT_ID as string) || '';
-  static clientSecret: string = (process.env.CLIENT_SECRET as string) || '';
 }

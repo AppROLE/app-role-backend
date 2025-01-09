@@ -1,11 +1,14 @@
 import { SignInUseCase } from './sign_in_usecase';
 import {
   MissingParameters,
+  RequestUserToForgotPassword,
+  UserNotRegistered,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import {
   BadRequest,
+  Conflict,
   Forbidden,
   InternalServerError,
   NotFound,
@@ -68,12 +71,15 @@ export class SignInController {
       if (error instanceof InvalidCredentialsError) {
         return new BadRequest(error.message);
       }
-      if (error instanceof UserNotConfirmed) {
-        return new Forbidden(error.message);
+      if (
+        error instanceof UserNotConfirmed ||
+        error instanceof UserSignUpNotFinished ||
+        error instanceof RequestUserToForgotPassword ||
+        error instanceof UserNotRegistered
+      ) {
+        return new Conflict(error.message);
       }
-      if (error instanceof UserSignUpNotFinished) {
-        return new BadRequest(error.message);
-      }
+
       if (error instanceof ForbiddenAction) {
         return new Unauthorized(error.message);
       }

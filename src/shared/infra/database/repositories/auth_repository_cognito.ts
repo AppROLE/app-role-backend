@@ -40,18 +40,15 @@ import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 import { User } from 'src/shared/domain/entities/user';
 import { UserCognitoDTO } from '../dtos/user_cognito_dto';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
-import { createHmac } from 'crypto';
 
 export class AuthRepositoryCognito implements IAuthRepository {
   private userPoolId: string;
   private appClientId: string;
-  private clientSecret: string;
   private client: CognitoIdentityProviderClient;
 
   constructor() {
     this.userPoolId = Environments.userPoolId;
     this.appClientId = Environments.appClientId;
-    this.clientSecret = Environments.clientSecret;
     this.client = new CognitoIdentityProviderClient({
       region: Environments.region,
     });
@@ -141,22 +138,27 @@ export class AuthRepositoryCognito implements IAuthRepository {
           { Name: 'name', Value: name },
           { Name: 'email', Value: email },
           { Name: 'custom:role', Value: role },
+          { Name: 'custom:username', Value: '' },
         ],
       };
 
       const command = new SignUpCommand(params);
       const response = await this.client.send(command);
 
-      return UserCognitoDTO.fromCognito(response).toEntity();
+      if (!response.UserSub) {
+        throw new CognitoError('User sub not found');
+      }
+
+      const user = await this.getUserByEmail(email);
+
+      if (!user) {
+        throw new UserNotRegistered();
+      }
+
+      return user;
     } catch (error) {
       this.handleError(error, 'signUp');
     }
-  }
-
-  private generateSecretHash(username: string): string {
-    const hasher = createHmac('sha256', this.clientSecret);
-    hasher.update(`${username}${this.appClientId}`);
-    return hasher.digest('base64');
   }
 
   async signIn(
@@ -168,14 +170,12 @@ export class AuthRepositoryCognito implements IAuthRepository {
     refreshToken: string;
   }> {
     try {
-      const secretHash = this.generateSecretHash(email);
       const params: InitiateAuthCommandInput = {
         ClientId: this.appClientId,
         AuthFlow: 'USER_PASSWORD_AUTH',
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,
-          SECRET_HASH: secretHash,
         },
       };
 
@@ -216,8 +216,8 @@ export class AuthRepositoryCognito implements IAuthRepository {
   async confirmCode(email: string, code: string) {
     try {
       const params: ConfirmSignUpCommandInput = {
-        Username: email,
         ClientId: this.appClientId,
+        Username: email,
         ConfirmationCode: code,
       };
 

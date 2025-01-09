@@ -89,7 +89,7 @@ export class UserNotRegistered extends BaseError {
 
 export class UserNotConfirmed extends BaseError {
   constructor() {
-    super('Usuário não confirmado');
+    super('Email ainda não confirmado');
   }
 }
 
@@ -102,12 +102,6 @@ export class UserSignUpNotFinished extends BaseError {
 export class RequestUserToForgotPassword extends BaseError {
   constructor() {
     super('Redefina sua senha');
-  }
-}
-
-export class FollowMeConflict extends BaseError {
-  constructor() {
-    super('Você não pode seguir a si mesmo');
   }
 }
 
