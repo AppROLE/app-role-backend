@@ -1,18 +1,18 @@
-import { Environments } from "src/shared/environments";
+import { Environments } from 'src/shared/environments';
 import {
+  LambdaEvent,
   LambdaHttpRequest,
   LambdaHttpResponse,
-} from "src/shared/helpers/external_interfaces/http_lambda_requests";
-import { SignUpController } from "./sign_up_controller";
-import { SignUpUseCase } from "./sign_up_usecase";
+} from 'src/shared/helpers/external_interfaces/http_lambda_requests';
+import { SignUpController, SignUpRequestBody } from './sign_up_controller';
+import { SignUpUseCase } from './sign_up_usecase';
 
-const repo = Environments.getAuthRepo();
-const mailRepo = Environments.getMailRepo();
-const usecase = new SignUpUseCase(repo, mailRepo);
+const usecase = new SignUpUseCase();
 const controller = new SignUpController(usecase);
 
-export async function signUpPresenter(event: Record<string, any>) {
-  const httpRequest = new LambdaHttpRequest(event);
+export async function signUpPresenter(event: LambdaEvent<SignUpRequestBody>) {
+
+  const httpRequest = new LambdaHttpRequest<SignUpRequestBody>(event);
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,

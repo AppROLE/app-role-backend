@@ -1,5 +1,13 @@
-abstract class IRequest {
-  abstract get data(): Record<string, unknown>;
+abstract class IRequest<
+  TBody = Record<string, any>,
+  THeaders = Record<string, any>,
+  TQueryParams = Record<string, any>
+> {
+  abstract get data(): {
+    body: TBody;
+    headers: THeaders;
+    query_params: TQueryParams;
+  };
 }
 
 abstract class IResponse {
@@ -7,4 +15,4 @@ abstract class IResponse {
   abstract get data(): Record<string, unknown>;
 }
 
-export { IRequest, IResponse }  
+export { IRequest, IResponse };

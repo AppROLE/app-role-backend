@@ -1,69 +1,66 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpStatusCodeEnum } from "../enum/http_status_code_enum";
-import { IRequest, IResponse } from "../external_interfaces/external_interface";
+import { HttpStatusCodeEnum } from '../enum/http_status_code_enum';
+import { IRequest, IResponse } from '../external_interfaces/external_interface';
 
-class HttpRequest implements IRequest {
-  body: Record<string, any>;
-  headers: Record<string, any>;
-  query_params: Record<string, any>;
-
-  private _data: Record<string, any> = {};
+class HttpRequest<
+  TBody extends Record<string, any> = Record<string, any>,
+  THeaders extends Record<string, any> = Record<string, any>,
+  TQueryParams extends Record<string, any> = Record<string, any>
+> implements IRequest<TBody, THeaders, TQueryParams>
+{
+  private _body: TBody;
+  private _headers: THeaders;
+  private _queryParams: TQueryParams;
 
   constructor(
-    body: Record<string, any> = {},
-    headers: Record<string, any> = {},
-    query_params: Record<string, any> = {}
+    body: TBody = {} as TBody,
+    headers: THeaders = {} as THeaders,
+    queryParams: TQueryParams = {} as TQueryParams
   ) {
-    this.body = body || {};
-    this.headers = headers || {};
-    this.query_params = query_params || {};
+    this._body = body;
+    this._headers = headers;
+    this._queryParams = queryParams;
 
-    const data_json: Record<string, any> = {};
-
-    // Verifique as chaves sobrepostas
-    if (typeof body === "object") {
-      Object.assign(data_json, body);
-      const overlappingKeys = Object.keys(this.body).filter(
-        (key) => key in this.query_params || key in this.headers
-      );
-      if (overlappingKeys.length > 0) {
-        console.warn(
-          `body, query_params, and/or headers have overlapping keys → ${overlappingKeys}`
-        );
-      }
-    } else {
-      const overlappingKeys = Object.keys(this.query_params).filter(
-        (key) => key in this.headers
-      );
-      if (overlappingKeys.length > 0) {
-        console.warn(
-          `query_params and headers have overlapping keys → ${overlappingKeys}`
-        );
-      }
-    }
-
-    if (typeof body === "string") {
-      Object.assign(data_json, { body });
-    }
-
-    Object.assign(data_json, this.headers, this.query_params);
-    this.data = data_json;
+    this.validateOverlappingKeys();
   }
 
-  get data(): Record<string, any> {
-    return this._data;
+  private validateOverlappingKeys(): void {
+    const overlappingKeys = new Set<string>();
+
+    const addOverlaps = (
+      source: Record<string, any>,
+      target: Record<string, any>
+    ) => {
+      Object.keys(source).forEach((key) => {
+        if (key in target) overlappingKeys.add(key);
+      });
+    };
+
+    addOverlaps(this._body, this._headers);
+    addOverlaps(this._body, this._queryParams);
+    addOverlaps(this._headers, this._queryParams);
+
+    if (overlappingKeys.size > 0) {
+      console.warn(
+        `Overlapping keys detected: ${Array.from(overlappingKeys).join(', ')}`
+      );
+    }
   }
 
-  set data(value: Record<string, any>) {
-    this._data = value;
+  get data(): { body: TBody; headers: THeaders; query_params: TQueryParams } {
+    return {
+      body: this._body,
+      headers: this._headers,
+      query_params: this._queryParams,
+    };
   }
 
   toString(): string {
     return `HttpRequest (body=${JSON.stringify(
-      this.body
-    )}, headers=${JSON.stringify(this.headers)}, query_params=${JSON.stringify(
-      this.query_params
-    )}, data=${JSON.stringify(this.data)})`;
+      this._body
+    )}, headers=${JSON.stringify(this._headers)}, query_params=${JSON.stringify(
+      this._queryParams
+    )})`;
   }
 }
 
@@ -84,10 +81,10 @@ class HttpResponse implements IResponse {
     this.headers = headers;
 
     const data_json: Record<string, any> = {};
-    if (typeof body === "object") {
+    if (typeof body === 'object') {
       Object.assign(data_json, body);
     }
-    if (typeof body === "string") {
+    if (typeof body === 'string') {
       Object.assign(data_json, { body });
     }
 
@@ -122,10 +119,10 @@ class HttpResponse implements IResponse {
 export { HttpRequest, HttpResponse };
 
 // Teste
-const body = { body: "body" };
-const headers = { headers: "headers", body: "body" };
-const query_params = { query_params: "query_params" };
+const body = { body: 'body' };
+const headers = { headers: 'headers', body: 'body' };
+const query_params = { query_params: 'query_params' };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const data = { data: "data" };
+const data = { data: 'data' };
 const request = new HttpRequest(body, headers, query_params);
 const response = new HttpResponse(200, body, headers);
