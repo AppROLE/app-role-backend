@@ -182,6 +182,8 @@ export class AuthRepositoryCognito implements IAuthRepository {
       const command = new InitiateAuthCommand(params);
       const result = await this.client.send(command);
 
+      console.log('AuthRepo: ', result);
+
       if (!result.AuthenticationResult) {
         throw new CognitoError('Authentication failed, no tokens returned');
       }
