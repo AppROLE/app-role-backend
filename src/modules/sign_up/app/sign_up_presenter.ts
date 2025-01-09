@@ -11,8 +11,8 @@ const usecase = new SignUpUseCase();
 const controller = new SignUpController(usecase);
 
 export async function signUpPresenter(event: LambdaEvent<SignUpRequestBody>) {
-  console.log(event);
   const httpRequest = new LambdaHttpRequest<SignUpRequestBody>(event);
+  await usecase.connect();
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,

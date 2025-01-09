@@ -116,20 +116,10 @@ interface ApiGatewayEvent {
   isBase64Encoded: boolean;
 }
 
-
-
-
-
-
-
-
-
-
 export type LambdaEvent<
   Tbody extends Record<string, any> = Record<string, any>,
   THeaders extends Record<string, any> = Record<string, any>,
-  TQueryParams extends Record<string, any> = Record<string, any>,
-
+  TQueryParams extends Record<string, any> = Record<string, any>
 > = {
   version: string;
   rawPath: string;
@@ -154,8 +144,10 @@ class LambdaHttpRequest<
   requesterUser: Record<string, any>;
 
   constructor(data: LambdaEvent<TBody, THeaders, TQueryParams>) {
+    console.info('LambdaHttpRequest:', data);
     const headers = data.headers || ({} as THeaders);
-    const queryStringParameters = data.queryStringParameters || ({} as TQueryParams);
+    const queryStringParameters =
+      data.queryStringParameters || ({} as TQueryParams);
     // Processa o corpo da requisição
     let body: TBody;
     try {
