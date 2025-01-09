@@ -9,7 +9,6 @@ import {
   MissingParameters,
   WrongTypeParameters,
 } from "src/shared/helpers/errors/errors";
-import { UnConfirmEventViewmodel } from "./unconfirm_event_viewmodel";
 import {
   BadRequest,
   InternalServerError,
@@ -33,13 +32,11 @@ export class UnConfirmEventController {
       if (typeof eventId !== "string")
         throw new WrongTypeParameters("eventId", "string", typeof eventId);
 
-      await this.usecase.execute(eventId, parsedUserApiGateway.username);
+      await this.usecase.execute(eventId, parsedUserApiGateway.userId);
 
-      const viewmodel = new UnConfirmEventViewmodel(
-        "Presença desconfirmada com sucesso"
-      );
-
-      return new OK(viewmodel.toJSON());
+      return new OK({
+        message: "Presença desconfirmada com sucesso",
+      });
     } catch (error: any) {
       if (
         error instanceof MissingParameters ||

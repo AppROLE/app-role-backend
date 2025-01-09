@@ -1,6 +1,6 @@
-import { Event } from 'src/shared/domain/entities/event';
-import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
-import { Repository } from 'src/shared/infra/database/repositories/repository';
+import { Event } from "src/shared/domain/entities/event";
+import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
+import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class GetAllEventsUseCase {
   repository: Repository;
@@ -17,7 +17,7 @@ export class GetAllEventsUseCase {
     this.event_repo = this.repository.event_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
   }
 
   execute(): Promise<Event[]> {
@@ -26,7 +26,7 @@ export class GetAllEventsUseCase {
   }
 
   executeFromToday(page: number): Promise<Event[]> {
-    const events = this.event_repo!.getAllEventsFromToday(page);
+    const events = this.event_repo!.getAllEventsFromToday();
     return events;
   }
 }

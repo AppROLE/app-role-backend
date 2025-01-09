@@ -3,13 +3,13 @@ import { Event } from "src/shared/domain/entities/event";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
-import { musicType } from "src/shared/domain/enums/musicType_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { STATUS } from "src/shared/domain/enums/status_enum";
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
 import { Address } from "src/shared/domain/entities/address";
+import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 
 interface CreateEventParams {
   name: string;
@@ -17,23 +17,23 @@ interface CreateEventParams {
   address: Address;
   price: number;
   ageRange: AGE_ENUM;
-  eventDate: Date;
+  eventDate: number;
   instituteId: string;
   eventStatus: STATUS;
-  musicType: musicType[];
+  musicType: MUSIC_TYPE[];
   menuLink?: string;
   galery_images: {
     image: Buffer;
     mimetype: string;
   }[];
-  banner_image?: {
+  bannerImage?: {
     image: Buffer;
     mimetype: string;
   };
-  features: FEATURE[];
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
+  features: FEATURE[];
 }
 
 export class CreateEventUseCase {
@@ -54,23 +54,23 @@ export class CreateEventUseCase {
     this.file_repo = this.repository.file_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
 
     if (!this.file_repo)
-      throw new Error('Expected to have an instance of the file repository');
+      throw new Error("Expected to have an instance of the file repository");
   }
 
-  async execute(params: CreateEventParams): Promise<string> {
+  async execute(params: CreateEventParams): Promise<Event> {
     const event_id = uuidv4();
 
     let bannerUrl = "";
-    if (params.banner_image) {
+    if (params.bannerImage) {
       bannerUrl = await this.file_repo!.uploadImage(
         `events/${event_id}/event-photo.${
-          params.banner_image.mimetype.split("/")[1]
+          params.bannerImage.mimetype.split("/")[1]
         }`,
-        params.banner_image.image,
-        params.banner_image.mimetype,
+        params.bannerImage.image,
+        params.bannerImage.mimetype,
         true
       );
     }
@@ -107,6 +107,10 @@ export class CreateEventUseCase {
       features: params.features,
       packageType: params.packageType,
       ticketUrl: params.ticketUrl,
+      reviewsId: [],
+      presencesId: [],
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
     });
 
     return await this.event_repo!.createEvent(event);

@@ -11,6 +11,7 @@ export interface IProfileRepository {
     isAnotherUser: boolean,
     requesterUsername?: string
   ): Promise<Profile | null>;
+  getProfilesByIds(profilesId: string[]): Promise<Profile[]>;
   createProfile(profile: Profile): Promise<Profile>;
   deleteProfile(userId: string): Promise<void>;
   findProfile(searchTerm: string): Promise<FindPersonReturnType[]>;

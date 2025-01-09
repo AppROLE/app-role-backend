@@ -11,11 +11,11 @@ import {
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { EntityError } from "src/shared/helpers/errors/errors";
 import { STATUS } from "src/shared/domain/enums/status_enum";
-import { musicType } from "src/shared/domain/enums/musicType_enum";
 import { FEATURE } from "src/shared/domain/enums/feature_enum";
 import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
 import { CATEGORY } from "src/shared/domain/enums/category_enum";
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
+import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
 
 export class CreateEventController {
   constructor(private readonly usecase: CreateEventUseCase) {}
@@ -113,17 +113,8 @@ export class CreateEventController {
         throw new WrongTypeParameters("ageRange", "string", typeof ageRange);
       }
 
-      const eventDateFormated = new Date(eventDate);
-
-      if (
-        !(eventDateFormated instanceof Date) ||
-        isNaN(eventDateFormated.getTime())
-      ) {
-        throw new WrongTypeParameters(
-          "eventDateFormated",
-          "Date",
-          typeof eventDateFormated
-        );
+      if (!(eventDate instanceof number) || isNaN(eventDate.getTime())) {
+        throw new WrongTypeParameters("eventDate", "number", typeof eventDate);
       }
 
       if (typeof instituteId !== "string") {
@@ -158,27 +149,15 @@ export class CreateEventController {
         ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM)
           ? (ageRange as AGE_ENUM)
           : AGE_ENUM.DEFAULT,
-        eventDate: eventDateFormated,
+        eventDate: eventDate,
         instituteId,
         eventStatus: STATUS[eventStatus as keyof typeof STATUS],
-        musicType: musicType
-          ? (musicType as string[]).map(
-              (type) => musicType[type as keyof typeof musicType]
-            )
-          : undefined,
+        musicType: musicType,
         menuLink: typeof menuLink === "string" ? menuLink : undefined,
         galery_images: gallery,
-        banner_image: banner,
-        features: features
-          ? (features as string[]).map(
-              (feature) => FEATURE[feature as keyof typeof FEATURE]
-            )
-          : undefined,
-        packageType: packageType
-          ? (packageType as string[]).map(
-              (pkg) => PACKAGE_TYPE[pkg as keyof typeof PACKAGE_TYPE]
-            )
-          : undefined,
+        bannerImage: banner,
+        features: features,
+        packageType: packageType,
         category: category
           ? CATEGORY[category as keyof typeof CATEGORY]
           : undefined,

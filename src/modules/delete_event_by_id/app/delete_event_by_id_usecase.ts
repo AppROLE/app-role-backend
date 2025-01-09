@@ -21,9 +21,9 @@ export class DeleteEventByIdUseCase {
     this.file_repo = this.repository.file_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
     if (!this.file_repo)
-      throw new Error('Expected to have an instance of the file repository');
+      throw new Error("Expected to have an instance of the file repository");
   }
 
   async execute(eventId: string): Promise<void> {
@@ -32,7 +32,7 @@ export class DeleteEventByIdUseCase {
       throw new NoItemsFound("event");
     }
 
-    await this.event_repo!.deleteEventById(eventId);
+    await this.event_repo!.deleteEvent(eventId);
     await this.file_repo!.deleteFolder(`events/${eventId}`);
   }
 }

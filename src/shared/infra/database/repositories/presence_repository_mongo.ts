@@ -74,17 +74,16 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
   async getPresencesByEventAndUser(
     eventId: string,
     userId: string
-  ): Promise<Presence[]> {
-    const presenceDocs = await this.presenceCollection
-      .find({ event_id: eventId, username: userId })
-      .toArray();
+  ): Promise<Presence | null> {
+    const presenceDocs = await this.presenceCollection.findOne({
+      event_id: eventId,
+      username: userId,
+    });
 
-    if (!presenceDocs || presenceDocs.length === 0) {
-      return [];
+    if (!presenceDocs) {
+      return null;
     }
 
-    return presenceDocs.map((presenceDoc) =>
-      PresenceMongoDTO.fromMongo(presenceDoc).toEntity()
-    );
+    return PresenceMongoDTO.fromMongo(presenceDocs).toEntity();
   }
 }

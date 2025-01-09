@@ -1,46 +1,39 @@
-import { Presence } from "src/shared/domain/entities/presence"
+import { Profile } from "src/shared/domain/entities/profile";
 
-export class PresenceViewmodel {
-  private id?: string
-  private eventId: string
-  private username: string
-  private nickname: string
-  private profilePhoto?: string
-  private checkedInAt?: Date
+export class ProfileViewmodel {
+  userId: string;
+  username: string;
+  nickname: string;
+  profilePhoto?: string;
 
-  constructor(presence: Presence) {
-    this.id = presence.id
-    this.eventId = presence.eventId
-    this.username = presence.username
-    this.nickname = presence.nickname
-    this.profilePhoto = presence.profilePhoto
-    this.checkedInAt = presence.checkedInAt
+  constructor(profile: Profile) {
+    this.userId = profile.userId;
+    this.username = profile.username;
+    this.nickname = profile.nickname;
+    this.profilePhoto = profile.profilePhoto;
   }
 
   toJSON() {
     return {
-      id: this.id,
-      eventId: this.eventId,
+      userId: this.userId,
       username: this.username,
       nickname: this.nickname,
       profilePhoto: this.profilePhoto,
-      checkedInAt: this.checkedInAt
-    }
+    };
   }
-
 }
 
 export class GetAllPresencesByEventIdViewmodel {
-  private presences: PresenceViewmodel[]
+  private profiles: ProfileViewmodel[];
 
-  constructor(presences: Presence[]) {
-    this.presences = presences.map(presence => new PresenceViewmodel(presence))
+  constructor(profiles: Profile[]) {
+    this.profiles = profiles.map((profile) => new ProfileViewmodel(profile));
   }
 
   toJSON() {
     return {
-      presences: this.presences.map(presence => presence.toJSON()),
-      message: 'Presenças encontradas com sucesso'
-    }
+      profiles: this.profiles.map((profile) => profile.toJSON()),
+      message: "Presenças encontradas com sucesso",
+    };
   }
 }
