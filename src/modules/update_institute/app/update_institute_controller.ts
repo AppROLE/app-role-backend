@@ -1,25 +1,34 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { UpdateInstituteUseCase } from "./update_institute_usecase";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { UpdateInstituteUseCase } from './update_institute_usecase';
 import {
   BadRequest,
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
+} from 'src/shared/helpers/external_interfaces/http_codes';
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/errors";
-import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
-import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
-import { UpdateInstituteViewModel } from "./update_institute_viewmodel";
-import { EntityError } from "src/shared/helpers/errors/errors";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/errors/errors';
+import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
+import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
+import { UpdateInstituteViewModel } from './update_institute_viewmodel';
+import { EntityError } from 'src/shared/helpers/errors/errors';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+
+export interface UpdateInstituteRequestBody {
+  instituteId: string;
+  description?: string;
+  institute_type?: INSTITUTE_TYPE;
+  partner_type?: PARTNER_TYPE;
+  name?: string;
+  phone?: string;
+}
 
 export class UpdateInstituteController {
   constructor(private readonly usecase: UpdateInstituteUseCase) {}
 
-  async handle(req: IRequest) {
+  async handle(req: IRequest<UpdateInstituteRequestBody>) {
     try {
       const {
         instituteId,
@@ -28,56 +37,56 @@ export class UpdateInstituteController {
         partner_type,
         name,
         phone,
-      } = req.data;
+      } = req.data.body;
 
       if (instituteId === undefined) {
-        throw new MissingParameters("instituteId");
+        throw new MissingParameters('instituteId');
       }
 
-      if (typeof instituteId !== "string") {
+      if (typeof instituteId !== 'string') {
         throw new WrongTypeParameters(
-          "instituteId",
-          "string",
+          'instituteId',
+          'string',
           typeof instituteId
         );
       }
 
       if (description !== undefined) {
-        if (typeof description !== "string") {
+        if (typeof description !== 'string') {
           throw new WrongTypeParameters(
-            "description",
-            "string",
+            'description',
+            'string',
             typeof description
           );
         }
       }
       if (institute_type !== undefined) {
-        if (typeof institute_type !== "string") {
+        if (typeof institute_type !== 'string') {
           throw new WrongTypeParameters(
-            "institute_type",
-            "string",
+            'institute_type',
+            'string',
             typeof institute_type
           );
         }
       }
       if (partner_type !== undefined) {
-        if (typeof partner_type !== "string") {
+        if (typeof partner_type !== 'string') {
           throw new WrongTypeParameters(
-            "partner_type",
-            "string",
+            'partner_type',
+            'string',
             typeof partner_type
           );
         }
       }
       if (name !== undefined) {
-        if (typeof name !== "string") {
-          throw new WrongTypeParameters("name", "string", typeof name);
+        if (typeof name !== 'string') {
+          throw new WrongTypeParameters('name', 'string', typeof name);
         }
       }
 
       if (phone !== undefined) {
-        if (typeof phone !== "string") {
-          throw new WrongTypeParameters("phone", "string", typeof phone);
+        if (typeof phone !== 'string') {
+          throw new WrongTypeParameters('phone', 'string', typeof phone);
         }
       }
 
@@ -91,7 +100,7 @@ export class UpdateInstituteController {
       );
 
       const viewmodel = new UpdateInstituteViewModel(
-        "Instituto atualizado com sucesso"
+        'Instituto atualizado com sucesso'
       );
 
       return new OK(viewmodel.toJSON());
