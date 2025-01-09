@@ -3,6 +3,7 @@ import {
   WrongTypeParameters,
   NoItemsFound,
   EntityError,
+  InvalidCredentialsError,
 } from 'src/shared/helpers/errors/errors';
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import {
@@ -10,6 +11,7 @@ import {
   BadRequest,
   NotFound,
   InternalServerError,
+  Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import { VerifyEmailUsecase } from './verify_email_usecase';
 import { VerifyEmailViewmodel } from './verify_email_viewmodel';
@@ -47,6 +49,9 @@ export class VerifyEmailController {
       );
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
+      if (error instanceof InvalidCredentialsError) {
+        return new Unauthorized(error.message);
+      }
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message);
       }
