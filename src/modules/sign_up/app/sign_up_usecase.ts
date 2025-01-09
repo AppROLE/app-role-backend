@@ -1,14 +1,15 @@
-import { Profile } from "src/shared/domain/entities/profile";
-import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
-import { EntityError } from "src/shared/helpers/errors/errors";
+import { Profile } from 'src/shared/domain/entities/profile';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
+import { EntityError } from 'src/shared/helpers/errors/errors';
 import {
   DuplicatedItem,
   RequestUserToForgotPassword,
   UserAlreadyExists,
   UserNotConfirmed,
-} from "src/shared/helpers/errors/errors";
-import { Validations } from "src/shared/helpers/utils/validations";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+} from 'src/shared/helpers/errors/errors';
+import { Validations } from 'src/shared/helpers/utils/validations';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class SignUpUseCase {
   repository: Repository;
@@ -25,20 +26,25 @@ export class SignUpUseCase {
     this.auth_repo = this.repository.auth_repo;
 
     if (!this.auth_repo)
-      throw new Error("Expected to have an instance of the auth repository");
+      throw new Error('Expected to have an instance of the auth repository');
   }
 
-  async execute(name: string, email: string, password: string) {
+  async execute(
+    name: string,
+    email: string,
+    password: string,
+    role = ROLE_TYPE.COMMON
+  ) {
     if (Validations.validateEmail(email) === false) {
-      throw new EntityError("email");
+      throw new EntityError('email');
     }
 
     if (Validations.validateName(name) === false) {
-      throw new EntityError("name");
+      throw new EntityError('name');
     }
 
     if (Validations.validatePassword(password) === false) {
-      throw new EntityError("password");
+      throw new EntityError('password');
     }
 
     const userAlreadyExists = await this.auth_repo!.getUserByEmail(email);
@@ -47,7 +53,12 @@ export class SignUpUseCase {
       throw new UserNotConfirmed();
     }
 
-    const createdUser = await this.auth_repo!.signUp(name, email, password);
+    const createdUser = await this.auth_repo!.signUp(
+      name,
+      email,
+      password,
+      role
+    );
 
     return createdUser;
   }

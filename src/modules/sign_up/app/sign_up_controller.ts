@@ -1,39 +1,58 @@
-import { MissingParameters, WrongTypeParameters } from "src/shared/helpers/errors/errors";
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { SignUpUseCase } from "./sign_up_usecase";
-import { SignUpViewmodel } from "./sign_up_viewmodel";
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
-import { BadRequest, Conflict, Created, Forbidden, InternalServerError } from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/errors";
-import { DuplicatedItem, RequestUserToForgotPassword, UserAlreadyExists, UserNotConfirmed } from "src/shared/helpers/errors/errors";
+import {
+  MissingParameters,
+  WrongTypeParameters,
+} from 'src/shared/helpers/errors/errors';
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { SignUpUseCase } from './sign_up_usecase';
+import { SignUpViewmodel } from './sign_up_viewmodel';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import {
+  BadRequest,
+  Conflict,
+  Created,
+  Forbidden,
+  InternalServerError,
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { EntityError } from 'src/shared/helpers/errors/errors';
+import {
+  DuplicatedItem,
+  RequestUserToForgotPassword,
+  UserAlreadyExists,
+  UserNotConfirmed,
+} from 'src/shared/helpers/errors/errors';
+
+export interface SignUpRequestBody {
+  name: string;
+  email: string;
+  password: string;
+  role?: ROLE_TYPE;
+}
 
 export class SignUpController {
   constructor(private readonly usecase: SignUpUseCase) {}
 
-  async handle(request: IRequest) {
-    try {
-      const name = request.data.name;
-      const email = request.data.email;
-      const password = request.data.password;
+  async handle(request: IRequest<SignUpRequestBody>) {
+    const { name, email, password } = request.data.body;
 
+    try {
       if (!name) {
-        throw new MissingParameters("name");
+        throw new MissingParameters('name');
       }
       if (!email) {
-        throw new MissingParameters("email");
+        throw new MissingParameters('email');
       }
       if (!password) {
-        throw new MissingParameters("password");
+        throw new MissingParameters('password');
       }
 
-      if (typeof name !== "string") {
-        throw new WrongTypeParameters("name", "string", typeof name);
+      if (typeof name !== 'string') {
+        throw new WrongTypeParameters('name', 'string', typeof name);
       }
-      if (typeof email !== "string") {
-        throw new WrongTypeParameters("email", "string", typeof email);
+      if (typeof email !== 'string') {
+        throw new WrongTypeParameters('email', 'string', typeof email);
       }
-      if (typeof password !== "string") {
-        throw new WrongTypeParameters("password", "string", typeof password);
+      if (typeof password !== 'string') {
+        throw new WrongTypeParameters('password', 'string', typeof password);
       }
 
       const response = await this.usecase.execute(name, email, password);
@@ -42,12 +61,15 @@ export class SignUpController {
         userId: response.userId,
         email: response.email,
         name: response.name,
-        role: response.role as ROLE_TYPE
+        role: response.role as ROLE_TYPE,
       });
 
       return new Created(viewmodel.toJSON());
     } catch (error: any) {
-      if (error instanceof MissingParameters || error instanceof WrongTypeParameters) {
+      if (
+        error instanceof MissingParameters ||
+        error instanceof WrongTypeParameters
+      ) {
         return new BadRequest(error.message);
       }
       if (error instanceof EntityError) {
@@ -63,7 +85,9 @@ export class SignUpController {
         return new Forbidden(error.message);
       }
       if (error instanceof Error) {
-        return new InternalServerError(`SignUpController, Error on handle: ${error.message}`);
+        return new InternalServerError(
+          `SignUpController, Error on handle: ${error.message}`
+        );
       }
     }
   }
