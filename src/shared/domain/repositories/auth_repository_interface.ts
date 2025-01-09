@@ -1,5 +1,5 @@
-import { User } from "../entities/user";
-import { ROLE_TYPE } from "../enums/role_type_enum";
+import { User } from '../entities/user';
+import { ROLE_TYPE } from '../enums/role_type_enum';
 
 export interface IAuthRepository {
   signUp(
@@ -17,6 +17,7 @@ export interface IAuthRepository {
     refreshToken: string;
   }>;
   resendCode(email: string): Promise<void>;
+  confirmCode(email: string, code: string): Promise<void>;
   getUserByEmail(email: string): Promise<User | null>;
   forgotPassword(email: string): Promise<void>;
   confirmForgotPassword(

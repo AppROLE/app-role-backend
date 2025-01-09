@@ -3,43 +3,47 @@ import {
   WrongTypeParameters,
   NoItemsFound,
   EntityError,
-} from "src/shared/helpers/errors/errors";
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
+} from 'src/shared/helpers/errors/errors';
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import {
   OK,
   BadRequest,
   NotFound,
   InternalServerError,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { ConfirmCodeUseCase } from "./confirm_code_usecase";
-import { ConfirmCodeViewmodel } from "./confirm_code_viewmodel";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { ConfirmCodeUseCase } from './confirm_code_usecase';
+import { ConfirmCodeViewmodel } from './confirm_code_viewmodel';
+
+export interface ConfirmCodeRequestBody {
+  email: string;
+  code: string;
+}
 
 export class ConfirmCodeController {
   constructor(private readonly usecase: ConfirmCodeUseCase) {}
 
-  async handle(request: IRequest) {
-    const email = request.data.email;
-    const code = request.data.code;
+  async handle(request: IRequest<ConfirmCodeRequestBody>) {
+    const { email, code } = request.data.body;
 
     try {
       if (!email) {
-        throw new MissingParameters("email");
+        throw new MissingParameters('email');
       }
       if (!code) {
-        throw new MissingParameters("code");
+        throw new MissingParameters('code');
       }
 
-      if (typeof email !== "string") {
-        throw new WrongTypeParameters("email", "string", typeof email);
+      if (typeof email !== 'string') {
+        throw new WrongTypeParameters('email', 'string', typeof email);
       }
 
-      if (typeof code !== "string") {
-        throw new WrongTypeParameters("code", "string", typeof code);
+      if (typeof code !== 'string') {
+        throw new WrongTypeParameters('code', 'string', typeof code);
       }
 
       await this.usecase.execute(email, code);
       const viewmodel = new ConfirmCodeViewmodel(
-        "Código validado com sucesso!"
+        'Código validado com sucesso!'
       );
       return new OK(viewmodel.toJSON());
     } catch (error: any) {

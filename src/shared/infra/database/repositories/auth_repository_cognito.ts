@@ -12,6 +12,8 @@ import {
   ForgotPasswordCommandInput,
   ConfirmForgotPasswordCommand,
   ConfirmForgotPasswordCommandInput,
+  ConfirmSignUpCommand,
+  ConfirmSignUpCommandInput,
   InitiateAuthCommand,
   InitiateAuthCommandInput,
   AdminDeleteUserCommand,
@@ -19,17 +21,27 @@ import {
   AdminUpdateUserAttributesCommand,
   AdminUpdateUserAttributesCommandInput,
   CognitoIdentityProviderServiceException,
-} from "@aws-sdk/client-cognito-identity-provider";
+} from '@aws-sdk/client-cognito-identity-provider';
 
-import { ConflictItems, EntityError, ForbiddenAction, PasswordDoesNotMatchError, RequestUserToForgotPassword, UserAlreadyExists, UserNotConfirmed, UserNotRegistered } from "src/shared/helpers/errors/errors";
-import { InvalidCredentialsError } from "src/shared/helpers/errors/errors";
-import { CognitoError, NoItemsFound } from "src/shared/helpers/errors/errors";
-import { Environments } from "src/shared/environments";
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
-import { User } from "src/shared/domain/entities/user";
-import { UserCognitoDTO } from "../dtos/user_cognito_dto";
+import {
+  ConflictItems,
+  EntityError,
+  ForbiddenAction,
+  PasswordDoesNotMatchError,
+  RequestUserToForgotPassword,
+  UserAlreadyExists,
+  UserNotConfirmed,
+  UserNotRegistered,
+} from 'src/shared/helpers/errors/errors';
+import { InvalidCredentialsError } from 'src/shared/helpers/errors/errors';
+import { CognitoError, NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { Environments } from 'src/shared/environments';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import { User } from 'src/shared/domain/entities/user';
+import { UserCognitoDTO } from '../dtos/user_cognito_dto';
+import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 
-export class AuthRepositoryCognito {
+export class AuthRepositoryCognito implements IAuthRepository {
   private userPoolId: string;
   private appClientId: string;
   private client: CognitoIdentityProviderClient;
@@ -47,62 +59,62 @@ export class AuthRepositoryCognito {
 
     if (error instanceof CognitoIdentityProviderServiceException) {
       switch (error.name) {
-        case "NotAuthorizedException":
+        case 'NotAuthorizedException':
           throw new InvalidCredentialsError();
-        case "UserNotFoundException":
+        case 'UserNotFoundException':
           throw new UserNotRegistered();
-        case "UserAlreadyExistsException":
+        case 'UserAlreadyExistsException':
           throw new UserAlreadyExists();
-        case "UserNotConfirmedException":
+        case 'UserNotConfirmedException':
           throw new UserNotConfirmed();
-        case "InvalidParameterException":
-          throw new EntityError("Invalid parameter");
-        case "InvalidPasswordException":
+        case 'InvalidParameterException':
+          throw new EntityError('Invalid parameter');
+        case 'InvalidPasswordException':
           throw new PasswordDoesNotMatchError();
-        case "CodeMismatchException":
-          throw new EntityError("Invalid confirmation code");
-        case "ExpiredCodeException":
-          throw new EntityError("Expired confirmation code");
-        case "LimitExceededException":
-          throw new ForbiddenAction("API request limit exceeded");
-        case "TooManyRequestsException":
-          throw new ForbiddenAction("Too many requests, please slow down");
-        case "ResourceNotFoundException":
-          throw new NoItemsFound("Resource not found");
-        case "AliasExistsException":
-          throw new ConflictItems("Alias already exists");
-        case "InternalErrorException":
-          throw new CognitoError("Internal server error");
-        case "PasswordResetRequiredException":
+        case 'CodeMismatchException':
+          throw new EntityError('Invalid confirmation code');
+        case 'ExpiredCodeException':
+          throw new EntityError('Expired confirmation code');
+        case 'LimitExceededException':
+          throw new ForbiddenAction('API request limit exceeded');
+        case 'TooManyRequestsException':
+          throw new ForbiddenAction('Too many requests, please slow down');
+        case 'ResourceNotFoundException':
+          throw new NoItemsFound('Resource not found');
+        case 'AliasExistsException':
+          throw new ConflictItems('Alias already exists');
+        case 'InternalErrorException':
+          throw new CognitoError('Internal server error');
+        case 'PasswordResetRequiredException':
           throw new RequestUserToForgotPassword();
-        case "UsernameExistsException":
+        case 'UsernameExistsException':
           throw new UserAlreadyExists();
-        case "UserLambdaValidationException":
-          throw new CognitoError("Lambda validation error");
-        case "InvalidLambdaResponseException":
-          throw new CognitoError("Invalid response from Lambda trigger");
-        case "UnexpectedLambdaException":
-          throw new CognitoError("Unexpected Lambda trigger error");
-        case "MFAMethodNotFoundException":
-          throw new ForbiddenAction("MFA method not found");
-        case "SoftwareTokenMFANotFoundException":
-          throw new ForbiddenAction("Software token MFA not configured");
-        case "EnableSoftwareTokenMFAException":
-          throw new ForbiddenAction("Unable to enable Software token MFA");
-        case "UserPoolTaggingException":
-          throw new CognitoError("User Pool tagging error");
-        case "InvalidSmsRoleAccessPolicyException":
-          throw new CognitoError("Invalid SMS role access policy");
-        case "InvalidSmsRoleTrustRelationshipException":
-          throw new CognitoError("Invalid SMS role trust relationship");
-        case "UserImportInProgressException":
-          throw new ForbiddenAction("User import in progress");
-        case "InvalidUserPoolConfigurationException":
-          throw new CognitoError("Invalid User Pool configuration");
-        case "SoftwareTokenMFANotEnabledException":
-          throw new ForbiddenAction("Software token MFA not enabled");
-        case "TooManyFailedAttemptsException":
-          throw new ForbiddenAction("Too many failed attempts");
+        case 'UserLambdaValidationException':
+          throw new CognitoError('Lambda validation error');
+        case 'InvalidLambdaResponseException':
+          throw new CognitoError('Invalid response from Lambda trigger');
+        case 'UnexpectedLambdaException':
+          throw new CognitoError('Unexpected Lambda trigger error');
+        case 'MFAMethodNotFoundException':
+          throw new ForbiddenAction('MFA method not found');
+        case 'SoftwareTokenMFANotFoundException':
+          throw new ForbiddenAction('Software token MFA not configured');
+        case 'EnableSoftwareTokenMFAException':
+          throw new ForbiddenAction('Unable to enable Software token MFA');
+        case 'UserPoolTaggingException':
+          throw new CognitoError('User Pool tagging error');
+        case 'InvalidSmsRoleAccessPolicyException':
+          throw new CognitoError('Invalid SMS role access policy');
+        case 'InvalidSmsRoleTrustRelationshipException':
+          throw new CognitoError('Invalid SMS role trust relationship');
+        case 'UserImportInProgressException':
+          throw new ForbiddenAction('User import in progress');
+        case 'InvalidUserPoolConfigurationException':
+          throw new CognitoError('Invalid User Pool configuration');
+        case 'SoftwareTokenMFANotEnabledException':
+          throw new ForbiddenAction('Software token MFA not enabled');
+        case 'TooManyFailedAttemptsException':
+          throw new ForbiddenAction('Too many failed attempts');
         default:
           throw new CognitoError(`${methodName} - ${error.message}`);
       }
@@ -111,16 +123,21 @@ export class AuthRepositoryCognito {
     throw new CognitoError(`${methodName} - ${error.message}`);
   }
 
-  async signUp(name: string, email: string, password: string, role: ROLE_TYPE): Promise<User> {
+  async signUp(
+    name: string,
+    email: string,
+    password: string,
+    role: ROLE_TYPE
+  ): Promise<User> {
     try {
       const params: SignUpCommandInput = {
         ClientId: this.appClientId,
         Password: password,
         Username: email,
         UserAttributes: [
-          { Name: "name", Value: name },
-          { Name: "email", Value: email },
-          { Name: "custom:role", Value: role },
+          { Name: 'name', Value: name },
+          { Name: 'email', Value: email },
+          { Name: 'custom:role', Value: role },
         ],
       };
 
@@ -129,7 +146,7 @@ export class AuthRepositoryCognito {
 
       return UserCognitoDTO.fromCognito(response).toEntity();
     } catch (error) {
-      this.handleError(error, "signUp");
+      this.handleError(error, 'signUp');
     }
   }
 
@@ -138,7 +155,7 @@ export class AuthRepositoryCognito {
       const params: AdminInitiateAuthCommandInput = {
         UserPoolId: this.userPoolId,
         ClientId: this.appClientId,
-        AuthFlow: "USER_PASSWORD_AUTH",
+        AuthFlow: 'USER_PASSWORD_AUTH',
         AuthParameters: { USERNAME: email, PASSWORD: password },
       };
 
@@ -146,18 +163,19 @@ export class AuthRepositoryCognito {
       const result = await this.client.send(command);
 
       if (!result.AuthenticationResult) {
-        throw new Error("Authentication failed, no tokens returned");
+        throw new Error('Authentication failed, no tokens returned');
       }
 
-      const { AccessToken, IdToken, RefreshToken } = result.AuthenticationResult;
+      const { AccessToken, IdToken, RefreshToken } =
+        result.AuthenticationResult;
 
       return {
-        accessToken: AccessToken || "",
-        idToken: IdToken || "",
-        refreshToken: RefreshToken || "",
+        accessToken: AccessToken || '',
+        idToken: IdToken || '',
+        refreshToken: RefreshToken || '',
       };
     } catch (error) {
-      this.handleError(error, "signIn");
+      this.handleError(error, 'signIn');
     }
   }
 
@@ -171,7 +189,22 @@ export class AuthRepositoryCognito {
       const command = new ResendConfirmationCodeCommand(params);
       await this.client.send(command);
     } catch (error) {
-      this.handleError(error, "resendCode");
+      this.handleError(error, 'resendCode');
+    }
+  }
+
+  async confirmCode(email: string, code: string): Promise<void> {
+    try {
+      const params: ConfirmSignUpCommandInput = {
+        Username: email,
+        ClientId: this.appClientId,
+        ConfirmationCode: code,
+      };
+
+      // const command = new ConfirmSignUpCommand(params);
+      // await this.client.send(command);
+    } catch (error) {
+      this.handleError(error, 'resendCode');
     }
   }
 
@@ -190,7 +223,7 @@ export class AuthRepositoryCognito {
 
       return UserCognitoDTO.fromCognito(response).toEntity();
     } catch (error) {
-      this.handleError(error, "getUserByEmail");
+      this.handleError(error, 'getUserByEmail');
     }
   }
 
@@ -204,11 +237,15 @@ export class AuthRepositoryCognito {
       const command = new ForgotPasswordCommand(params);
       await this.client.send(command);
     } catch (error) {
-      this.handleError(error, "forgotPassword");
+      this.handleError(error, 'forgotPassword');
     }
   }
 
-  async confirmForgotPassword(email: string, newPassword: string, code: string): Promise<void> {
+  async confirmForgotPassword(
+    email: string,
+    newPassword: string,
+    code: string
+  ): Promise<void> {
     try {
       const params: ConfirmForgotPasswordCommandInput = {
         ClientId: this.appClientId,
@@ -220,7 +257,7 @@ export class AuthRepositoryCognito {
       const command = new ConfirmForgotPasswordCommand(params);
       await this.client.send(command);
     } catch (error) {
-      this.handleError(error, "confirmForgotPassword");
+      this.handleError(error, 'confirmForgotPassword');
     }
   }
 
@@ -229,7 +266,7 @@ export class AuthRepositoryCognito {
       const authParams: AdminInitiateAuthCommandInput = {
         UserPoolId: this.userPoolId,
         ClientId: this.appClientId,
-        AuthFlow: "ADMIN_NO_SRP_AUTH",
+        AuthFlow: 'ADMIN_NO_SRP_AUTH',
         AuthParameters: { USERNAME: username, PASSWORD: password },
       };
 
@@ -243,7 +280,7 @@ export class AuthRepositoryCognito {
 
       await this.client.send(deleteCommand);
     } catch (error) {
-      this.handleError(error, "deleteAccount");
+      this.handleError(error, 'deleteAccount');
     }
   }
 
@@ -252,13 +289,13 @@ export class AuthRepositoryCognito {
       const params: AdminUpdateUserAttributesCommandInput = {
         UserPoolId: this.userPoolId,
         Username: email,
-        UserAttributes: [{ Name: "custom:role", Value: newRole }],
+        UserAttributes: [{ Name: 'custom:role', Value: newRole }],
       };
 
       const command = new AdminUpdateUserAttributesCommand(params);
       await this.client.send(command);
     } catch (error) {
-      this.handleError(error, "adminUpdateUser");
+      this.handleError(error, 'adminUpdateUser');
     }
   }
 }
