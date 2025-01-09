@@ -6,11 +6,7 @@ import { GetProfileReturnType } from "../types/get_profile_return_type";
 export interface IProfileRepository {
   getByEmail(email: string): Promise<Profile | null>;
   getByUsername(username: string): Promise<Profile | null>;
-  getByUserId(
-    userId: string,
-    isAnotherUser: boolean,
-    requesterUsername?: string
-  ): Promise<Profile | null>;
+  getByUserId(userId: string): Promise<Profile | null>;
   getProfilesByIds(profilesId: string[]): Promise<Profile[]>;
   createProfile(profile: Profile): Promise<Profile>;
   deleteProfile(userId: string): Promise<void>;

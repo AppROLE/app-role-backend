@@ -1,4 +1,3 @@
-import { LocationProps } from "src/shared/domain/entities/event";
 import { Institute } from "src/shared/domain/entities/institute";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
@@ -20,7 +19,9 @@ export class UpdateInstituteUseCase {
     this.institute_repo = this.repository.institute_repo;
 
     if (!this.institute_repo)
-      throw new Error('Expected to have an instance of the institute repository');
+      throw new Error(
+        "Expected to have an instance of the institute repository"
+      );
   }
 
   async execute(
