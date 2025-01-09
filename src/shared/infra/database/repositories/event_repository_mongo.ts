@@ -1,18 +1,18 @@
-import { Event } from "../../../domain/entities/event";
-import { IEventRepository } from "../../../domain/repositories/event_repository_interface";
-import { IEvent } from "../models/event.model";
-import { EventMongoDTO } from "../dtos/event_mongo_dto";
+import { Event } from '../../../domain/entities/event';
+import { IEventRepository } from '../../../domain/repositories/event_repository_interface';
+import { IEvent } from '../models/event.model';
+import { EventMongoDTO } from '../dtos/event_mongo_dto';
 import {
   NoItemsFound,
   ConflictItems,
-} from "../../../../../src/shared/helpers/errors/errors";
-import { Collection, Connection } from "mongoose";
+} from '../../../../../src/shared/helpers/errors/errors';
+import { Collection, Connection } from 'mongoose';
 
 export class EventRepositoryMongo implements IEventRepository {
   private eventCollection: Collection<IEvent>;
 
   constructor(connection: Connection) {
-    this.eventCollection = connection.collection<IEvent>("Event");
+    this.eventCollection = connection.collection<IEvent>('Event');
   }
 
   async createEvent(event: Event): Promise<Event> {
@@ -21,7 +21,7 @@ export class EventRepositoryMongo implements IEventRepository {
     const result = await this.eventCollection.insertOne(eventDoc);
 
     if (!result.acknowledged) {
-      throw new Error("Erro ao criar evento no MongoDB.");
+      throw new Error('Erro ao criar evento no MongoDB.');
     }
 
     const createdEventDoc = await this.eventCollection.findOne({
@@ -29,7 +29,7 @@ export class EventRepositoryMongo implements IEventRepository {
     });
 
     if (!createdEventDoc) {
-      throw new Error("Erro ao buscar o evento criado no MongoDB.");
+      throw new Error('Erro ao buscar o evento criado no MongoDB.');
     }
 
     return EventMongoDTO.fromMongo(createdEventDoc).toEntity();
@@ -39,12 +39,24 @@ export class EventRepositoryMongo implements IEventRepository {
     const result = await this.eventCollection.deleteOne({ _id: eventId });
 
     if (!result.deletedCount || result.deletedCount === 0) {
-      throw new NoItemsFound("Evento");
+      throw new NoItemsFound('Evento');
     }
   }
 
   async getAllEvents(): Promise<Event[]> {
     const events = await this.eventCollection.find().toArray();
+
+    if (!events || events.length === 0) {
+      return [];
+    }
+
+    return events.map((event) => EventMongoDTO.fromMongo(event).toEntity());
+  }
+
+  async getEventsByIds(eventIds: string[]): Promise<Event[]> {
+    const events = await this.eventCollection
+      .find({ _id: { $in: eventIds } })
+      .toArray();
 
     if (!events || events.length === 0) {
       return [];
