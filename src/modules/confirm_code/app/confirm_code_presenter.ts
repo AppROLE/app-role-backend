@@ -1,17 +1,20 @@
-import { Environments } from "src/shared/environments";
+import { Environments } from 'src/shared/environments';
 import {
+  LambdaEvent,
   LambdaHttpRequest,
   LambdaHttpResponse,
-} from "src/shared/helpers/external_interfaces/http_lambda_requests";
-import { ConfirmCodeUseCase } from "./confirm_code_usecase";
-import { ConfirmCodeController } from "./confirm_code_controller";
+} from 'src/shared/helpers/external_interfaces/http_lambda_requests';
+import { ConfirmCodeUseCase } from './confirm_code_usecase';
+import {
+  ConfirmCodeController,
+  ConfirmCodeRequestBody,
+} from './confirm_code_controller';
 
-const repo = Environments.getAuthRepo();
-const usecase = new ConfirmCodeUseCase(repo);
+const usecase = new ConfirmCodeUseCase();
 const controller = new ConfirmCodeController(usecase);
 
 export async function confirmCodePresenter(
-  event: Record<string, any>
+  event: LambdaEvent<ConfirmCodeRequestBody>
 ) {
   const httpRequest = new LambdaHttpRequest(event);
   const response = await controller.handle(httpRequest);
@@ -20,7 +23,6 @@ export async function confirmCodePresenter(
     response?.statusCode,
     response?.headers
   );
-  
 
   return httpResponse.toJSON();
 }

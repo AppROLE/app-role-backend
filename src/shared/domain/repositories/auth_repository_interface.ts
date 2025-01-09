@@ -1,3 +1,4 @@
+import { ConfirmSignUpCommandOutput } from '@aws-sdk/client-cognito-identity-provider';
 import { User } from '../entities/user';
 import { ROLE_TYPE } from '../enums/role_type_enum';
 
@@ -17,7 +18,7 @@ export interface IAuthRepository {
     refreshToken: string;
   }>;
   resendCode(email: string): Promise<void>;
-  confirmCode(email: string, code: string): Promise<void>;
+  confirmCode(email: string, code: string): Promise<ConfirmSignUpCommandOutput>;
   getUserByEmail(email: string): Promise<User | null>;
   forgotPassword(email: string): Promise<void>;
   confirmForgotPassword(

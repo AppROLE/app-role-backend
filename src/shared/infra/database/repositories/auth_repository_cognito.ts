@@ -193,7 +193,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
     }
   }
 
-  async confirmCode(email: string, code: string): Promise<void> {
+  async confirmCode(email: string, code: string) {
     try {
       const params: ConfirmSignUpCommandInput = {
         Username: email,
@@ -201,8 +201,8 @@ export class AuthRepositoryCognito implements IAuthRepository {
         ConfirmationCode: code,
       };
 
-      // const command = new ConfirmSignUpCommand(params);
-      // await this.client.send(command);
+      const command = new ConfirmSignUpCommand(params);
+      return await this.client.send(command);
     } catch (error) {
       this.handleError(error, 'resendCode');
     }

@@ -1,4 +1,3 @@
-import { Profile } from 'src/shared/domain/entities/profile';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
@@ -40,18 +39,15 @@ export class ConfirmCodeUseCase {
       throw new NoItemsFound('código');
     }
 
-    const codeFromCognito = result.code;
-    const user = result.user;
-
-    return { message: 'Código validado com sucesso!', user, codeFromCognito };
+    return { message: 'Código validado com sucesso!' };
   }
 
-  async getUser(username: string) {
-    if (!Profile.validateUsername(username)) {
-      throw new EntityError('username');
+  async getUser(email: string) {
+    if (!Validations.validateEmail(email)) {
+      throw new EntityError('email');
     }
 
-    const result = await this.repo.findUserByUsername(username);
+    const result = await this.auth_repo!.getUserByEmail(email);
 
     if (!result) {
       throw new NoItemsFound('usuário');
