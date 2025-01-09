@@ -1,18 +1,25 @@
-import { Environments } from "src/shared/environments";
+import { Environments } from 'src/shared/environments';
 import {
+  LambdaEvent,
   LambdaHttpRequest,
   LambdaHttpResponse,
-} from "src/shared/helpers/external_interfaces/http_lambda_requests";
-import { ResendCodeController } from "./resend_code_controller";
-import { ResendCodeUseCase } from "./resend_code_usecase";
+} from 'src/shared/helpers/external_interfaces/http_lambda_requests';
+import {
+  ResendCodeController,
+  ResendCodeRequestBody,
+} from './resend_code_controller';
+import { ResendCodeUseCase } from './resend_code_usecase';
 
-const repo = Environments.getAuthRepo();
-const mailRepo = Environments.getMailRepo();
-const usecase = new ResendCodeUseCase(repo, mailRepo);
+const usecase = new ResendCodeUseCase();
 const controller = new ResendCodeController(usecase);
 
-export async function resendCodePresenter(event: Record<string, any>) {
+export async function resendCodePresenter(
+  event: LambdaEvent<ResendCodeRequestBody>
+) {
   const httpRequest = new LambdaHttpRequest(event);
+
+  await usecase.connect();
+
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,
