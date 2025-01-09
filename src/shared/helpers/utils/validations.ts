@@ -26,18 +26,6 @@ export class Validations {
     return true;
   }
 
-  static validateUsername(username: string): boolean {
-    if (
-      !username ||
-      username.trim().length === 0 ||
-      username.trim().length > 20 ||
-      username !== username.toLowerCase()
-    ) {
-      return false;
-    }
-    return true;
-  }
-
   static validateCpf(cpf?: string): boolean {
     if (cpf && cpf.trim().length > 14) {
       return false;

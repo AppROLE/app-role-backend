@@ -35,10 +35,7 @@ export class User {
     }
     this.email = props.email;
 
-    if (!Validations.validateUsername(props.username)) {
-      throw new EntityError('username');
-    }
-    this.username = props.username;
+    this.username = props.username || '';
 
     if (!Validations.validateName(props.name)) {
       throw new EntityError('name');
