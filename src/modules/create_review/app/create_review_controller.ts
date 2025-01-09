@@ -28,49 +28,33 @@ export class CreateReviewController {
     try {
       const parsedUserApiGateway =
         UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      if (!parsedUserApiGateway) throw new ForbiddenAction("Usuário não encontrado");
+      if (!parsedUserApiGateway)
+        throw new ForbiddenAction("Usuário não encontrado");
 
-      if(!parsedUserApiGateway.username) throw new ForbiddenAction("Usuário não encontrado");
+      if (!parsedUserApiGateway.username)
+        throw new ForbiddenAction("Usuário não encontrado");
 
-      const { rating, review, createdAt, eventId, photoUrl, name } = req.data;
+      const { rating, review, eventId } = req.data;
 
       if (!rating) throw new MissingParameters("rating");
       if (!review) throw new MissingParameters("review");
-      if (!createdAt) throw new MissingParameters("createdAt");
       if (!eventId) throw new MissingParameters("eventId");
-      if (!photoUrl) throw new MissingParameters("photoUrl");
-      if (!name) throw new MissingParameters("name");
 
       if (typeof rating !== "number")
         throw new WrongTypeParameters("rating", "number", typeof rating);
       if (typeof review !== "string")
         throw new WrongTypeParameters("review", "string", typeof review);
-      if (typeof createdAt !== "number")
-        throw new WrongTypeParameters(
-          "createdAt",
-          "number",
-          typeof createdAt
-        );
       if (typeof eventId !== "string")
         throw new WrongTypeParameters("eventId", "string", typeof eventId);
-      if (typeof photoUrl !== "string")
-        throw new WrongTypeParameters("photoUrl", "string", typeof photoUrl);
-      if (typeof name !== "string")
-        throw new WrongTypeParameters("name", "string", typeof name);
 
-      await this.usecase.execute(
-        rating,
+      const reviewCreated = await this.usecase.execute(
         review,
-        createdAt,
+        rating,
         eventId,
-        parsedUserApiGateway.username,
-        name.split(" ")[0],
-        photoUrl
+        parsedUserApiGateway.userId
       );
 
-      const viewmodel = new CreateReviewViewModel(
-        "Avaliação criada com sucesso"
-      );
+      const viewmodel = new CreateReviewViewModel(reviewCreated);
       return new Created(viewmodel);
     } catch (error: any) {
       if (
