@@ -6,7 +6,7 @@ export async function parseMultipartFormData(
   files: Record<string, { image: Buffer; mimetype: string }>;
   fields: Record<string, any>;
 }> {
-  console.info('parseMultipartFormDataRequest:', request);
+  console.info('parseMultipartFormData:', request);
   const contentType =
     request.headers['content-type'] || request.headers['Content-Type'];
   if (!contentType || !contentType.includes('multipart/form-data')) {
@@ -27,15 +27,11 @@ export async function parseMultipartFormData(
     fields: {},
   };
 
-  let fileIndex = 1;
-
   return new Promise((resolve, reject) => {
     try {
       busboy.on('file', (fieldname, file, infos) => {
         const { mimeType } = infos;
         const chunks: Buffer[] = [];
-        const fileKey = `${fieldname}_${fileIndex}`;
-        fileIndex += 1;
 
         file
           .on('data', (chunk: Buffer) => {
@@ -43,7 +39,7 @@ export async function parseMultipartFormData(
           })
           .on('end', () => {
             const completeFile = Buffer.concat(chunks);
-            result.files[fileKey] = {
+            result.files[fieldname] = {
               image: completeFile,
               mimetype: mimeType,
             };
