@@ -1,10 +1,10 @@
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
-import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
+import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class DeleteInstituteByIdUseCase {
+export class DeleteInstituteUsecase {
   repository: Repository;
   private event_repo?: IEventRepository;
   private file_repo?: IFileRepository;
@@ -29,21 +29,23 @@ export class DeleteInstituteByIdUseCase {
     if (!this.file_repo)
       throw new Error('Expected to have an instance of the file repository');
     if (!this.institute_repo)
-      throw new Error('Expected to have an instance of the institute repository');
+      throw new Error(
+        'Expected to have an instance of the institute repository'
+      );
   }
 
   async execute(instituteId: string): Promise<void> {
     const institute = await this.institute_repo!.getInstituteById(instituteId);
     if (!institute) {
-      throw new NoItemsFound("institute");
+      throw new NoItemsFound('institute');
     }
 
-    if (institute.instituteEventsId) {
-      for (const eventId of institute.instituteEventsId) {
+    if (institute.eventsId) {
+      for (const eventId of institute.eventsId) {
         const event = await this.event_repo!.getEventById(eventId);
 
         if (event) {
-          await this.event_repo!.deleteEventById(eventId);
+          await this.event_repo!.deleteEvent(eventId);
           await this.file_repo!.deleteFolder(`events/${eventId}`);
         }
       }

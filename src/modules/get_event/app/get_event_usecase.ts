@@ -1,9 +1,9 @@
-import { Event } from "src/shared/domain/entities/event";
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { Event } from 'src/shared/domain/entities/event';
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class GetEventByIdUseCase {
+export class GetEventUseCase {
   repository: Repository;
   private event_repo?: IEventRepository;
 
@@ -24,7 +24,7 @@ export class GetEventByIdUseCase {
   async execute(eventId: string): Promise<Event> {
     const event = await this.event_repo!.getEventById(eventId);
     if (!event) {
-      throw new NoItemsFound("event");
+      throw new NoItemsFound('event');
     }
     return event;
   }

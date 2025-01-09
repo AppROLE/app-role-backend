@@ -1,21 +1,14 @@
 import {
-  LambdaEvent,
   LambdaHttpRequest,
   LambdaHttpResponse,
 } from 'src/shared/helpers/external_interfaces/http_lambda_requests';
-import { GetInstituteByIdUseCase } from './get_institute_by_id_usecase';
-import {
-  GetInstituteByIdController,
-  GetInstituteByIdRequestBody,
-} from './get_institute_by_id_controller';
+import { DeleteEventUsecase } from './delete_event_usecase';
+import { DeleteEventController } from './delete_event_controller';
 
-const usecase = new GetInstituteByIdUseCase();
-const controller = new GetInstituteByIdController(usecase);
+const usecase = new DeleteEventUsecase();
+const controller = new DeleteEventController(usecase);
 
-export async function lambda_handler(
-  event: LambdaEvent<GetInstituteByIdRequestBody>,
-  context: any
-) {
+export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
   const requesterUser = event.requestContext.authorizer.claims;
   await usecase.connect();

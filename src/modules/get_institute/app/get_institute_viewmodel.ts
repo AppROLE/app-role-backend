@@ -3,7 +3,7 @@ import { Institute } from 'src/shared/domain/entities/institute';
 import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 
-export class GetInstituteByIdViewModel {
+export class GetInstituteViewmodel {
   private instituteId?: string;
   private name: string;
   private logoPhoto?: string;
@@ -48,7 +48,7 @@ export class GetInstituteByIdViewModel {
 }
 
 export class GetAllInstitutesByPartnerTypeViewModel {
-  private institutes: GetInstituteByIdViewModel[];
+  private institutes: GetInstituteViewmodel[];
 
   constructor(institutes: Institute[]) {
     if (!institutes) {
@@ -56,7 +56,7 @@ export class GetAllInstitutesByPartnerTypeViewModel {
     }
 
     this.institutes = institutes.map(
-      (institute) => new GetInstituteByIdViewModel(institute)
+      (institute) => new GetInstituteViewmodel(institute)
     );
   }
 

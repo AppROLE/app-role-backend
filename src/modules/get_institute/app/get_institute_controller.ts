@@ -1,5 +1,5 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { GetInstituteByIdUseCase } from './get_institute_by_id_usecase';
+import { GetInstituteUsecase } from './get_institute_usecase';
 import {
   BadRequest,
   Conflict,
@@ -16,15 +16,15 @@ import {
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import { MissingParameters } from 'src/shared/helpers/errors/errors';
-import { GetInstituteByIdViewModel } from './get_institute_by_id_viewmodel';
+import { GetInstituteViewmodel } from './get_institute_viewmodel';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 
 export interface GetInstituteByIdRequestBody {
   instituteId: string;
 }
 
-export class GetInstituteByIdController {
-  constructor(private readonly usecase: GetInstituteByIdUseCase) {}
+export class GetInstituteController {
+  constructor(private readonly usecase: GetInstituteUsecase) {}
 
   async handle(req: IRequest, requesterUser: Record<string, any>) {
     try {
@@ -39,7 +39,7 @@ export class GetInstituteByIdController {
       }
 
       const institute = await this.usecase.execute(instituteId);
-      const viewModel = new GetInstituteByIdViewModel(institute);
+      const viewModel = new GetInstituteViewmodel(institute);
       return new OK(viewModel.toJSON());
     } catch (error: any) {
       if (

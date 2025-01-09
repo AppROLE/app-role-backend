@@ -28,7 +28,7 @@ export class GetAllPresencesByEventIdController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { eventId } = request.data.body;
+      const { eventId } = request.data.query_params;
 
       if (!eventId) throw new MissingParameters('eventId');
 

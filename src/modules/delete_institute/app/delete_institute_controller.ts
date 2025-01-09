@@ -15,13 +15,13 @@ import {
   NoItemsFound,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
-import { DeleteInstituteByIdViewModel } from './delete_institute_by_id_viewmodel';
-import { DeleteInstituteByIdUseCase } from './delete_institute_by_id_usecase';
+import { DeleteInstituteViewModel } from './delete_institute_viewmodel';
+import { DeleteInstituteUsecase } from './delete_institute_usecase';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
-export class DeleteInstituteByIdController {
-  constructor(private readonly usecase: DeleteInstituteByIdUseCase) {}
+export class DeleteInstituteController {
+  constructor(private readonly usecase: DeleteInstituteUsecase) {}
 
   async handle(
     req: IRequest,
@@ -42,7 +42,7 @@ export class DeleteInstituteByIdController {
 
       await this.usecase.execute(instituteId as string);
 
-      const viewmodel = new DeleteInstituteByIdViewModel(
+      const viewmodel = new DeleteInstituteViewModel(
         'Instituto deletado com sucesso'
       );
       return new OK(viewmodel.toJSON());

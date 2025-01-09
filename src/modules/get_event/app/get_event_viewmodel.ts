@@ -7,7 +7,7 @@ import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
 import { CATEGORY } from 'src/shared/domain/enums/category_enum';
 import { FEATURE } from 'src/shared/domain/enums/feature_enum';
 
-export class GetEventByIdViewModel {
+export class GetEventViewmodel {
   eventId: string;
   name: string;
   description: string;

@@ -1,6 +1,5 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { GetEventByIdViewModel } from './get_event_by_id_viewmodel';
-import { GetEventByIdUseCase } from './get_event_by_id_usecase';
+import { DeleteEventUsecase } from './delete_event_usecase';
 import {
   BadRequest,
   Conflict,
@@ -18,9 +17,10 @@ import {
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
-export class GetEventByIdController {
-  constructor(private readonly usecase: GetEventByIdUseCase) {}
+export class DeleteEventController {
+  constructor(private readonly usecase: DeleteEventUsecase) {}
 
   async handle(req: IRequest, requesterUser: Record<string, any>) {
     try {
@@ -28,10 +28,19 @@ export class GetEventByIdController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
+      if (userApiGateway.role !== ROLE_TYPE.ORGANIZER) {
+        throw new ForbiddenAction(
+          'Usuário nao tem permissão para deletar um evento'
+        );
+      }
+
       const { eventId } = req.data.body;
-      const event = await this.usecase.execute(eventId as string);
-      const viewModel = new GetEventByIdViewModel(event);
-      return new OK(viewModel.toJSON());
+
+      await this.usecase.execute(eventId as string);
+
+      return new OK({
+        message: 'Evento deletado com sucesso',
+      });
     } catch (error: any) {
       if (
         error instanceof EntityError ||
