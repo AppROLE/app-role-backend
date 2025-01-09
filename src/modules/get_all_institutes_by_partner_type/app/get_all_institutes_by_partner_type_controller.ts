@@ -1,35 +1,45 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { GetAllInstitutesByPartnerTypeUseCase } from "./get_all_institutes_by_partner_type_usecase";
-import { WrongTypeParameters } from "src/shared/helpers/errors/errors";
-import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
-import { GetAllInstitutesByPartnerTypeViewModel } from "./get_all_institutes_by_partner_type_viewmodel";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { GetAllInstitutesByPartnerTypeUseCase } from './get_all_institutes_by_partner_type_usecase';
+import { WrongTypeParameters } from 'src/shared/helpers/errors/errors';
+import {
+  PARTNER_TYPE,
+  toEnumPartnerType,
+} from 'src/shared/domain/enums/partner_type_enum';
+import { GetAllInstitutesByPartnerTypeViewModel } from './get_all_institutes_by_partner_type_viewmodel';
 import {
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+
+export interface GetAllInstitutesByPartnerTypeRequestBody {
+  partnerType: string;
+}
 
 export class GetAllInstitutesByPartnerTypeController {
   constructor(private readonly usecase: GetAllInstitutesByPartnerTypeUseCase) {}
 
-  async handle(req: IRequest): Promise<any> {
-    try {
-      const { partnerType } = req.data;
+  async handle(
+    req: IRequest<GetAllInstitutesByPartnerTypeRequestBody>
+  ): Promise<any> {
+    const { partnerType } = req.data.body;
 
-      if (typeof partnerType !== "string") {
+    try {
+      if (typeof partnerType !== 'string') {
         throw new WrongTypeParameters(
-          "partnerType",
-          "string",
+          'partnerType',
+          'string',
           typeof partnerType
         );
       }
 
-      const institutes = await this.usecase.execute(
-        PARTNER_TYPE[partnerType as keyof typeof PARTNER_TYPE]
-      );
+      const partnerTypeEnum = toEnumPartnerType(partnerType);
+
+      const institutes = await this.usecase.execute(partnerTypeEnum);
 
       const viewmodel = new GetAllInstitutesByPartnerTypeViewModel(institutes);
+
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
       if (error instanceof WrongTypeParameters) {
