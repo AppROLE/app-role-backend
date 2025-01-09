@@ -27,11 +27,6 @@ export class ForgotPasswordUseCase {
       throw new EntityError('email');
     }
 
-    const user = await this.auth_repo!.getUserByEmail(email);
-    if (!user) {
-      throw new NoItemsFound('Email não encontrado');
-    }
-
     await this.auth_repo!.forgotPassword(email);
   }
 }
