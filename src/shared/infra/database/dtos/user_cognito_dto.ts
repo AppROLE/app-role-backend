@@ -1,12 +1,12 @@
-import { User } from "src/shared/domain/entities/user";
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
-import { USER_STATUS } from "src/shared/domain/enums/user_status";
+import { User } from 'src/shared/domain/entities/user';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import { USER_STATUS } from 'src/shared/domain/enums/user_status';
 
 const TO_COGNITO_PARAMS = {
-  email: "email",
-  name: "name",
-  username: "custom:username",
-  role: "custom:role",
+  email: 'email',
+  name: 'name',
+  username: 'custom:username',
+  role: 'custom:role',
 };
 
 type CognitoAttribute = {
@@ -79,6 +79,7 @@ export class UserCognitoDTO {
   }
 
   static fromCognito(data: Record<string, any>): UserCognitoDTO {
+    console.log('Dados cognito:', data);
     const userAttributes: CognitoAttribute[] = data.UserAttributes || [];
 
     const userData: Record<string, any> = {};
@@ -86,18 +87,20 @@ export class UserCognitoDTO {
       userData[att.Name] = att.Value;
     }
 
-    userData["enabled"] = data["Enabled"];
-    userData["status"] = data["UserStatus"] ?? "CONFIRMED";
+    console.log('userData:', userData);
+
+    userData['enabled'] = data['Enabled'];
+    userData['status'] = data['UserStatus'] ?? 'CONFIRMED';
 
     return new UserCognitoDTO({
-      userId: userData["sub"],
-      email: userData["email"],
-      username: userData["custom:username"],
-      name: userData["name"],
-      role: userData["custom:role"],
-      userStatus: userData["status"],
-      enabled: userData["enabled"],
-      emailVerified: userData["email_verified"] === "true",
+      userId: userData['sub'],
+      email: userData['email'],
+      username: userData['custom:username'],
+      name: userData['name'],
+      role: userData['custom:role'],
+      userStatus: userData['status'],
+      enabled: userData['enabled'],
+      emailVerified: userData['email_verified'] === 'true',
     });
   }
 
