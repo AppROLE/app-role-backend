@@ -26,12 +26,6 @@ export class ConfirmForgotPasswordUseCase {
       throw new EntityError('email');
     }
 
-    const user = await this.auth_repo!.getUserByEmail(email);
-
-    if (!user) {
-      throw new NoItemsFound('Email não encontrado');
-    }
-
     if (!Validations.validatePassword(newPassword)) {
       throw new EntityError('newPassword');
     }

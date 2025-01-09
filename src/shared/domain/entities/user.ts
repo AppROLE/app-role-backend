@@ -42,9 +42,6 @@ export class User {
     }
     this.name = props.name;
 
-    if (!Validations.validateRole(props.role)) {
-      throw new EntityError('role');
-    }
     this.role = props.role;
 
     if (
