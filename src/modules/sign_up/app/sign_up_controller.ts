@@ -1,5 +1,6 @@
 import {
   MissingParameters,
+  NoItemsFound,
   UserNotRegistered,
   UserSignUpNotFinished,
   WrongTypeParameters,
@@ -14,6 +15,7 @@ import {
   Created,
   Forbidden,
   InternalServerError,
+  NotFound,
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import {
@@ -68,6 +70,9 @@ export class SignUpController {
 
       return new Created(viewmodel.toJSON());
     } catch (error: any) {
+      if (error instanceof NoItemsFound) {
+        return new NotFound(error.message);
+      }
       if (
         error instanceof MissingParameters ||
         error instanceof WrongTypeParameters
