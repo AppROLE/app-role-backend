@@ -22,7 +22,7 @@ export class ConfirmForgotPasswordUseCase {
   }
 
   async execute(email: string, newPassword: string, code: string) {
-    if (Validations.validateEmail(email)) {
+    if (!Validations.validateEmail(email)) {
       throw new EntityError('email');
     }
 
