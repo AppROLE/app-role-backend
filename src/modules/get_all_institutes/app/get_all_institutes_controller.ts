@@ -1,12 +1,12 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import {
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { GetAllInstitutesUseCase } from "./get_all_institutes_usecase";
-import { GetAllInstitutesViewModel } from "./get_all_institutes_viewmodel";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { GetAllInstitutesUseCase } from './get_all_institutes_usecase';
+import { GetAllInstitutesViewModel } from './get_all_institutes_viewmodel';
 
 export class GetAllInstitutesController {
   constructor(private readonly usecase: GetAllInstitutesUseCase) {}
