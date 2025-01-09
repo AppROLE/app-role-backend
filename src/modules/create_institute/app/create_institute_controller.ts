@@ -1,25 +1,40 @@
-import { CreateInstituteUseCase } from "./create_institute_usecase";
+import { CreateInstituteUseCase } from './create_institute_usecase';
 import {
   INSTITUTE_TYPE,
   toEnum,
-} from "src/shared/domain/enums/institute_type_enum";
+} from 'src/shared/domain/enums/institute_type_enum';
 import {
+  ForbiddenAction,
   MissingParameters,
+  NoItemsFound,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/errors/errors';
 import {
   BadRequest,
   Created,
   InternalServerError,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/errors";
-import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
-import { DuplicatedItem } from "src/shared/helpers/errors/errors";
+  NotFound,
+  Unauthorized,
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { EntityError } from 'src/shared/helpers/errors/errors';
+import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
+import { DuplicatedItem } from 'src/shared/helpers/errors/errors';
+import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export class CreateInstituteController {
   constructor(private readonly usecase: CreateInstituteUseCase) {}
 
-  async handle(formData: Record<string, any>) {
+  async handle(
+    formData: Record<string, any>,
+    requesterUser: Record<string, any>
+  ) {
+    const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
+
+    if (!userApiGateway) throw new ForbiddenAction('Usuário');
+
+    if (userApiGateway.role === ROLE_TYPE.COMMON)
+      throw new ForbiddenAction('Usuário não tem permissão');
     try {
       const {
         description,
@@ -38,19 +53,19 @@ export class CreateInstituteController {
         phone,
       } = formData.fields;
 
-      const logo = formData.files["logoPhoto"];
+      const logo = formData.files['logoPhoto'];
 
       if (logo === undefined) {
-        throw new MissingParameters("logoPhoto");
+        throw new MissingParameters('logoPhoto');
       }
 
-      const photos = formData.files["photos"] || [];
+      const photos = formData.files['photos'] || [];
 
       const requiredParams = [
-        "description",
-        "institute_type",
-        "partner_type",
-        "name",
+        'description',
+        'institute_type',
+        'partner_type',
+        'name',
       ];
 
       for (const param of requiredParams) {
@@ -59,66 +74,66 @@ export class CreateInstituteController {
         }
       }
 
-      if (typeof description !== "string") {
+      if (typeof description !== 'string') {
         throw new WrongTypeParameters(
-          "description",
-          "string",
+          'description',
+          'string',
           typeof description
         );
       }
-      if (typeof institute_type !== "string") {
+      if (typeof institute_type !== 'string') {
         throw new WrongTypeParameters(
-          "institute_type",
-          "string",
+          'institute_type',
+          'string',
           typeof institute_type
         );
       }
-      if (typeof partner_type !== "string") {
+      if (typeof partner_type !== 'string') {
         throw new WrongTypeParameters(
-          "partner_type",
-          "string",
+          'partner_type',
+          'string',
           typeof partner_type
         );
       }
-      if (typeof name !== "string") {
-        throw new WrongTypeParameters("name", "string", typeof name);
+      if (typeof name !== 'string') {
+        throw new WrongTypeParameters('name', 'string', typeof name);
       }
 
-      if (typeof latitude !== "number") {
-        throw new WrongTypeParameters("latitude", "number", typeof latitude);
+      if (typeof latitude !== 'number') {
+        throw new WrongTypeParameters('latitude', 'number', typeof latitude);
       }
-      if (typeof longitude !== "number") {
-        throw new WrongTypeParameters("longitude", "number", typeof longitude);
+      if (typeof longitude !== 'number') {
+        throw new WrongTypeParameters('longitude', 'number', typeof longitude);
       }
-      if (typeof address !== "string") {
-        throw new WrongTypeParameters("address", "string", typeof address);
+      if (typeof address !== 'string') {
+        throw new WrongTypeParameters('address', 'string', typeof address);
       }
-      if (typeof neighborhood !== "string") {
+      if (typeof neighborhood !== 'string') {
         throw new WrongTypeParameters(
-          "neighborhood",
-          "string",
+          'neighborhood',
+          'string',
           typeof neighborhood
         );
       }
-      if (typeof city !== "string") {
-        throw new WrongTypeParameters("city", "string", typeof city);
+      if (typeof city !== 'string') {
+        throw new WrongTypeParameters('city', 'string', typeof city);
       }
-      if (typeof state !== "string") {
-        throw new WrongTypeParameters("state", "string", typeof state);
+      if (typeof state !== 'string') {
+        throw new WrongTypeParameters('state', 'string', typeof state);
       }
-      if (typeof cep !== "string") {
-        throw new WrongTypeParameters("cep", "string", typeof cep);
+      if (typeof cep !== 'string') {
+        throw new WrongTypeParameters('cep', 'string', typeof cep);
       }
 
       if (price !== undefined) {
-        if (typeof price !== "number") {
-          throw new WrongTypeParameters("price", "number", typeof price);
+        if (typeof price !== 'number') {
+          throw new WrongTypeParameters('price', 'number', typeof price);
         }
       }
 
       if (phone !== undefined) {
-        if (typeof phone !== "string") {
-          throw new WrongTypeParameters("phone", "string", typeof phone);
+        if (typeof phone !== 'string') {
+          throw new WrongTypeParameters('phone', 'string', typeof phone);
         }
       }
 
@@ -145,26 +160,28 @@ export class CreateInstituteController {
       });
 
       return new Created({
-        message: "Instituição criada com sucesso",
+        message: 'Instituição criada com sucesso',
         id: institute.instituteId,
       });
-    } catch (error) {
+    } catch (error: any) {
       if (
+        error instanceof EntityError ||
         error instanceof MissingParameters ||
         error instanceof WrongTypeParameters
       ) {
         return new BadRequest(error.message);
       }
-      if (error instanceof EntityError) {
-        return new BadRequest(error.message);
+
+      if (error instanceof ForbiddenAction) {
+        return new Unauthorized(error.message);
       }
-      if (error instanceof DuplicatedItem) {
-        return new BadRequest(error.message);
+
+      if (error instanceof NoItemsFound) {
+        return new NotFound(error.message);
       }
+
       if (error instanceof Error) {
-        return new InternalServerError(
-          `CreateEventController, Error on handle: ${error.message}`
-        );
+        return new InternalServerError(error.message);
       }
     } finally {
       await this.usecase.repository.closeSession();

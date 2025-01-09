@@ -1,50 +1,56 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { UnConfirmEventUseCase } from "./unconfirm_event_usecase";
-import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { UnConfirmEventUseCase } from './unconfirm_event_usecase';
+import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import {
+  ConflictItems,
+  EntityError,
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/errors/errors';
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/errors/errors';
 import {
   BadRequest,
+  Conflict,
   InternalServerError,
   NotFound,
   OK,
   Unauthorized,
-} from "src/shared/helpers/external_interfaces/http_codes";
+} from 'src/shared/helpers/external_interfaces/http_codes';
 
 export class UnConfirmEventController {
   constructor(private readonly usecase: UnConfirmEventUseCase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
-      const parsedUserApiGateway =
-        UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      if (!parsedUserApiGateway) throw new ForbiddenAction("usuário");
+      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
-      const { eventId } = request.data;
+      if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      if (!eventId) throw new MissingParameters("eventId");
-      if (typeof eventId !== "string")
-        throw new WrongTypeParameters("eventId", "string", typeof eventId);
+      const { eventId } = request.data.body;
 
-      await this.usecase.execute(eventId, parsedUserApiGateway.userId);
+      if (!eventId) throw new MissingParameters('eventId');
+      if (typeof eventId !== 'string')
+        throw new WrongTypeParameters('eventId', 'string', typeof eventId);
+
+      await this.usecase.execute(eventId, userApiGateway.userId);
 
       return new OK({
-        message: "Presença desconfirmada com sucesso",
+        message: 'Presença desconfirmada com sucesso',
       });
     } catch (error: any) {
       if (
+        error instanceof EntityError ||
         error instanceof MissingParameters ||
         error instanceof WrongTypeParameters
       ) {
         return new BadRequest(error.message);
       }
-
+      if (error instanceof ConflictItems) {
+        return new Conflict(error.message);
+      }
       if (error instanceof ForbiddenAction) {
         return new Unauthorized(error.message);
       }
@@ -53,7 +59,9 @@ export class UnConfirmEventController {
         return new NotFound(error.message);
       }
 
-      return new InternalServerError("Erro interno no servidor");
+      if (error instanceof Error) {
+        return new InternalServerError(error.message);
+      }
     } finally {
       await this.usecase.repository.closeSession();
     }

@@ -1,7 +1,6 @@
-import { Institute } from "src/shared/domain/entities/institute";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { Institute } from 'src/shared/domain/entities/institute';
+import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllInstitutesUseCase {
   repository: Repository;
@@ -18,7 +17,9 @@ export class GetAllInstitutesUseCase {
     this.institute_repo = this.repository.institute_repo;
 
     if (!this.institute_repo)
-      throw new Error('Expected to have an instance of the institute repository');
+      throw new Error(
+        'Expected to have an instance of the institute repository'
+      );
   }
 
   execute(): Promise<Institute[]> {

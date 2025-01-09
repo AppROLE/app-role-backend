@@ -1,28 +1,37 @@
-import { Profile } from "src/shared/domain/entities/profile";
-import { EntityError } from "src/shared/helpers/errors/errors";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { IAuthRepository } from "src/shared/domain/repositories/auth_repository_interface";
-import { generateConfirmationCode } from "src/shared/utils/generate_confirmation_code";
+import { EntityError } from 'src/shared/helpers/errors/errors';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
+import { Validations } from 'src/shared/helpers/utils/validations';
 
 export class ForgotPasswordUseCase {
-  constructor(
-    private readonly repo: IAuthRepository,
-  ) {}
+  repository: Repository;
+  private auth_repo?: IAuthRepository;
+
+  constructor() {
+    this.repository = new Repository({
+      auth_repo: true,
+    });
+  }
+
+  async connect() {
+    await this.repository.connectRepository();
+    this.auth_repo = this.repository.auth_repo;
+
+    if (!this.auth_repo)
+      throw new Error('Expected to have an instance of the auth repository');
+  }
 
   async execute(email: string) {
-    if (!Profile.validateEmail(email)) {
-      throw new EntityError("email");
+    if (!Validations.validateEmail(email)) {
+      throw new EntityError('email');
     }
 
-    const user = await this.repo.getUserByEmail(email);
+    const user = await this.auth_repo!.getUserByEmail(email);
     if (!user) {
-      throw new NoItemsFound("esse email");
+      throw new NoItemsFound('Email não encontrado');
     }
 
-    const code = generateConfirmationCode();
-
-    await this.repo.forgotPassword(email, code);
-
-    return { message: "E-mail de recuperação enviado com sucesso" };
+    await this.auth_repo!.forgotPassword(email);
   }
 }

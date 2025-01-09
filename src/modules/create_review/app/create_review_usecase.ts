@@ -1,63 +1,62 @@
+import { Review } from "src/shared/domain/entities/review";
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { EntityError } from "src/shared/helpers/errors/errors";
+import { IReviewRepository } from "src/shared/domain/repositories/review_repository_interface";
+import { EntityError, NoItemsFound } from "src/shared/helpers/errors/errors";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class CreateReviewUseCase {
   repository: Repository;
   private event_repo?: IEventRepository;
+  private review_repo?: IReviewRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
+      review_repo: true,
     });
   }
 
   async connect() {
     await this.repository.connectRepository();
     this.event_repo = this.repository.event_repo;
+    this.review_repo = this.repository.review_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
+
+    if (!this.review_repo)
+      throw new Error("Expected to have an instance of the review repository");
   }
 
   async execute(
-    rating: number,
     review: string,
-    createdAt: number,
+    rating: number,
     eventId: string,
-    username: string,
-    name: string,
-    photoUrl: string
-  ) {
+    userId: string
+  ): Promise<Review> {
     if (rating < 0 || rating > 5) {
       throw new EntityError("rating");
     }
     if (review.length < 5 || review.length > 250) {
       throw new EntityError("review");
     }
-    if (createdAt < 0) {
-      throw new EntityError("createdAt");
-    }
-    if (eventId.length < 1 || eventId.trim() === "") {
-      throw new EntityError("eventId");
-    }
-    if (username.length < 1 || username.trim() === "") {
-      throw new EntityError("username");
-    }
-    if (photoUrl.length < 1 || photoUrl.trim() === "") {
-      throw new EntityError("photoUrl");
-    }
 
-    const reviwedDate = new Date(createdAt);
+    const event = await this.event_repo!.getEventById(eventId);
 
-    await this.event_repo!.createReview(
-      rating,
-      review,
-      reviwedDate,
-      eventId,
-      name,
-      photoUrl,
-      username
-    );
+    if (!event) throw new NoItemsFound("event");
+
+    const createdReview = new Review({
+      reviewId: uuidv4(),
+      userId: userId,
+      eventId: event.eventId,
+      review: review,
+      rating: rating,
+      createdAt: new Date().getTime(),
+    });
+
+    return await this.review_repo!.createReview(createdReview);
   }
+}
+function uuidv4(): string {
+  throw new Error("Function not implemented.");
 }

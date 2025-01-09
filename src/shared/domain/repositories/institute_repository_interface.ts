@@ -10,6 +10,7 @@ export interface IInstituteRepository {
     partnerType: PARTNER_TYPE
   ): Promise<Institute[]>;
   getInstituteById(instituteId: string): Promise<Institute | null>;
+  getInstitutesByIds(institutesId: string[]): Promise<Institute[]>;
   deleteInstituteById(instituteId: string): Promise<void>;
   updateInstitute(
     instituteId: string,

@@ -1,5 +1,6 @@
-import { User } from "../entities/user";
-import { ROLE_TYPE } from "../enums/role_type_enum";
+import { ConfirmSignUpCommandOutput } from '@aws-sdk/client-cognito-identity-provider';
+import { User } from '../entities/user';
+import { ROLE_TYPE } from '../enums/role_type_enum';
 
 export interface IAuthRepository {
   signUp(
@@ -17,6 +18,7 @@ export interface IAuthRepository {
     refreshToken: string;
   }>;
   resendCode(email: string): Promise<void>;
+  confirmCode(email: string, code: string): Promise<ConfirmSignUpCommandOutput>;
   getUserByEmail(email: string): Promise<User | null>;
   forgotPassword(email: string): Promise<void>;
   confirmForgotPassword(
@@ -24,11 +26,11 @@ export interface IAuthRepository {
     newPassword: string,
     code: string
   ): Promise<void>;
-  // refreshToken(refreshToken: string): Promise<{
-  //   accessToken: string;
-  //   idToken: string;
-  //   refreshToken: string;
-  // }>;
   deleteAccount(username: string, password: string): Promise<void>;
   adminUpdateUser(email: string, newRole: string): Promise<void>;
+  refreshToken(refreshToken: string): Promise<{
+    accessToken: string;
+    idToken: string;
+    refreshToken: string;
+  }>;
 }

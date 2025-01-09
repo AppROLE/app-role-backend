@@ -1,40 +1,42 @@
 import {
+  EntityError,
   MissingParameters,
+  NoItemsFound,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/errors";
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { ResendCodeUseCase } from "./resend_code_usecase";
+} from 'src/shared/helpers/errors/errors';
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import {
   BadRequest,
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { EntityError } from "src/shared/helpers/errors/errors";
-import { ResendCodeViewmodel } from "./resend_code_viewmodel";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { ResendCodeUseCase } from './resend_code_usecase';
+
+export interface ResendCodeRequestBody {
+  email: string;
+}
 
 export class ResendCodeController {
   constructor(private readonly usecase: ResendCodeUseCase) {}
 
-  async handle(request: IRequest) {
-    const email = request.data.email;
+  async handle(request: IRequest<ResendCodeRequestBody>) {
+    const { email } = request.data.body;
 
     try {
       if (!email) {
-        throw new MissingParameters("email");
+        throw new MissingParameters('email');
       }
 
-      if (typeof email !== "string") {
-        throw new WrongTypeParameters("email", "string", typeof email);
+      if (typeof email !== 'string') {
+        throw new WrongTypeParameters('email', 'string', typeof email);
       }
 
       await this.usecase.execute(email);
 
-      const viewmodel = new ResendCodeViewmodel(
-        "Um novo código foi enviado para o seu e-mail!"
-      );
-      return new OK(viewmodel.toJSON());
+      return new OK({
+        message: 'Um novo código foi enviado para o seu e-mail!',
+      });
     } catch (error: any) {
       if (
         error instanceof MissingParameters ||
