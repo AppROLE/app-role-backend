@@ -50,15 +50,12 @@ export class SignUpUseCase {
     const user = await this.auth_repo!.getUserByEmail(email);
 
     if (!user) {
-      throw new UserNotConfirmed();
+      throw new UserAlreadyExists();
     }
 
-    const createdUser = await this.auth_repo!.signUp(
-      name,
-      email,
-      password,
-      role
-    );
+    await this.auth_repo!.signUp(name, email, password, role);
+
+    const createdUser = await this.auth_repo!.getUserByEmail(email);
 
     return createdUser;
   }

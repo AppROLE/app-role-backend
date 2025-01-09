@@ -10,7 +10,10 @@ import { SignUpUseCase } from './sign_up_usecase';
 const usecase = new SignUpUseCase();
 const controller = new SignUpController(usecase);
 
-export async function signUpPresenter(event: LambdaEvent<SignUpRequestBody>) {
+export async function lambda_handler(
+  event: LambdaEvent<SignUpRequestBody>,
+  context: any
+) {
   const httpRequest = new LambdaHttpRequest<SignUpRequestBody>(event);
   await usecase.connect();
   const response = await controller.handle(httpRequest);
@@ -21,9 +24,4 @@ export async function signUpPresenter(event: LambdaEvent<SignUpRequestBody>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await signUpPresenter(event);
-  return response;
 }

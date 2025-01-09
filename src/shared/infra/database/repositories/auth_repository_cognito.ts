@@ -128,7 +128,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
     email: string,
     password: string,
     role: ROLE_TYPE
-  ): Promise<User> {
+  ): Promise<void> {
     try {
       const params: SignUpCommandInput = {
         ClientId: this.appClientId,
@@ -148,14 +148,6 @@ export class AuthRepositoryCognito implements IAuthRepository {
       if (!response.UserSub) {
         throw new CognitoError('User sub not found');
       }
-
-      const user = await this.getUserByEmail(email);
-
-      if (!user) {
-        throw new UserNotRegistered();
-      }
-
-      return user;
     } catch (error) {
       this.handleError(error, 'signUp');
     }
@@ -245,6 +237,11 @@ export class AuthRepositoryCognito implements IAuthRepository {
 
       return UserCognitoDTO.fromCognito(response).toEntity();
     } catch (error) {
+      if (error instanceof CognitoIdentityProviderServiceException) {
+        if (error.name === 'UserNotFoundException') {
+          return null;
+        }
+      }
       this.handleError(error, 'getUserByEmail');
     }
   }

@@ -77,9 +77,6 @@ export class SignUpController {
       if (error instanceof EntityError) {
         return new BadRequest(error.message);
       }
-      if (error instanceof UserAlreadyExists) {
-        return new Conflict(error.message);
-      }
       if (
         error instanceof UserNotConfirmed ||
         error instanceof UserSignUpNotFinished ||
@@ -87,7 +84,7 @@ export class SignUpController {
         error instanceof UserNotRegistered ||
         error instanceof UserAlreadyExists
       ) {
-        return new Forbidden(error.message);
+        return new Conflict(error.message);
       }
       if (error instanceof RequestUserToForgotPassword) {
         return new Forbidden(error.message);

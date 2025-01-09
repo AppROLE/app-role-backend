@@ -8,7 +8,7 @@ export interface IAuthRepository {
     email: string,
     password: string,
     role: ROLE_TYPE
-  ): Promise<User>;
+  ): Promise<void>;
   signIn(
     email: string,
     password: string
