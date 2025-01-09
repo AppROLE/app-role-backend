@@ -1,11 +1,11 @@
-import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
-import { Event } from "../../../shared/domain/entities/event";
-import { Address } from "src/shared/domain/entities/address";
-import { STATUS } from "src/shared/domain/enums/status_enum";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
-import { CATEGORY } from "src/shared/domain/enums/category_enum";
-import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
-import { FEATURE } from "src/shared/domain/enums/feature_enum";
+import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
+import { Event } from '../../../shared/domain/entities/event';
+import { Address } from 'src/shared/domain/entities/address';
+import { STATUS } from 'src/shared/domain/enums/status_enum';
+import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
+import { CATEGORY } from 'src/shared/domain/enums/category_enum';
+import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
+import { FEATURE } from 'src/shared/domain/enums/feature_enum';
 
 export class EventViewModel {
   eventId: string;
@@ -19,9 +19,8 @@ export class EventViewModel {
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  eventPhotoLink?: string;
+  eventPhoto: string;
   galeryLink: string[];
-  bannerUrl?: string;
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -43,9 +42,8 @@ export class EventViewModel {
     this.eventStatus = event.eventStatus;
     this.musicType = event.musicType;
     this.menuLink = event.menuLink;
-    this.eventPhotoLink = event.eventPhotoLink;
+    this.eventPhoto = event.eventPhoto;
     this.galeryLink = event.galeryLink;
-    this.bannerUrl = event.bannerUrl;
     this.packageType = event.packageType;
     this.category = event.category;
     this.ticketUrl = event.ticketUrl;
@@ -78,9 +76,8 @@ export class EventViewModel {
       eventStatus: this.eventStatus,
       musicType: this.musicType,
       menuLink: this.menuLink,
-      eventPhotoLink: this.eventPhotoLink,
+      eventPhoto: this.eventPhoto,
       galeryLink: this.galeryLink,
-      bannerUrl: this.bannerUrl,
       packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,
@@ -103,7 +100,7 @@ export class GetAllEventsByFilterViewModel {
   toJSON() {
     return {
       events: this.events.map((event) => event.toJSON()),
-      message: "Todos os eventos foram recuperados com sucesso",
+      message: 'Todos os eventos foram recuperados com sucesso',
     };
   }
 }

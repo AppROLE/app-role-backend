@@ -1,14 +1,14 @@
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { Event, LocationProps } from "src/shared/domain/entities/event";
-import { EntityError } from "src/shared/helpers/errors/errors";
-import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
-import { STATUS } from "src/shared/domain/enums/status_enum";
-import { musicType } from "src/shared/domain/enums/musicType_enum";
-import { FEATURE } from "src/shared/domain/enums/feature_enum";
-import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
-import { CATEGORY } from "src/shared/domain/enums/category_enum";
-import { Repository } from "src/shared/infra/database/repositories/repository";
-import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { Event, LocationProps } from 'src/shared/domain/entities/event';
+import { EntityError } from 'src/shared/helpers/errors/errors';
+import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
+import { STATUS } from 'src/shared/domain/enums/status_enum';
+import { musicType } from 'src/shared/domain/enums/musicType_enum';
+import { FEATURE } from 'src/shared/domain/enums/feature_enum';
+import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
+import { CATEGORY } from 'src/shared/domain/enums/category_enum';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
+import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
 
 interface UpdateEventParams {
   eventId: string;
@@ -54,16 +54,16 @@ export class UpdateEventUseCase {
     this.file_repo = this.repository.file_repo;
 
     if (!this.event_repo)
-      throw new Error("Expected to have an instance of the event repository");
+      throw new Error('Expected to have an instance of the event repository');
     if (!this.file_repo)
-      throw new Error("Expected to have an instance of the file repository");
+      throw new Error('Expected to have an instance of the file repository');
   }
 
   async execute(params: UpdateEventParams): Promise<Event> {
     const { eventId, ...updatedFields } = params;
 
     if (!eventId) {
-      throw new EntityError("Event ID is required");
+      throw new EntityError('Event ID is required');
     }
 
     const existingEvent = await this.event_repo!.getEventById(eventId);
@@ -84,7 +84,6 @@ export class UpdateEventUseCase {
       musicType: existingEvent.getMusicType,
       menuLink: existingEvent.getMenuLink,
       galeryLink: existingEvent.getGaleryLink,
-      bannerUrl: existingEvent.getEventBannerUrl,
       features: existingEvent.getFeatures as FEATURE[],
       packageType: existingEvent.getPackageType,
       category: existingEvent.getCategoryType,
@@ -129,7 +128,7 @@ export class UpdateEventUseCase {
           const photo = params.galery_images[i];
           const photoUrl = await this.file_repo!.uploadImage(
             `events/${existingEvent.getEventId}/galery/${i}.${
-              photo.mimetype.split("/")[1]
+              photo.mimetype.split('/')[1]
             }`,
             photo.image,
             photo.mimetype,
@@ -141,11 +140,11 @@ export class UpdateEventUseCase {
       eventToUpdate.setGaleryLink = galeryUrls;
     }
     if (updatedFields.bannerImage) {
-      let bannerUrl = "";
+      let bannerUrl = '';
       if (params.bannerImage) {
         bannerUrl = await this.file_repo!.uploadImage(
           `events/${existingEvent.getEventId}/event-photo.${
-            params.bannerImage.mimetype.split("/")[1]
+            params.bannerImage.mimetype.split('/')[1]
           }`,
           params.bannerImage.image,
           params.bannerImage.mimetype,

@@ -61,6 +61,20 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     );
   }
 
+  async getInstitutesByIds(institutesId: string[]): Promise<Institute[]> {
+    const instituteDocs = await this.instituteCollection
+      .find({ _id: { $in: institutesId } })
+      .toArray();
+
+    if (!instituteDocs || instituteDocs.length === 0) {
+      return [];
+    }
+
+    return instituteDocs.map((doc) =>
+      InstituteMongoDTO.fromMongo(doc).toEntity()
+    );
+  }
+
   async deleteInstituteById(instituteId: string): Promise<void> {
     const result = await this.instituteCollection.deleteOne({
       _id: instituteId,

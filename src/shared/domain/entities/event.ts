@@ -1,11 +1,11 @@
-import { EntityError } from "../../helpers/errors/errors";
-import { STATUS } from "../../domain/enums/status_enum";
-import { FEATURE } from "../enums/feature_enum";
-import { CATEGORY } from "../enums/category_enum";
-import { PACKAGE_TYPE } from "../enums/package_type_enum";
-import { AGE_ENUM } from "../enums/age_enum";
-import { Address } from "./address";
-import { MUSIC_TYPE } from "../enums/music_type_enum";
+import { EntityError } from '../../helpers/errors/errors';
+import { STATUS } from '../../domain/enums/status_enum';
+import { FEATURE } from '../enums/feature_enum';
+import { CATEGORY } from '../enums/category_enum';
+import { PACKAGE_TYPE } from '../enums/package_type_enum';
+import { AGE_ENUM } from '../enums/age_enum';
+import { Address } from './address';
+import { MUSIC_TYPE } from '../enums/music_type_enum';
 
 interface EventProps {
   eventId: string;
@@ -19,9 +19,8 @@ interface EventProps {
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  eventPhotoLink?: string;
+  eventPhoto: string;
   galeryLink: string[];
-  bannerUrl?: string;
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -44,9 +43,8 @@ export class Event {
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  eventPhotoLink?: string;
+  eventPhoto: string;
   galeryLink: string[];
-  bannerUrl?: string;
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -68,9 +66,8 @@ export class Event {
     this.eventStatus = props.eventStatus;
     this.musicType = props.musicType;
     this.menuLink = props.menuLink;
-    this.eventPhotoLink = props.eventPhotoLink;
+    this.eventPhoto = props.eventPhoto;
     this.galeryLink = props.galeryLink;
-    this.bannerUrl = props.bannerUrl;
     this.features = props.features || [];
     this.packageType = props.packageType || [];
     this.category = props.category;

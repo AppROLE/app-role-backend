@@ -1,23 +1,23 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { DeleteEventByIdUseCase } from "./delete_event_by_id_usecase";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { DeleteEventByIdUseCase } from './delete_event_by_id_usecase';
 import {
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 
 export class DeleteEventByIdController {
   constructor(private readonly usecase: DeleteEventByIdUseCase) {}
 
   async handle(req: IRequest): Promise<any> {
     try {
-      const { eventId } = req.data;
+      const { eventId } = req.data.body;
 
       await this.usecase.execute(eventId as string);
 
       return new OK({
-        message: "Evento deletado com sucesso",
+        message: 'Evento deletado com sucesso',
       });
     } catch (error: any) {
       if (error instanceof NoItemsFound) {

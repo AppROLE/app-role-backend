@@ -1,12 +1,12 @@
-import { IEvent, EventModel } from "../models/event.model";
-import { Event } from "../../../domain/entities/event";
-import { STATUS } from "../../../domain/enums/status_enum";
-import { CATEGORY } from "src/shared/domain/enums/category_enum";
-import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
-import { FEATURE } from "src/shared/domain/enums/feature_enum";
-import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
-import { Address } from "src/shared/domain/entities/address";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
+import { IEvent, EventModel } from '../models/event.model';
+import { Event } from '../../../domain/entities/event';
+import { STATUS } from '../../../domain/enums/status_enum';
+import { CATEGORY } from 'src/shared/domain/enums/category_enum';
+import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
+import { FEATURE } from 'src/shared/domain/enums/feature_enum';
+import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
+import { Address } from 'src/shared/domain/entities/address';
+import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
 
 export interface EventMongoDTOProps {
   _id: string;
@@ -20,9 +20,8 @@ export interface EventMongoDTOProps {
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  eventPhotoLink?: string;
+  eventPhoto: string;
   galeryLink: string[];
-  bannerUrl?: string;
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -45,9 +44,8 @@ export class EventMongoDTO {
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  eventPhotoLink?: string;
+  eventPhoto: string;
   galeryLink: string[];
-  bannerUrl?: string;
   package_type: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -61,7 +59,6 @@ export class EventMongoDTO {
     this._id = props._id;
     this.instituteId = props.instituteId;
     this.name = props.name;
-    this.bannerUrl = props.bannerUrl;
     this.address = props.address;
     this.price = props.price;
     this.description = props.description;
@@ -70,7 +67,7 @@ export class EventMongoDTO {
     this.eventStatus = props.eventStatus;
     this.musicType = props.musicType || [];
     this.menuLink = props.menuLink;
-    this.eventPhotoLink = props.eventPhotoLink;
+    this.eventPhoto = props.eventPhoto;
     this.galeryLink = props.galeryLink || [];
     this.package_type = props.packageType || [];
     this.category = props.category;
@@ -87,7 +84,6 @@ export class EventMongoDTO {
       _id: eventDoc._id,
       instituteId: eventDoc.instituteId,
       name: eventDoc.name,
-      bannerUrl: eventDoc.bannerUrl,
       address: eventDoc.address,
       price: eventDoc.price,
       description: eventDoc.description,
@@ -97,7 +93,7 @@ export class EventMongoDTO {
       eventStatus: eventDoc.eventStatus,
       musicType: eventDoc.musicType,
       menuLink: eventDoc.menuLink,
-      eventPhotoLink: eventDoc.eventPhotoLink,
+      eventPhoto: eventDoc.eventPhoto,
       galeryLink: eventDoc.galeryLink,
       packageType: eventDoc.packageType,
       category: eventDoc.category,
@@ -124,10 +120,9 @@ export class EventMongoDTO {
       eventStatus: this.eventStatus as STATUS,
       musicType: (this.musicType || []).map((type) => type as MUSIC_TYPE),
       menuLink: this.menuLink,
-      eventPhotoLink: this.eventPhotoLink,
+      eventPhoto: this.eventPhoto,
       galeryLink: this.galeryLink || [],
       instituteId: this.instituteId,
-      bannerUrl: this.bannerUrl,
       packageType: (this.package_type || []).map(
         (type) => type as PACKAGE_TYPE
       ),
@@ -145,7 +140,6 @@ export class EventMongoDTO {
       _id: event.eventId,
       instituteId: event.instituteId,
       name: event.name,
-      bannerUrl: event.bannerUrl,
       address: event.address,
       price: event.price,
       description: event.description,
@@ -154,12 +148,12 @@ export class EventMongoDTO {
       features: event.features,
       eventStatus: event.eventStatus,
       musicType: event.musicType,
-      menuLink: event.menuLink || "",
-      eventPhotoLink: event.eventPhotoLink || "",
+      menuLink: event.menuLink || '',
+      eventPhoto: event.eventPhoto || '',
       galeryLink: event.galeryLink || [],
       packageType: event.packageType || [],
       category: event.category,
-      ticketUrl: event.ticketUrl || "",
+      ticketUrl: event.ticketUrl || '',
       reviewsId: event.reviewsId,
       presencesId: event.presencesId,
       createdAt: event.createdAt,
@@ -172,7 +166,6 @@ export class EventMongoDTO {
       _id: this._id,
       instituteId: this.instituteId,
       name: this.name,
-      bannerUrl: this.bannerUrl,
       address: this.address,
       price: this.price,
       description: this.description,
@@ -182,7 +175,7 @@ export class EventMongoDTO {
       eventStatus: this.eventStatus,
       musicType: this.musicType,
       menuLink: this.menuLink,
-      eventPhotoLink: this.eventPhotoLink,
+      eventPhoto: this.eventPhoto,
       galeryLink: this.galeryLink,
       package_type: this.package_type,
       category: this.category,

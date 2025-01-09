@@ -1,15 +1,15 @@
-import { v4 as uuidv4 } from "uuid";
-import { Event } from "src/shared/domain/entities/event";
-import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
-import { CATEGORY } from "src/shared/domain/enums/category_enum";
-import { FEATURE } from "src/shared/domain/enums/feature_enum";
-import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
-import { STATUS } from "src/shared/domain/enums/status_enum";
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { Repository } from "src/shared/infra/database/repositories/repository";
-import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
-import { Address } from "src/shared/domain/entities/address";
-import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
+import { v4 as uuidv4 } from 'uuid';
+import { Event } from 'src/shared/domain/entities/event';
+import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
+import { CATEGORY } from 'src/shared/domain/enums/category_enum';
+import { FEATURE } from 'src/shared/domain/enums/feature_enum';
+import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
+import { STATUS } from 'src/shared/domain/enums/status_enum';
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
+import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
+import { Address } from 'src/shared/domain/entities/address';
+import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
 
 interface CreateEventParams {
   name: string;
@@ -26,7 +26,7 @@ interface CreateEventParams {
     image: Buffer;
     mimetype: string;
   }[];
-  bannerImage?: {
+  eventImage: {
     image: Buffer;
     mimetype: string;
   };
@@ -54,23 +54,23 @@ export class CreateEventUseCase {
     this.file_repo = this.repository.file_repo;
 
     if (!this.event_repo)
-      throw new Error("Expected to have an instance of the event repository");
+      throw new Error('Expected to have an instance of the event repository');
 
     if (!this.file_repo)
-      throw new Error("Expected to have an instance of the file repository");
+      throw new Error('Expected to have an instance of the file repository');
   }
 
   async execute(params: CreateEventParams): Promise<Event> {
     const event_id = uuidv4();
 
-    let bannerUrl = "";
-    if (params.bannerImage) {
-      bannerUrl = await this.file_repo!.uploadImage(
+    let eventPhoto = '';
+    if (params.eventImage) {
+      eventPhoto = await this.file_repo!.uploadImage(
         `events/${event_id}/event-photo.${
-          params.bannerImage.mimetype.split("/")[1]
+          params.eventImage.mimetype.split('/')[1]
         }`,
-        params.bannerImage.image,
-        params.bannerImage.mimetype,
+        params.eventImage.image,
+        params.eventImage.mimetype,
         true
       );
     }
@@ -80,7 +80,7 @@ export class CreateEventUseCase {
       for (let i = 0; i < params.galery_images.length; i++) {
         const photo = params.galery_images[i];
         const photoUrl = await this.file_repo!.uploadImage(
-          `events/${event_id}/galery/${i}.${photo.mimetype.split("/")[1]}`,
+          `events/${event_id}/galery/${i}.${photo.mimetype.split('/')[1]}`,
           photo.image,
           photo.mimetype,
           true
@@ -103,7 +103,7 @@ export class CreateEventUseCase {
       category: params.category,
       menuLink: params.menuLink,
       galeryLink: galeryUrls,
-      bannerUrl: bannerUrl,
+      eventPhoto: eventPhoto,
       features: params.features,
       packageType: params.packageType,
       ticketUrl: params.ticketUrl,

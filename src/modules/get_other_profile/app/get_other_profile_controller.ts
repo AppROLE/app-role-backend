@@ -1,5 +1,5 @@
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { GetProfileUseCase } from "./get_my_profile_usecase";
+import { GetProfileUseCase } from "./get_other_profile_usecase";
 import {
   BadRequest,
   InternalServerError,

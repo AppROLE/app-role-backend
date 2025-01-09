@@ -3,8 +3,8 @@ import {
   LambdaHttpRequest,
   LambdaHttpResponse,
 } from "src/shared/helpers/external_interfaces/http_lambda_requests";
-import { GetProfileUseCase } from "./get_my_profile_usecase";
-import { GetProfileController } from "./get_my_profile_controller";
+import { GetProfileUseCase } from "./get_other_profile_usecase";
+import { GetProfileController } from "./get_other_profile_controller";
 
 const repo = Environments.getUserRepo();
 const usecase = new GetProfileUseCase(repo);
