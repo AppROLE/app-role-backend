@@ -38,6 +38,8 @@ jobs:
           echo USER_POOL_ARN=${{ secrets.USER_POOL_ARN }} >> $GITHUB_ENV
           echo USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> $GITHUB_ENV
           echo APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID }} >> $GITHUB_ENV
+          echo USER_POOL_NAME=${{ secrets.USER_POOL_NAME }} >> $GITHUB_ENV
+          echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> $GITHUB_ENV
 
       - uses: actions/setup-node@v3
         with:
@@ -77,5 +79,6 @@ jobs:
           USER_POOL_NAME: ${{ secrets.USER_POOL_NAME }}
           USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
           APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
           MONGO_URI: ${{ secrets.MONGO_URI }}

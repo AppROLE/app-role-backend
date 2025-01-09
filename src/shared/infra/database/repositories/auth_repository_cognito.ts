@@ -40,15 +40,18 @@ import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 import { User } from 'src/shared/domain/entities/user';
 import { UserCognitoDTO } from '../dtos/user_cognito_dto';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
+import { createHmac } from 'crypto';
 
 export class AuthRepositoryCognito implements IAuthRepository {
   private userPoolId: string;
   private appClientId: string;
+  private clientSecret: string;
   private client: CognitoIdentityProviderClient;
 
   constructor() {
     this.userPoolId = Environments.userPoolId;
     this.appClientId = Environments.appClientId;
+    this.clientSecret = Environments.clientSecret;
     this.client = new CognitoIdentityProviderClient({
       region: Environments.region,
     });
@@ -60,7 +63,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
     if (error instanceof CognitoIdentityProviderServiceException) {
       switch (error.name) {
         case 'NotAuthorizedException':
-          throw new InvalidCredentialsError();
+          throw new InvalidCredentialsError(error.message);
         case 'UserNotFoundException':
           throw new UserNotRegistered();
         case 'UserAlreadyExistsException':
@@ -150,20 +153,37 @@ export class AuthRepositoryCognito implements IAuthRepository {
     }
   }
 
-  async signIn(email: string, password: string) {
+  private generateSecretHash(username: string): string {
+    const hasher = createHmac('sha256', this.clientSecret);
+    hasher.update(`${username}${this.appClientId}`);
+    return hasher.digest('base64');
+  }
+
+  async signIn(
+    email: string,
+    password: string
+  ): Promise<{
+    accessToken: string;
+    idToken: string;
+    refreshToken: string;
+  }> {
     try {
-      const params: AdminInitiateAuthCommandInput = {
-        UserPoolId: this.userPoolId,
+      const secretHash = this.generateSecretHash(email);
+      const params: InitiateAuthCommandInput = {
         ClientId: this.appClientId,
         AuthFlow: 'USER_PASSWORD_AUTH',
-        AuthParameters: { USERNAME: email, PASSWORD: password },
+        AuthParameters: {
+          USERNAME: email,
+          PASSWORD: password,
+          SECRET_HASH: secretHash,
+        },
       };
 
-      const command = new AdminInitiateAuthCommand(params);
+      const command = new InitiateAuthCommand(params);
       const result = await this.client.send(command);
 
       if (!result.AuthenticationResult) {
-        throw new Error('Authentication failed, no tokens returned');
+        throw new CognitoError('Authentication failed, no tokens returned');
       }
 
       const { AccessToken, IdToken, RefreshToken } =

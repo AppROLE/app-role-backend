@@ -37,7 +37,7 @@ export class SignInUseCase {
     const result = await this.auth_repo?.signIn(email, password);
 
     if (!result) {
-      throw new InvalidCredentialsError();
+      throw new InvalidCredentialsError('Tokens não encontrados');
     }
 
     return result;

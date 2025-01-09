@@ -58,6 +58,7 @@ export class SignInController {
       ) {
         return new BadRequest(error.message);
       }
+
       if (error instanceof EntityError) {
         return new BadRequest(error.message);
       }

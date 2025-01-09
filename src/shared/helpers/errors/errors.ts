@@ -65,49 +65,49 @@ export class ForbiddenAction extends BaseError {
 
 export class ConflictItems extends BaseError {
   constructor(message: string) {
-    super(`Conflict items for ${message}`);
+    super(`itens conflictuais: ${message}`);
   }
 }
 
 export class UserAlreadyConfirmedEvent extends BaseError {
   constructor() {
-    super("Usuário já confirmou presença neste evento");
+    super('Usuário já confirmou presença neste evento');
   }
 }
 
 export class UserAlreadyExists extends BaseError {
   constructor() {
-    super("Este usuário já está cadastrado");
+    super('Este usuário já está cadastrado');
   }
 }
 
 export class UserNotRegistered extends BaseError {
   constructor() {
-    super("Usuário não cadastrado ainda");
+    super('Usuário não cadastrado');
   }
 }
 
 export class UserNotConfirmed extends BaseError {
   constructor() {
-    super("Usuário não confirmado ainda");
+    super('Usuário não confirmado');
   }
 }
 
 export class UserSignUpNotFinished extends BaseError {
   constructor() {
-    super("Usuário não finalizou o cadastro ainda");
+    super('Usuário não finalizou o cadastro');
   }
 }
 
 export class RequestUserToForgotPassword extends BaseError {
   constructor() {
-    super("Redefina sua senha com o esqueci minha senha");
+    super('Redefina sua senha');
   }
 }
 
 export class FollowMeConflict extends BaseError {
   constructor() {
-    super("Você não pode seguir a si mesmo");
+    super('Você não pode seguir a si mesmo');
   }
 }
 
@@ -119,13 +119,13 @@ export class CognitoError extends BaseError {
 
 export class PasswordDoesNotMatchError extends BaseError {
   constructor() {
-    super("Password does not match");
+    super('Password does not match');
   }
 }
 
 export class InvalidCredentialsError extends BaseError {
-  constructor() {
-    super("Credenciais inválidas");
+  constructor(message: string) {
+    super(`Credenciais inválidas: ${message}`);
   }
 }
 

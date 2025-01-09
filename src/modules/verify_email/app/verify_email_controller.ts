@@ -50,7 +50,7 @@ export class VerifyEmailController {
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
       if (error instanceof InvalidCredentialsError) {
-        return new Unauthorized(error.message);
+        return new BadRequest(error.message);
       }
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message);
