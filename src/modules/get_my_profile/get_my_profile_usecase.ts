@@ -17,7 +17,7 @@ export interface ConfirmedEventsResponse {
   eventDate: number;
 }
 
-export class GetOtherProfileUseCase {
+export class GetMyProfileUseCase {
   repository: Repository;
   private profile_repo?: IProfileRepository;
   private event_repo?: IEventRepository;
@@ -57,44 +57,22 @@ export class GetOtherProfileUseCase {
       );
   }
 
-  async execute(
-    myUserId: string,
-    userId: string
-  ): Promise<[Profile, ConfirmedEventsResponse[]]> {
-    // Buscar o perfil do usuário atual
-    const myProfile = await this.profile_repo!.getByUserId(myUserId);
-    if (!myProfile)
-      throw new NoItemsFound('Perfil do usuário atual não encontrado');
+  async execute(userId: string): Promise<[Profile, ConfirmedEventsResponse[]]> {
+    const profile = await this.profile_repo!.getByUserId(userId);
+    if (!profile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
-    // Buscar o perfil do outro usuário
-    const otherProfile = await this.profile_repo!.getByUserId(userId);
-    if (!otherProfile)
-      throw new NoItemsFound('Perfil do outro usuário não encontrado');
-
-    // Validar se são amigos
-    const areWeFriends =
-      myProfile.following.includes(otherProfile.userId) &&
-      otherProfile.followers.includes(myProfile.userId);
-
-    if (!areWeFriends) return [otherProfile, []];
-
-    // Obter presenças do outro usuário
-    const presencesIds = otherProfile.presencesId;
+    const presencesIds = profile.presencesId;
     const presences = await this.presence_repo!.getPresencesByIds(presencesIds);
 
-    // Obter IDs dos eventos confirmados
     const eventsIds = presences.map((presence) => presence.eventId);
     const events = await this.event_repo!.getEventsByIds(eventsIds);
 
-    // Obter IDs dos institutos associados aos eventos
     const institutesIds = events.map((event) => event.instituteId);
 
-    // Buscar os institutos associados
     const institutes = await this.institute_repo!.getInstitutesByIds(
       institutesIds
     );
 
-    // Mapear eventos para incluir informações do instituto
     const eventResponse: ConfirmedEventsResponse[] = events.map((event) => {
       const institute = institutes.find(
         (institute) => institute.instituteId === event.instituteId
@@ -111,6 +89,6 @@ export class GetOtherProfileUseCase {
       };
     });
 
-    return [otherProfile, eventResponse];
+    return [profile, eventResponse];
   }
 }

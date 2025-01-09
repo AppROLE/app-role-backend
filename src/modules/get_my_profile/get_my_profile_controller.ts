@@ -1,5 +1,4 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { GetOtherProfileUseCase } from './get_other_profile_usecase';
 import {
   BadRequest,
   InternalServerError,
@@ -13,26 +12,22 @@ import {
   NoItemsFound,
 } from 'src/shared/helpers/errors/errors';
 import { WrongTypeParameters } from 'src/shared/helpers/errors/errors';
-import { GetOtherProfileViewmodel } from './get_other_profile_viewmodel';
+import { GetMyProfileViewmodel } from './get_my_profile_viewmodel';
+import { GetMyProfileUseCase } from './get_my_profile_usecase';
 
-export class GetOtherProfileController {
-  constructor(private readonly usecase: GetOtherProfileUseCase) {}
+export class GetMyProfileController {
+  constructor(private readonly usecase: GetMyProfileUseCase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
       if (!requesterUser) throw new ForbiddenAction('usuário');
 
-      const { otherUserId } = request.data.body;
-
       const { userId } =
         UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
 
-      const [profile, confirmedEvents] = await this.usecase.execute(
-        userId,
-        otherUserId
-      );
+      const [profile, confirmedEvents] = await this.usecase.execute(userId);
 
-      const viewmodel = new GetOtherProfileViewmodel(profile, confirmedEvents);
+      const viewmodel = new GetMyProfileViewmodel(profile, confirmedEvents);
 
       return new OK(viewmodel.toJSON());
     } catch (error: any) {
