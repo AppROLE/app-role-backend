@@ -49,7 +49,7 @@ export class SignUpUseCase {
 
     const user = await this.auth_repo!.getUserByEmail(email);
 
-    if (!user) {
+    if (user) {
       throw new UserAlreadyExists();
     }
 
