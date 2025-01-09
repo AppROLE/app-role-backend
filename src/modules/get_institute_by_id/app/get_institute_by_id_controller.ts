@@ -1,25 +1,30 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { GetInstituteByIdUseCase } from "./get_institute_by_id_usecase";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { GetInstituteByIdUseCase } from './get_institute_by_id_usecase';
 import {
   InternalServerError,
   NotFound,
   OK,
-} from "src/shared/helpers/external_interfaces/http_codes";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { MissingParameters } from "src/shared/helpers/errors/errors";
-import { GetInstituteByIdViewModel } from "./get_institute_by_id_viewmodel";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { MissingParameters } from 'src/shared/helpers/errors/errors';
+import { GetInstituteByIdViewModel } from './get_institute_by_id_viewmodel';
+
+export interface GetInstituteByIdRequestBody {
+  instituteId: string;
+}
 
 export class GetInstituteByIdController {
   constructor(private readonly usecase: GetInstituteByIdUseCase) {}
 
-  async handle(req: IRequest): Promise<any> {
+  async handle(req: IRequest<GetInstituteByIdRequestBody>): Promise<any> {
     try {
-      const { instituteId } = req.data;
+      const { instituteId } = req.data.body;
 
-      if (instituteId == undefined) {
-        throw new MissingParameters("instituteId");
+      if (!instituteId) {
+        throw new MissingParameters('instituteId');
       }
-      const institute = await this.usecase.execute(instituteId as string);
+
+      const institute = await this.usecase.execute(instituteId);
       const viewModel = new GetInstituteByIdViewModel(institute);
       return new OK(viewModel.toJSON());
     } catch (error: any) {
