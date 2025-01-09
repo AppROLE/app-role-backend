@@ -147,7 +147,7 @@ export class CreateEventController {
         address: {
           latitude,
           longitude,
-          address,
+          street: address,
           number,
           neighborhood,
           city,

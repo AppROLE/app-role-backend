@@ -69,18 +69,6 @@ export class ConflictItems extends BaseError {
   }
 }
 
-export class FailToSendEmail extends BaseError {
-  constructor(message: string) {
-    super(`Falha ao enviar o email ${message}`);
-  }
-}
-
-export class FailedToAddToGallery extends BaseError {
-  constructor() {
-    super("Você atingiu o limite de fotos na galeria");
-  }
-}
-
 export class UserAlreadyConfirmedEvent extends BaseError {
   constructor() {
     super("Usuário já confirmou presença neste evento");
@@ -128,7 +116,6 @@ export class CognitoError extends BaseError {
     super(`Erro com o Cognito: ${message}`);
   }
 }
-
 
 export class PasswordDoesNotMatchError extends BaseError {
   constructor() {

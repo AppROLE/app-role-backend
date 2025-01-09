@@ -1,7 +1,5 @@
 import { Address } from "src/shared/domain/entities/address";
-import {
-  Event
-} from "../../../shared/domain/entities/event";
+import { Event } from "../../../shared/domain/entities/event";
 
 export class EventViewModel {
   private eventId?: string;
@@ -50,7 +48,7 @@ export class EventViewModel {
       name: this.name,
       bannerUrl: this.bannerUrl,
       location: {
-        address: this.address.address,
+        address: this.address.street,
         number: this.address.number,
         cep: this.address.cep,
         city: this.address.city,

@@ -3,7 +3,7 @@ interface PresenceProps {
   eventId: string;
   userId: string;
   promoterCode?: string;
-  createdAt: Date;
+  createdAt: number;
 }
 
 export class Presence {
@@ -11,7 +11,7 @@ export class Presence {
   eventId: string;
   userId: string;
   promoterCode?: string;
-  createdAt: Date;
+  createdAt: number;
 
   constructor(props: PresenceProps) {
     this.presenceId = props.presenceId;

@@ -26,28 +26,21 @@ export class ReviewRepositoryMongo implements IReviewRepository {
       throw new Error("Erro ao buscar a revisão criada no MongoDB.");
     }
 
-    const reviewDTO = ReviewDTO.fromMongo(createdReview);
-    return ReviewDTO.toEntity(reviewDTO);
+    return ReviewDTO.fromMongo(createdReview).toEntity();
   }
 
   async getReviewsByEventId(eventId: string): Promise<Review[]> {
     const reviewsCursor = this.reviewCollection.find({ eventId });
     const reviewsArray = await reviewsCursor.toArray();
 
-    return reviewsArray.map((review) => {
-      const reviewDTO = ReviewDTO.fromMongo(review);
-      return ReviewDTO.toEntity(reviewDTO);
-    });
+    return reviewsArray.map((review) => ReviewDTO.fromMongo(review).toEntity());
   }
 
   async getReviewsByUserId(userId: string): Promise<Review[]> {
     const reviewsCursor = this.reviewCollection.find({ userId });
     const reviewsArray = await reviewsCursor.toArray();
 
-    return reviewsArray.map((review) => {
-      const reviewDTO = ReviewDTO.fromMongo(review);
-      return ReviewDTO.toEntity(reviewDTO);
-    });
+    return reviewsArray.map((review) => ReviewDTO.fromMongo(review).toEntity());
   }
 
   async deleteReviewById(reviewId: string): Promise<void> {

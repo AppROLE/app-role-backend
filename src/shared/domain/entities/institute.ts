@@ -15,6 +15,8 @@ interface InstituteProps {
   price?: number;
   photosUrl: string[];
   eventsId: string[];
+  createdAt: number;
+  updatedAt: number;
 }
 
 export class Institute {
@@ -29,6 +31,8 @@ export class Institute {
   price?: number;
   photosUrl: string[];
   eventsId: string[];
+  createdAt: number;
+  updatedAt: number;
 
   constructor(props: InstituteProps) {
     this.validate(props);
@@ -43,6 +47,8 @@ export class Institute {
     this.price = props.price || 0;
     this.photosUrl = props.photosUrl;
     this.eventsId = props.eventsId;
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
   }
 
   private validate(props: InstituteProps): void {

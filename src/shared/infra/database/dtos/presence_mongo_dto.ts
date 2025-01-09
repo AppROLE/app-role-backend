@@ -2,41 +2,41 @@ import { Presence } from "src/shared/domain/entities/presence";
 import { IPresence, PresenceModel } from "../models/presence.model";
 
 export interface PresenceMongoDTOProps {
-  _id: string;
+  presenceId: string;
   eventId: string;
   userId: string;
   promoterCode?: string;
-  createdAt: Date;
+  createdAt: number;
 }
 
 export class PresenceMongoDTO {
-  _id: string;
+  presenceId: string;
   eventId: string;
   userId: string;
   promoterCode?: string;
-  createdAt: Date;
+  createdAt: number;
 
   constructor(props: PresenceMongoDTOProps) {
-    this._id = props._id;
+    this.presenceId = props.presenceId;
     this.eventId = props.eventId;
     this.userId = props.userId;
     this.promoterCode = props.promoterCode;
     this.createdAt = props.createdAt;
   }
 
-  static fromMongo(presence: any): PresenceMongoDTO {
+  static fromMongo(presence: IPresence): PresenceMongoDTO {
     return new PresenceMongoDTO({
-      _id: presence._id,
-      eventId: presence.event_id,
-      userId: presence.username,
-      promoterCode: presence.promoter_code,
+      presenceId: presence._id,
+      eventId: presence.eventId,
+      userId: presence.userId,
+      promoterCode: presence.promoterCode,
       createdAt: presence.createdAt,
     });
   }
 
   toEntity(): Presence {
     return new Presence({
-      presenceId: this._id,
+      presenceId: this.presenceId,
       eventId: this.eventId,
       userId: this.userId,
       promoterCode: this.promoterCode,
@@ -46,7 +46,7 @@ export class PresenceMongoDTO {
 
   static fromEntity(presence: Presence): PresenceMongoDTO {
     return new PresenceMongoDTO({
-      _id: presence.presenceId,
+      presenceId: presence.presenceId,
       eventId: presence.eventId,
       userId: presence.userId,
       promoterCode: presence.promoterCode,
@@ -56,7 +56,7 @@ export class PresenceMongoDTO {
 
   toMongo(): IPresence {
     return new PresenceModel({
-      _id: this._id,
+      presenceId: this.presenceId,
       event_id: this.eventId,
       username: this.userId,
       promoter_code: this.promoterCode,

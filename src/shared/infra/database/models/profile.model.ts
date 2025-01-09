@@ -11,14 +11,14 @@ export interface IProfile extends Document {
   email: string;
   role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt?: Date;
-  dateBirth?: Date;
+  acceptedTermsAt?: number;
+  dateBirth?: number;
   gender?: GENDER_TYPE;
   cpf?: string;
   biography?: string;
   phoneNumber?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number;
+  updatedAt: number;
   linkInstagram?: string;
   linkTiktok?: string;
   backgroundPhoto?: string;
@@ -40,14 +40,14 @@ const ProfileSchema: Schema = new Schema<IProfile>({
   email: { type: String, required: true, unique: true },
   acceptedTerms: { type: Boolean, required: true },
   role: { type: String, required: true },
-  acceptedTermsAt: { type: Date },
-  updatedAt: { type: Date, default: Date.now },
+  acceptedTermsAt: { type: Number },
+  updatedAt: { type: Number },
   phoneNumber: { type: String },
-  dateBirth: { type: Date },
+  dateBirth: { type: Number },
   cpf: { type: String, unique: true },
   gender: { type: GENDER_TYPE },
   biography: { type: String },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Number },
   linkInstagram: { type: String },
   linkTiktok: { type: String },
   backgroundPhoto: { type: String },

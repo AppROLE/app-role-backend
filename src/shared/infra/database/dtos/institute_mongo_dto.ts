@@ -8,7 +8,7 @@ import { IInstitute, InstituteModel } from "../models/institute.model";
 import { Address } from "src/shared/domain/entities/address";
 
 export interface InstituteMongoDTOProps {
-  _id: string;
+  instituteId: string;
   name: string;
   logoPhoto: string;
   description: string;
@@ -19,23 +19,27 @@ export interface InstituteMongoDTOProps {
   price?: number;
   photosUrl: string[];
   eventsId: string[];
+  createdAt: number;
+  updatedAt: number;
 }
 
 export class InstituteMongoDTO {
-  private _id: string;
-  private name: string;
-  private logoPhoto: string;
-  private description: string;
-  private instituteType: INSTITUTE_TYPE;
-  private partnerType: PARTNER_TYPE;
-  private phone?: string;
-  private address: Address;
-  private price?: number;
-  private photosUrl: string[];
-  private eventsId: string[];
+  instituteId: string;
+  name: string;
+  logoPhoto: string;
+  description: string;
+  instituteType: INSTITUTE_TYPE;
+  partnerType: PARTNER_TYPE;
+  phone?: string;
+  address: Address;
+  price?: number;
+  photosUrl: string[];
+  eventsId: string[];
+  createdAt: number;
+  updatedAt: number;
 
   constructor(props: InstituteMongoDTOProps) {
-    this._id = props._id;
+    this.instituteId = props.instituteId;
     this.name = props.name;
     this.logoPhoto = props.logoPhoto;
     this.description = props.description;
@@ -46,11 +50,13 @@ export class InstituteMongoDTO {
     this.price = props.price;
     this.photosUrl = props.photosUrl;
     this.eventsId = props.eventsId;
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
   }
 
   toEntity(): Institute {
     return new Institute({
-      instituteId: this._id,
+      instituteId: this.instituteId,
       partnerType: this.partnerType,
       name: this.name,
       logoPhoto: this.logoPhoto,
@@ -61,12 +67,14 @@ export class InstituteMongoDTO {
       price: this.price,
       photosUrl: this.photosUrl,
       eventsId: this.eventsId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     });
   }
 
   static fromEntity(institute: Institute): InstituteMongoDTO {
     return new InstituteMongoDTO({
-      _id: institute.instituteId,
+      instituteId: institute.instituteId,
       name: institute.name,
       logoPhoto: institute.logoPhoto,
       description: institute.description,
@@ -77,38 +85,44 @@ export class InstituteMongoDTO {
       price: institute.price,
       photosUrl: institute.photosUrl,
       eventsId: institute.eventsId,
+      createdAt: institute.createdAt,
+      updatedAt: institute.updatedAt,
     });
   }
 
   toMongo(): IInstitute {
     return new InstituteModel({
-      _id: this._id,
+      _id: this.instituteId,
       name: this.name,
       logoPhoto: this.logoPhoto,
       description: this.description,
       institute_type: this.instituteType,
       partner_type: this.partnerType,
       phone: this.phone,
-      location: this.address,
+      address: this.address,
       price: this.price,
       photosUrl: this.photosUrl,
       eventsId: this.eventsId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     });
   }
 
-  static fromMongo(institute: any): InstituteMongoDTO {
+  static fromMongo(institute: IInstitute): InstituteMongoDTO {
     return new InstituteMongoDTO({
-      _id: institute._id,
+      instituteId: institute._id,
       name: institute.name,
       logoPhoto: institute.logoPhoto,
       description: institute.description,
-      instituteType: institute.institute_type,
-      partnerType: institute.partner_type,
+      instituteType: institute.instituteType,
+      partnerType: institute.partnerType,
       phone: institute.phone,
-      address: institute.location,
+      address: institute.address,
       price: institute.price,
       photosUrl: institute.photosUrl,
       eventsId: institute.eventsId,
+      createdAt: institute.createdAt,
+      updatedAt: institute.updatedAt,
     });
   }
 }

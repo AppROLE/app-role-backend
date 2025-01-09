@@ -44,17 +44,17 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return ProfileMongoDTO.fromMongo(userDoc).toEntity();
   }
 
-  async createProfile(user: Profile): Promise<Profile> {
-    const userDoc = ProfileMongoDTO.fromEntity(user).toMongo();
+  async createProfile(profile: Profile): Promise<Profile> {
+    const profileDoc = ProfileMongoDTO.fromEntity(profile).toMongo();
 
-    const result = await this.userCollection.insertOne(userDoc);
+    const result = await this.userCollection.insertOne(profileDoc);
 
     if (!result.acknowledged) {
       throw new Error("Erro ao criar usuário no MongoDB.");
     }
 
     const createdUserDoc = await this.userCollection.findOne({
-      _id: userDoc._id,
+      _id: profile.userId,
     });
 
     if (!createdUserDoc) {
@@ -67,7 +67,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   async deleteProfile(userId: string): Promise<void> {
     const result = await this.userCollection.deleteOne({ _id: userId });
 
-    if (result.deletedCount === 0) {
+    if (!result.deletedCount || result.deletedCount === 0) {
       throw new Error(`Usuário com ID ${userId} nao encontrado.`);
     }
   }

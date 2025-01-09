@@ -7,6 +7,7 @@ import {
   UserAlreadyExists,
   UserNotConfirmed,
 } from "src/shared/helpers/errors/errors";
+import { Validations } from "src/shared/helpers/utils/validations";
 import { Repository } from "src/shared/infra/database/repositories/repository";
 
 export class SignUpUseCase {
@@ -28,21 +29,17 @@ export class SignUpUseCase {
   }
 
   async execute(name: string, email: string, password: string) {
-    if (Profile.validateEmail(email) === false) {
+    if (Validations.validateEmail(email) === false) {
       throw new EntityError("email");
     }
 
-    if (Profile.validateName(name) === false) {
+    if (Validations.validateName(name) === false) {
       throw new EntityError("name");
     }
 
-    if (Profile.validatePassword(password) === false) {
+    if (Validations.validatePassword(password) === false) {
       throw new EntityError("password");
     }
-
-    const emailRegex = new RegExp(
-      /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-    );
 
     const userAlreadyExists = await this.auth_repo!.getUserByEmail(email);
 

@@ -12,14 +12,14 @@ interface ProfileProps {
   email: string;
   role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt?: Date;
-  dateBirth?: Date;
+  acceptedTermsAt?: number;
+  dateBirth?: number;
   gender?: GENDER_TYPE;
   cpf?: string;
   biography?: string;
   phoneNumber?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number;
+  updatedAt: number;
   linkInstagram?: string;
   linkTiktok?: string;
   backgroundPhoto?: string;
@@ -41,14 +41,14 @@ export class Profile {
   email: string;
   role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt?: Date;
-  dateBirth?: Date;
+  acceptedTermsAt?: number;
+  dateBirth?: number;
   gender?: GENDER_TYPE;
   cpf?: string;
   biography?: string;
   phoneNumber?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number;
+  updatedAt: number;
   linkInstagram?: string;
   linkTiktok?: string;
   backgroundPhoto?: string;
@@ -82,10 +82,6 @@ export class Profile {
       throw new EntityError("username");
     }
     this.username = props.username;
-
-    if (props.dateBirth && props.dateBirth > new Date()) {
-      throw new EntityError("dateBirth");
-    }
     this.dateBirth = props.dateBirth;
 
     if (Validations.validateEmail(props.email)) {

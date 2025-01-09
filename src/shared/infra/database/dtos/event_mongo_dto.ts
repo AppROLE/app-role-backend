@@ -15,7 +15,7 @@ export interface EventMongoDTOProps {
   address: Address;
   price: number;
   ageRange: AGE_ENUM;
-  eventDate: Date;
+  eventDate: number;
   instituteId: string;
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
@@ -29,6 +29,8 @@ export interface EventMongoDTOProps {
   features: FEATURE[];
   reviewsId: string[];
   presencesId: string[];
+  createdAt: number;
+  updatedAt: number;
 }
 
 export class EventMongoDTO {
@@ -38,7 +40,7 @@ export class EventMongoDTO {
   address: Address;
   price: number;
   ageRange: AGE_ENUM;
-  eventDate: Date;
+  eventDate: number;
   instituteId: string;
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
@@ -52,6 +54,8 @@ export class EventMongoDTO {
   features: FEATURE[];
   reviewsId: string[];
   presencesId: string[];
+  createdAt: number;
+  updatedAt: number;
 
   constructor(props: EventMongoDTOProps) {
     this._id = props._id;
@@ -74,15 +78,17 @@ export class EventMongoDTO {
     this.features = props.features || [];
     this.reviewsId = props.reviewsId || [];
     this.presencesId = props.presencesId || [];
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
   }
 
-  static fromMongo(eventDoc: any): EventMongoDTO {
+  static fromMongo(eventDoc: IEvent): EventMongoDTO {
     return new EventMongoDTO({
       _id: eventDoc._id,
       instituteId: eventDoc.instituteId,
       name: eventDoc.name,
       bannerUrl: eventDoc.bannerUrl,
-      address: eventDoc.location,
+      address: eventDoc.address,
       price: eventDoc.price,
       description: eventDoc.description,
       ageRange: eventDoc.ageRange,
@@ -93,11 +99,13 @@ export class EventMongoDTO {
       menuLink: eventDoc.menuLink,
       eventPhotoLink: eventDoc.eventPhotoLink,
       galeryLink: eventDoc.galeryLink,
-      packageType: eventDoc.package_type,
+      packageType: eventDoc.packageType,
       category: eventDoc.category,
       ticketUrl: eventDoc.ticketUrl,
       reviewsId: eventDoc.reviewsId,
       presencesId: eventDoc.presencesId,
+      createdAt: eventDoc.createdAt,
+      updatedAt: eventDoc.updatedAt,
     });
   }
 
@@ -127,6 +135,8 @@ export class EventMongoDTO {
       ticketUrl: this.ticketUrl,
       reviewsId: this.reviewsId,
       presencesId: this.presencesId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     });
   }
 
@@ -152,6 +162,8 @@ export class EventMongoDTO {
       ticketUrl: event.ticketUrl || "",
       reviewsId: event.reviewsId,
       presencesId: event.presencesId,
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt,
     });
   }
 
@@ -161,7 +173,7 @@ export class EventMongoDTO {
       instituteId: this.instituteId,
       name: this.name,
       bannerUrl: this.bannerUrl,
-      location: this.address,
+      address: this.address,
       price: this.price,
       description: this.description,
       ageRange: this.ageRange,
@@ -175,9 +187,10 @@ export class EventMongoDTO {
       package_type: this.package_type,
       category: this.category,
       ticketUrl: this.ticketUrl,
-      createdAt: this.eventDate,
       reviewsId: this.reviewsId,
       presencesId: this.presencesId,
+      createdAt: this.eventDate,
+      updatedAt: this.updatedAt,
     });
   }
 }

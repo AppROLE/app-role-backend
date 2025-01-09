@@ -12,7 +12,38 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
     this.presenceCollection = connection.collection<IPresence>("Presence");
   }
 
-  async getAllPresences(eventId: string): Promise<Presence[]> {
+  async createPresence(presence: Presence): Promise<Presence> {
+    const presenceDoc = PresenceMongoDTO.fromEntity(presence).toMongo();
+
+    const result = await this.presenceCollection.insertOne(presenceDoc);
+
+    if (!result.acknowledged) {
+      throw new Error("Failed to create presence in MongoDB.");
+    }
+
+    const createdPresenceDoc = await this.presenceCollection.findOne({
+      _id: presenceDoc._id,
+    });
+
+    if (!createdPresenceDoc) {
+      throw new Error("Failed to find created presence in MongoDB.");
+    }
+
+    return PresenceMongoDTO.fromMongo(createdPresenceDoc).toEntity();
+  }
+
+  async deletePresence(eventId: string, userId: string): Promise<void> {
+    const result = await this.presenceCollection.deleteOne({
+      event_id: eventId,
+      username: userId,
+    });
+
+    if (!result.deletedCount) {
+      throw new NoItemsFound("presence");
+    }
+  }
+
+  async getPresencesByEvent(eventId: string): Promise<Presence[]> {
     const presenceDocs = await this.presenceCollection
       .find({ event_id: eventId })
       .toArray();
@@ -21,74 +52,39 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
       return [];
     }
 
-    return presenceDocs.map((doc) =>
-      PresenceMongoDTO.toEntity(PresenceMongoDTO.fromMongo(doc))
+    return presenceDocs.map((presenceDoc) =>
+      PresenceMongoDTO.fromMongo(presenceDoc).toEntity()
     );
   }
 
-  async confirmPresence(
-    eventId: string,
-    username: string,
-    nickname: string,
-    profilePhoto?: string,
-    promoterCode?: string
-  ): Promise<void> {
-    const presence = new Presence({
-      eventId,
-      username,
-      nickname,
-      profilePhoto,
-      promoterCode,
-      checkedInAt: new Date(),
-    });
+  async getPresencesByUser(userId: string): Promise<Presence[]> {
+    const presenceDocs = await this.presenceCollection
+      .find({ username: userId })
+      .toArray();
 
-    const dto = PresenceMongoDTO.fromEntity(presence);
-    const presenceDoc = PresenceMongoDTO.toMongo(dto);
-
-    const result = await this.presenceCollection.insertOne(presenceDoc);
-    if (!result.acknowledged) {
-      throw new Error("Failed to confirm presence in MongoDB.");
+    if (!presenceDocs || presenceDocs.length === 0) {
+      return [];
     }
-  }
 
-  async countPresencesByEvent(
-    eventIds: string[]
-  ): Promise<{ eventId: string; count: number }[]> {
-    const counts = await Promise.all(
-      eventIds.map(async (eventId) => {
-        const count = await this.presenceCollection.countDocuments({
-          event_id: eventId,
-        });
-        return { eventId, count };
-      })
+    return presenceDocs.map((presenceDoc) =>
+      PresenceMongoDTO.fromMongo(presenceDoc).toEntity()
     );
-
-    return counts;
   }
 
-  async getPresenceByEventAndUser(
+  async getPresencesByEventAndUser(
     eventId: string,
-    username: string
-  ): Promise<Presence | null> {
-    const presenceDoc = await this.presenceCollection.findOne({
-      event_id: eventId,
-      username,
-    });
+    userId: string
+  ): Promise<Presence[]> {
+    const presenceDocs = await this.presenceCollection
+      .find({ event_id: eventId, username: userId })
+      .toArray();
 
-    if (!presenceDoc) {
-      return null;
+    if (!presenceDocs || presenceDocs.length === 0) {
+      return [];
     }
 
-    return PresenceMongoDTO.toEntity(PresenceMongoDTO.fromMongo(presenceDoc));
-  }
-
-  async unConfirmPresence(eventId: string, username: string): Promise<void> {
-    const result = await this.presenceCollection.deleteOne({
-      event_id: eventId,
-      username,
-    });
-    if (!result.deletedCount) {
-      throw new NoItemsFound("presence");
-    }
+    return presenceDocs.map((presenceDoc) =>
+      PresenceMongoDTO.fromMongo(presenceDoc).toEntity()
+    );
   }
 }

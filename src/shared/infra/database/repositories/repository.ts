@@ -1,7 +1,6 @@
 import mongoose, { Connection } from "mongoose";
 import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
 import { Environments, STAGE } from "src/shared/environments";
-import { EventRepositoryMock } from "../../mocks/event_repository_mock";
 import { EventRepositoryMongo } from "./event_repository_mongo";
 import { DatabaseException } from "src/shared/helpers/errors/errors";
 import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
@@ -55,11 +54,7 @@ export class Repository {
     }
   }
 
-  private _initializeMockRepositories(): void {
-    if (this.config.event_repo && !this.event_repo) {
-      this.event_repo = new EventRepositoryMock();
-    }
-  }
+  private _initializeMockRepositories(): void {}
 
   private async _initializeDatabaseRepositories(): Promise<void> {
     this.connection = this.connection || (await this.__connectDb());

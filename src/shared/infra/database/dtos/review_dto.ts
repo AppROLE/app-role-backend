@@ -2,34 +2,34 @@ import { Review } from "src/shared/domain/entities/review";
 import { IReview, ReviewModel } from "../models/review.model";
 
 export interface ReviewDTOProps {
-  _id: string;
   reviewId: string;
+  userId: string;
   eventId: string;
   review: string;
   rating: number;
-  createdAt: Date;
+  createdAt: number;
 }
 
 export class ReviewDTO {
-  _id: string;
   reviewId: string;
+  userId: string;
   eventId: string;
   review: string;
   rating: number;
-  createdAt: Date;
+  createdAt: number;
   constructor(props: ReviewDTOProps) {
-    this._id = props._id;
     this.reviewId = props.reviewId;
+    this.userId = props.userId;
     this.eventId = props.eventId;
     this.review = props.review;
     this.rating = props.rating;
     this.createdAt = props.createdAt;
   }
 
-  static fromMongo(review: any): ReviewDTO {
+  static fromMongo(review: IReview): ReviewDTO {
     return new ReviewDTO({
-      _id: review._id,
-      reviewId: review.reviewId,
+      reviewId: review._id,
+      userId: review.userId,
       eventId: review.eventId,
       review: review.review,
       rating: review.rating,
@@ -39,8 +39,8 @@ export class ReviewDTO {
 
   toMongo(): IReview {
     return new ReviewModel({
-      _id: this._id,
-      reviewId: this.reviewId,
+      _id: this.reviewId,
+      userId: this.userId,
       eventId: this.eventId,
       review: this.review,
       rating: this.rating,
@@ -50,8 +50,8 @@ export class ReviewDTO {
 
   static fromEntity(review: Review): ReviewDTO {
     return new ReviewDTO({
-      _id: review.reviewId,
       reviewId: review.reviewId,
+      userId: review.userId,
       eventId: review.eventId,
       review: review.review,
       rating: review.rating,
@@ -63,7 +63,7 @@ export class ReviewDTO {
     return new Review({
       reviewId: this.reviewId,
       eventId: this.eventId,
-      userId: this._id,
+      userId: this.userId,
       review: this.review,
       rating: this.rating,
       createdAt: this.createdAt,

@@ -132,7 +132,7 @@ export class CreateInstituteController {
         address: {
           latitude: latitude,
           longitude: longitude,
-          address: address,
+          street: address,
           number: number,
           neighborhood: neighborhood,
           city: city,

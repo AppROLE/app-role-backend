@@ -21,43 +21,32 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
   async createInstitute(institute: Institute): Promise<Institute> {
     const instituteDoc = InstituteMongoDTO.fromEntity(institute).toMongo();
 
-    const existingInstitute = await this.instituteCollection.findOne({
-      name: instituteDoc.name,
-    });
-    if (existingInstitute) {
-      throw new DuplicatedItem("name");
-    }
-
     const result = await this.instituteCollection.insertOne(instituteDoc);
     if (!result.acknowledged) {
       throw new Error("Failed to create institute in MongoDB.");
     }
 
-    return institute;
-  }
+    const createdInstituteDoc = await this.instituteCollection.findOne({
+      _id: institute.instituteId,
+    });
 
-  async getInstituteById(instituteId: string): Promise<Institute> {
-    const instituteDoc = await this.instituteCollection
-      .aggregate([
-        { $match: { _id: instituteId } },
-        {
-          $lookup: {
-            from: "Event",
-            localField: "events",
-            foreignField: "_id",
-            as: "eventsDetails",
-          },
-        },
-      ])
-      .toArray();
-
-    if (!instituteDoc || instituteDoc.length === 0) {
+    if (!createdInstituteDoc) {
       throw new NoItemsFound("institute");
     }
 
-    return InstituteMongoDTO.toEntity(
-      InstituteMongoDTO.fromMongo(instituteDoc[0])
-    );
+    return InstituteMongoDTO.fromMongo(createdInstituteDoc).toEntity();
+  }
+
+  async getInstituteById(instituteId: string): Promise<Institute | null> {
+    const instituteDoc = await this.instituteCollection.findOne({
+      _id: instituteId,
+    });
+
+    if (!instituteDoc) {
+      return null;
+    }
+
+    return InstituteMongoDTO.fromMongo(instituteDoc).toEntity();
   }
 
   async getAllInstitutes(): Promise<Institute[]> {
@@ -68,12 +57,18 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     }
 
     return instituteDocs.map((doc) =>
-      InstituteMongoDTO.toEntity(InstituteMongoDTO.fromMongo(doc))
+      InstituteMongoDTO.fromMongo(doc).toEntity()
     );
   }
 
   async deleteInstituteById(instituteId: string): Promise<void> {
-    await this.instituteCollection.deleteOne({ _id: instituteId });
+    const result = await this.instituteCollection.deleteOne({
+      _id: instituteId,
+    });
+
+    if (!result.deletedCount || result.deletedCount === 0) {
+      throw new NoItemsFound("institute");
+    }
   }
 
   async getAllInstitutesByPartnerType(
@@ -88,7 +83,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     }
 
     return instituteDocs.map((doc) =>
-      InstituteMongoDTO.toEntity(InstituteMongoDTO.fromMongo(doc))
+      InstituteMongoDTO.fromMongo(doc).toEntity()
     );
   }
 
@@ -110,18 +105,24 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     if (address) updateFields.address = address;
     if (phone) updateFields.phone = phone;
 
-    const updatedInstitute = await this.instituteCollection.findOneAndUpdate(
+    const result = await this.instituteCollection.findOneAndUpdate(
       { _id: instituteId },
       { $set: updateFields },
       { returnDocument: "after" }
     );
 
-    if (!updatedInstitute) {
+    if (!result) {
       throw new NoItemsFound("institute");
     }
 
-    return InstituteMongoDTO.toEntity(
-      InstituteMongoDTO.fromMongo(updatedInstitute)
-    );
+    const updatedInstituteDoc = await this.instituteCollection.findOne({
+      _id: instituteId,
+    });
+
+    if (!updatedInstituteDoc) {
+      throw new NoItemsFound("institute");
+    }
+
+    return InstituteMongoDTO.fromMongo(updatedInstituteDoc).toEntity();
   }
 }

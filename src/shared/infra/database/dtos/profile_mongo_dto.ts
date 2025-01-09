@@ -4,22 +4,22 @@ import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 import { IProfile, ProfileModel } from "../models/profile.model";
 import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
 
-export interface UserMongoDTOProps {
-  _id: string;
+export interface ProfileMongoDTOProps {
+  userId: string;
   name: string;
   nickname: string;
   username: string;
   email: string;
   role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt?: Date;
-  dateBirth?: Date;
+  acceptedTermsAt?: number;
+  dateBirth?: number;
   gender?: GENDER_TYPE;
   cpf?: string;
   biography?: string;
   phoneNumber?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number;
+  updatedAt: number;
   linkInstagram?: string;
   linkTiktok?: string;
   backgroundPhoto?: string;
@@ -34,21 +34,21 @@ export interface UserMongoDTOProps {
 }
 
 export class ProfileMongoDTO {
-  _id: string;
+  userId: string;
   name: string;
   nickname: string;
   username: string;
   email: string;
   role: ROLE_TYPE;
   acceptedTerms: boolean;
-  acceptedTermsAt?: Date;
-  dateBirth?: Date;
+  acceptedTermsAt?: number;
+  dateBirth?: number;
   gender?: GENDER_TYPE;
   cpf?: string;
   biography?: string;
   phoneNumber?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number;
+  updatedAt: number;
   linkInstagram?: string;
   linkTiktok?: string;
   backgroundPhoto?: string;
@@ -61,8 +61,8 @@ export class ProfileMongoDTO {
   followers: string[];
   presencesId: string[];
 
-  constructor(props: UserMongoDTOProps) {
-    this._id = props._id;
+  constructor(props: ProfileMongoDTOProps) {
+    this.userId = props.userId;
     this.name = props.name;
     this.email = props.email;
     this.nickname = props.nickname;
@@ -92,7 +92,7 @@ export class ProfileMongoDTO {
 
   static fromMongo(profile: IProfile): ProfileMongoDTO {
     return new ProfileMongoDTO({
-      _id: profile._id,
+      userId: profile._id,
       name: profile.name,
       email: profile.email,
       nickname: profile.nickname,
@@ -123,7 +123,7 @@ export class ProfileMongoDTO {
 
   toEntity(): Profile {
     return new Profile({
-      userId: this._id,
+      userId: this.userId,
       name: this.name,
       nickname: this.nickname,
       username: this.username,
@@ -154,7 +154,7 @@ export class ProfileMongoDTO {
 
   static fromEntity(profile: Profile): ProfileMongoDTO {
     return new ProfileMongoDTO({
-      _id: profile.userId as string,
+      userId: profile.userId,
       name: profile.name,
       email: profile.email,
       nickname: profile.nickname,
@@ -174,7 +174,7 @@ export class ProfileMongoDTO {
       backgroundPhoto: profile.backgroundPhoto,
       biography: profile.biography,
       profilePhoto: profile.profilePhoto,
-      privacy: profile.privacy as PRIVACY_TYPE,
+      privacy: profile.privacy,
       followers: profile.followers,
       following: profile.following,
       favorites: profile.favorites,
@@ -185,7 +185,7 @@ export class ProfileMongoDTO {
 
   toMongo(): IProfile {
     return new ProfileModel({
-      _id: this._id,
+      _id: this.userId,
       name: this.name,
       email: this.email,
       nickname: this.nickname,
