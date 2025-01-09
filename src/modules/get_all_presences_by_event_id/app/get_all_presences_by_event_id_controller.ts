@@ -9,15 +9,10 @@ import {
   InternalServerError,
   NotFound,
   OK,
-  Unauthorized,
 } from "src/shared/helpers/external_interfaces/http_codes";
 import { GetAllPresencesByEventIdViewmodel } from "./get_all_presences_by_event_id_viewmodel";
 import { EntityError } from "src/shared/helpers/errors/errors";
-import {
-  ForbiddenAction,
-  NoItemsFound,
-} from "src/shared/helpers/errors/errors";
-import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
+import { NoItemsFound } from "src/shared/helpers/errors/errors";
 
 export class GetAllPresencesByEventIdController {
   constructor(private readonly usecase: GetAllPresencesByEventIdUseCase) {}

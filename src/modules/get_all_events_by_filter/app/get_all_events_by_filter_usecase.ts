@@ -18,7 +18,7 @@ export class GetEventsByFilterUseCase {
     this.event_repo = this.repository.event_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
   }
 
   async execute(filter: any): Promise<Event[]> {

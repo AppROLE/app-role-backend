@@ -1,5 +1,5 @@
 import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { ConfirmEventUseCase } from "./confirm_event_usecase";
+import { ConfirmPresenceUsecase } from "./confirm_presence_usecase";
 import { EntityError } from "src/shared/helpers/errors/errors";
 import {
   MissingParameters,
@@ -11,7 +11,7 @@ import {
   NoItemsFound,
   UserAlreadyConfirmedEvent,
 } from "src/shared/helpers/errors/errors";
-import { ConfirmEventViewmodel } from "./confirm_event_viewmodel";
+import { ConfirmPresenceViewmodel } from "./confirm_presence_viewmodel";
 import {
   BadRequest,
   InternalServerError,
@@ -20,8 +20,13 @@ import {
   Unauthorized,
 } from "src/shared/helpers/external_interfaces/http_codes";
 
-export class ConfirmEventController {
-  constructor(private readonly usecase: ConfirmEventUseCase) {}
+interface ConfirmPresenceData {
+  eventId: string;
+  promoterCode?: string;
+}
+
+export class ConfirmPresenceController {
+  constructor(private readonly usecase: ConfirmPresenceUsecase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
@@ -29,18 +34,13 @@ export class ConfirmEventController {
         UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
       if (!parsedUserApiGateway) throw new ForbiddenAction("usuário");
 
-      const { eventId, profilePhoto, promoterCode } = request.data;
+      const { eventId, promoterCode } =
+        request.data as unknown as ConfirmPresenceData;
 
       if (!eventId) throw new MissingParameters("eventId");
       if (typeof eventId !== "string")
         throw new WrongTypeParameters("eventId", "string", typeof eventId);
 
-      if (profilePhoto && typeof profilePhoto !== "string")
-        throw new WrongTypeParameters(
-          "profilePhoto",
-          "string",
-          typeof profilePhoto
-        );
       if (promoterCode && typeof promoterCode !== "string")
         throw new WrongTypeParameters(
           "promoterCode",
@@ -50,17 +50,11 @@ export class ConfirmEventController {
 
       await this.usecase.execute(
         eventId,
-        parsedUserApiGateway.username,
-        parsedUserApiGateway.nickname,
-        profilePhoto && profilePhoto !== "" && typeof profilePhoto === "string"
-          ? profilePhoto
-          : undefined,
-        promoterCode && promoterCode !== "" && typeof promoterCode === "string"
-          ? promoterCode
-          : undefined
+        parsedUserApiGateway.userId,
+        promoterCode
       );
 
-      const viewmodel = new ConfirmEventViewmodel(
+      const viewmodel = new ConfirmPresenceViewmodel(
         "Presença confirmada com sucesso"
       );
 

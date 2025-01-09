@@ -8,5 +8,5 @@ export interface IPresenceRepository {
   getPresencesByEventAndUser(
     eventId: string,
     userId: string
-  ): Promise<Presence[]>;
+  ): Promise<Presence | null>;
 }

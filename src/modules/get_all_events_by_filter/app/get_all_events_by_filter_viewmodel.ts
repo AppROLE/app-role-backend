@@ -1,73 +1,94 @@
 import { AGE_ENUM } from "src/shared/domain/enums/age_enum";
-import { Event, LocationProps } from "../../../shared/domain/entities/event";
+import { Event } from "../../../shared/domain/entities/event";
+import { Address } from "src/shared/domain/entities/address";
+import { STATUS } from "src/shared/domain/enums/status_enum";
+import { MUSIC_TYPE } from "src/shared/domain/enums/music_type_enum";
+import { CATEGORY } from "src/shared/domain/enums/category_enum";
+import { PACKAGE_TYPE } from "src/shared/domain/enums/package_type_enum";
+import { FEATURE } from "src/shared/domain/enums/feature_enum";
 
 export class EventViewModel {
-  private eventId?: string;
-  private name: string;
-  private bannerUrl?: string;
-  private location: LocationProps;
-  private price: number;
-  private description: string;
-  private ageRange: AGE_ENUM;
-  private eventDate: Date;
-  private instituteId: string;
-  private features: string[];
-  private musicType?: string[];
-  private menuLink?: string;
-  private galeryLink?: string[];
-  private packageType?: string[];
-  private category?: string;
-  private ticketUrl?: string;
-  private eventPhotoLink?: string;
+  eventId: string;
+  name: string;
+  description: string;
+  address: Address;
+  price: number;
+  ageRange: AGE_ENUM;
+  eventDate: number;
+  instituteId: string;
+  eventStatus: STATUS;
+  musicType: MUSIC_TYPE[];
+  menuLink?: string;
+  eventPhotoLink?: string;
+  galeryLink: string[];
+  bannerUrl?: string;
+  packageType: PACKAGE_TYPE[];
+  category?: CATEGORY;
+  ticketUrl?: string;
+  features: FEATURE[];
+  reviewsId: string[];
+  presencesId: string[];
+  createdAt: number;
+  updatedAt: number;
 
   constructor(event: Event) {
-    this.eventId = event.getEventId;
-    this.name = event.getEventName;
-    this.bannerUrl = event.getEventBannerUrl;
-    this.location = event.getEventLocation;
-    this.price = event.getEventPrice;
-    this.description = event.getEventDescription;
-    this.ageRange = event.getEventAgeRange;
-    this.eventDate = event.getEventDate;
-    this.instituteId = event.getInstituteId;
-    this.features = event.getFeatures;
-    this.musicType = event.getMusicType;
-    this.menuLink = event.getMenuLink;
-    this.galeryLink = event.getGaleryLink;
-    this.packageType = event.getPackageType;
-    this.category = event.getCategoryType;
-    this.ticketUrl = event.getTicketUrl;
-    this.eventPhotoLink = event.getEventPhotoLink;
+    this.eventId = event.eventId;
+    this.name = event.name;
+    this.description = event.description;
+    this.address = event.address;
+    this.price = event.price;
+    this.ageRange = event.ageRange;
+    this.eventDate = event.eventDate;
+    this.instituteId = event.instituteId;
+    this.eventStatus = event.eventStatus;
+    this.musicType = event.musicType;
+    this.menuLink = event.menuLink;
+    this.eventPhotoLink = event.eventPhotoLink;
+    this.galeryLink = event.galeryLink;
+    this.bannerUrl = event.bannerUrl;
+    this.packageType = event.packageType;
+    this.category = event.category;
+    this.ticketUrl = event.ticketUrl;
+    this.features = event.features;
+    this.reviewsId = event.reviewsId;
+    this.presencesId = event.presencesId;
+    this.createdAt = event.createdAt;
+    this.updatedAt = event.updatedAt;
   }
 
   toJSON() {
     return {
       eventId: this.eventId,
       name: this.name,
-      bannerUrl: this.bannerUrl,
-      location: {
-        address: this.location.address,
-        number: this.location.number,
-        cep: this.location.cep,
-        city: this.location.city,
-        neighborhood: this.location.neighborhood,
-        state: this.location.state,
-        latitude: this.location.latitude,
-        longitude: this.location.longitude,
+      description: this.description,
+      address: {
+        street: this.address.street,
+        number: this.address.number,
+        cep: this.address.cep,
+        city: this.address.city,
+        neighborhood: this.address.neighborhood,
+        state: this.address.state,
+        latitude: this.address.latitude,
+        longitude: this.address.longitude,
       },
       price: this.price,
-      description: this.description,
       ageRange: this.ageRange,
       eventDate: this.eventDate,
       instituteId: this.instituteId,
-      features: this.features,
+      eventStatus: this.eventStatus,
       musicType: this.musicType,
       menuLink: this.menuLink,
+      eventPhotoLink: this.eventPhotoLink,
       galeryLink: this.galeryLink,
+      bannerUrl: this.bannerUrl,
       packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,
-      eventPhotoLink: this.eventPhotoLink,
+      features: this.features,
+      reviewsId: this.reviewsId,
+      presencesId: this.presencesId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 }

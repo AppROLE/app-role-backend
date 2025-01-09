@@ -1,4 +1,4 @@
-export class UnConfirmEventViewmodel {
+export class ConfirmPresenceViewmodel {
   message: string;
 
   constructor(message: string) {
@@ -7,7 +7,7 @@ export class UnConfirmEventViewmodel {
 
   toJSON() {
     return {
-      message: this.message
-    }
+      message: this.message,
+    };
   }
 }

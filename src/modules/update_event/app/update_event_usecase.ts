@@ -26,7 +26,7 @@ interface UpdateEventParams {
     image: Buffer;
     mimetype: string;
   }[];
-  banner_image?: {
+  bannerImage?: {
     image: Buffer;
     mimetype: string;
   };
@@ -54,9 +54,9 @@ export class UpdateEventUseCase {
     this.file_repo = this.repository.file_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
     if (!this.file_repo)
-      throw new Error('Expected to have an instance of the file repository');
+      throw new Error("Expected to have an instance of the file repository");
   }
 
   async execute(params: UpdateEventParams): Promise<Event> {
@@ -140,15 +140,15 @@ export class UpdateEventUseCase {
       }
       eventToUpdate.setGaleryLink = galeryUrls;
     }
-    if (updatedFields.banner_image) {
+    if (updatedFields.bannerImage) {
       let bannerUrl = "";
-      if (params.banner_image) {
+      if (params.bannerImage) {
         bannerUrl = await this.file_repo!.uploadImage(
           `events/${existingEvent.getEventId}/event-photo.${
-            params.banner_image.mimetype.split("/")[1]
+            params.bannerImage.mimetype.split("/")[1]
           }`,
-          params.banner_image.image,
-          params.banner_image.mimetype,
+          params.bannerImage.image,
+          params.bannerImage.mimetype,
           true
         );
       }

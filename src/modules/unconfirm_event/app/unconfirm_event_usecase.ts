@@ -21,23 +21,25 @@ export class UnConfirmEventUseCase {
     this.presence_repo = this.repository.presence_repo;
 
     if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
+      throw new Error("Expected to have an instance of the event repository");
     if (!this.presence_repo)
-      throw new Error('Expected to have an instance of the presence repository');
+      throw new Error(
+        "Expected to have an instance of the presence repository"
+      );
   }
 
-  async execute(eventId: string, username: string) {
+  async execute(eventId: string, userId: string) {
     const event = await this.event_repo!.getEventById(eventId);
 
     if (!event) throw new NoItemsFound("eventId");
 
-    const presenceExists = await this.presence_repo!.getPresenceByEventAndUser(
+    const presenceExists = await this.presence_repo!.getPresencesByEventAndUser(
       eventId,
-      username
+      userId
     );
 
     if (!presenceExists) throw new NoItemsFound("presence");
 
-    await this.presence_repo!.unConfirmPresence(eventId, username);
+    await this.presence_repo!.deletePresence(eventId, userId);
   }
 }

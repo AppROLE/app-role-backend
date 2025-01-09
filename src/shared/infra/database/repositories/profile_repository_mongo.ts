@@ -44,6 +44,20 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return ProfileMongoDTO.fromMongo(userDoc).toEntity();
   }
 
+  async getProfilesByIds(profilesId: string[]): Promise<Profile[]> {
+    const profiles = await this.userCollection
+      .find({ _id: { $in: profilesId } })
+      .toArray();
+
+    if (!profiles || profiles.length === 0) {
+      return [];
+    }
+
+    return profiles.map((profileDoc) =>
+      ProfileMongoDTO.fromMongo(profileDoc).toEntity()
+    );
+  }
+
   async createProfile(profile: Profile): Promise<Profile> {
     const profileDoc = ProfileMongoDTO.fromEntity(profile).toMongo();
 
