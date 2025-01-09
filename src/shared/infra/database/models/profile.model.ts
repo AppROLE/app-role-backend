@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
-import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
+import mongoose, { Schema, Document } from 'mongoose';
+import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
+import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export interface IProfile extends Document {
   _id: string;
@@ -45,7 +45,7 @@ const ProfileSchema: Schema = new Schema<IProfile>({
   phoneNumber: { type: String },
   dateBirth: { type: Number },
   cpf: { type: String, unique: true },
-  gender: { type: GENDER_TYPE },
+  gender: { type: String },
   biography: { type: String },
   createdAt: { type: Number },
   linkInstagram: { type: String },
@@ -53,12 +53,12 @@ const ProfileSchema: Schema = new Schema<IProfile>({
   backgroundPhoto: { type: String },
   profilePhoto: { type: String },
   privacy: { type: String },
-  followers: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
-  following: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
-  favorites: [{ type: Schema.Types.ObjectId, ref: "Institute" }],
-  reviewsId: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  followers: [{ type: Schema.Types.ObjectId, ref: 'Profile' }],
+  following: [{ type: Schema.Types.ObjectId, ref: 'Profile' }],
+  favorites: [{ type: Schema.Types.ObjectId, ref: 'Institute' }],
+  reviewsId: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
   searchHistory: [{ type: String }],
-  presencesId: [{ type: Schema.Types.ObjectId, ref: "Presence" }],
+  presencesId: [{ type: Schema.Types.ObjectId, ref: 'Presence' }],
 });
 
-export const ProfileModel = mongoose.model<IProfile>("Profile", ProfileSchema);
+export const ProfileModel = mongoose.model<IProfile>('Profile', ProfileSchema);
