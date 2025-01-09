@@ -1,16 +1,15 @@
 import {
   LambdaHttpRequest,
   LambdaHttpResponse,
-} from "src/shared/helpers/external_interfaces/http_lambda_requests";
-import { FavoriteInstituteUseCase } from "./favorite_institute_usecase";
-import { FavoriteInstituteController } from "./favorite_institute_controller";
-import { getRequesterUser } from "src/shared/utils/get_requester_user";
+} from 'src/shared/helpers/external_interfaces/http_lambda_requests';
+import { FavoriteInstituteUsecase } from './favorite_institute_usecase';
+import { FavoriteInstituteController } from './favorite_institute_controller';
 
-const usecase = new FavoriteInstituteUseCase();
+const usecase = new FavoriteInstituteUsecase();
 const controller = new FavoriteInstituteController(usecase);
 
-export async function favoriteInstitutePresenter(event: Record<string, any>) {
-  const requesterUser = getRequesterUser(event);
+export async function lambda_handler(event: any, context: any) {
+  const requesterUser = event.requestContext.authorizer.claims;
   const httpRequest = new LambdaHttpRequest(event);
   await usecase.connect();
   const response = await controller.handle(httpRequest, requesterUser);
@@ -21,9 +20,4 @@ export async function favoriteInstitutePresenter(event: Record<string, any>) {
   );
 
   return httpResponse.toJSON();
-}
-
-export async function lambda_handler(event: any, context: any) {
-  const response = await favoriteInstitutePresenter(event);
-  return response;
 }

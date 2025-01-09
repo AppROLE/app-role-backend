@@ -1,10 +1,9 @@
-import { EntityError } from 'src/shared/helpers/errors/errors';
-import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
-import { Repository } from 'src/shared/infra/database/repositories/repository';
+import { EntityError, NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Validations } from 'src/shared/helpers/utils/validations';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class ForgotPasswordUseCase {
+export class ConfirmForgotPasswordUseCase {
   repository: Repository;
   private auth_repo?: IAuthRepository;
 
@@ -22,16 +21,25 @@ export class ForgotPasswordUseCase {
       throw new Error('Expected to have an instance of the auth repository');
   }
 
-  async execute(email: string) {
-    if (!Validations.validateEmail(email)) {
+  async execute(email: string, newPassword: string, code: string) {
+    if (Validations.validateEmail(email)) {
       throw new EntityError('email');
     }
 
     const user = await this.auth_repo!.getUserByEmail(email);
+
     if (!user) {
       throw new NoItemsFound('Email não encontrado');
     }
 
-    await this.auth_repo!.forgotPassword(email);
+    if (Validations.validatePassword(newPassword)) {
+      throw new EntityError('newPassword');
+    }
+
+    if (Validations.validateCode(code)) {
+      throw new EntityError('code');
+    }
+
+    await this.auth_repo!.confirmForgotPassword(email, newPassword, code);
   }
 }

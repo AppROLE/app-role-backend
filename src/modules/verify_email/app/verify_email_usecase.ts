@@ -4,7 +4,7 @@ import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Validations } from 'src/shared/helpers/utils/validations';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class ConfirmCodeUseCase {
+export class VerifyEmailUsecase {
   repository: Repository;
   private auth_repo?: IAuthRepository;
 

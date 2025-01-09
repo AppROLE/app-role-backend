@@ -1,27 +1,42 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import { CreateEventUseCase } from 'src/modules/create_event/app/create_event_usecase';
 import {
+  ConflictItems,
+  ForbiddenAction,
   MissingParameters,
+  NoItemsFound,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import {
   BadRequest,
+  Conflict,
   Created,
   InternalServerError,
+  NotFound,
+  Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import { STATUS } from 'src/shared/domain/enums/status_enum';
-import { FEATURE } from 'src/shared/domain/enums/feature_enum';
-import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
 import { CATEGORY } from 'src/shared/domain/enums/category_enum';
 import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
-import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
+import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export class CreateEventController {
   constructor(private readonly usecase: CreateEventUseCase) {}
 
-  async handle(formData: Record<string, any>) {
+  async handle(
+    formData: Record<string, any>,
+    requesterUser: Record<string, any>
+  ) {
     try {
+      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
+
+      if (!userApiGateway) throw new ForbiddenAction('Usuário');
+
+      if (userApiGateway.role === ROLE_TYPE.COMMON)
+        throw new ForbiddenAction('Usuário não tem permissão');
+
       const {
         name,
         description,
@@ -154,7 +169,7 @@ export class CreateEventController {
         eventStatus: STATUS[eventStatus as keyof typeof STATUS],
         musicType: musicType,
         menuLink: typeof menuLink === 'string' ? menuLink : undefined,
-        galery_images: gallery,
+        galeryImages: gallery,
         eventImage: photo,
         features: features,
         packageType: packageType,
@@ -170,18 +185,25 @@ export class CreateEventController {
       });
     } catch (error: any) {
       if (
+        error instanceof EntityError ||
         error instanceof MissingParameters ||
         error instanceof WrongTypeParameters
       ) {
         return new BadRequest(error.message);
       }
-      if (error instanceof EntityError) {
-        return new BadRequest(error.message);
+      if (error instanceof ConflictItems) {
+        return new Conflict(error.message);
       }
+      if (error instanceof ForbiddenAction) {
+        return new Unauthorized(error.message);
+      }
+
+      if (error instanceof NoItemsFound) {
+        return new NotFound(error.message);
+      }
+
       if (error instanceof Error) {
-        return new InternalServerError(
-          `CreateEventController, Error on handle: ${error.message}`
-        );
+        return new InternalServerError(error.message);
       }
     } finally {
       await this.usecase.repository.closeSession();

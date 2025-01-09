@@ -1,4 +1,4 @@
-export class ForgotPasswordViewmodel {
+export class VerifyEmailViewmodel {
   message: string;
 
   constructor(message: string) {

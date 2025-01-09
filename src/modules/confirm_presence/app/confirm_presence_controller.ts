@@ -1,24 +1,25 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { ConfirmPresenceUsecase } from "./confirm_presence_usecase";
-import { EntityError } from "src/shared/helpers/errors/errors";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { ConfirmPresenceUsecase } from './confirm_presence_usecase';
+import { EntityError } from 'src/shared/helpers/errors/errors';
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/errors";
-import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
+} from 'src/shared/helpers/errors/errors';
+import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import {
   ForbiddenAction,
   NoItemsFound,
   UserAlreadyConfirmedEvent,
-} from "src/shared/helpers/errors/errors";
-import { ConfirmPresenceViewmodel } from "./confirm_presence_viewmodel";
+} from 'src/shared/helpers/errors/errors';
+import { ConfirmPresenceViewmodel } from './confirm_presence_viewmodel';
 import {
   BadRequest,
   InternalServerError,
   NotFound,
   OK,
   Unauthorized,
-} from "src/shared/helpers/external_interfaces/http_codes";
+} from 'src/shared/helpers/external_interfaces/http_codes';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 interface ConfirmPresenceData {
   eventId: string;
@@ -30,32 +31,28 @@ export class ConfirmPresenceController {
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
-      const parsedUserApiGateway =
-        UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      if (!parsedUserApiGateway) throw new ForbiddenAction("usuário");
+      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
+
+      if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
       const { eventId, promoterCode } =
         request.data as unknown as ConfirmPresenceData;
 
-      if (!eventId) throw new MissingParameters("eventId");
-      if (typeof eventId !== "string")
-        throw new WrongTypeParameters("eventId", "string", typeof eventId);
+      if (!eventId) throw new MissingParameters('eventId');
+      if (typeof eventId !== 'string')
+        throw new WrongTypeParameters('eventId', 'string', typeof eventId);
 
-      if (promoterCode && typeof promoterCode !== "string")
+      if (promoterCode && typeof promoterCode !== 'string')
         throw new WrongTypeParameters(
-          "promoterCode",
-          "string",
+          'promoterCode',
+          'string',
           typeof promoterCode
         );
 
-      await this.usecase.execute(
-        eventId,
-        parsedUserApiGateway.userId,
-        promoterCode
-      );
+      await this.usecase.execute(eventId, userApiGateway.userId, promoterCode);
 
       const viewmodel = new ConfirmPresenceViewmodel(
-        "Presença confirmada com sucesso"
+        'Presença confirmada com sucesso'
       );
 
       return new OK(viewmodel.toJSON());

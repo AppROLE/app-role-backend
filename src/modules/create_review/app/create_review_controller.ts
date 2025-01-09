@@ -1,5 +1,5 @@
-import { IRequest } from "src/shared/helpers/external_interfaces/external_interface";
-import { CreateReviewUseCase } from "./create_review_usecase";
+import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
+import { CreateReviewUseCase } from './create_review_usecase';
 import {
   BadRequest,
   Conflict,
@@ -7,51 +7,54 @@ import {
   InternalServerError,
   NotFound,
   Unauthorized,
-} from "src/shared/helpers/external_interfaces/http_codes";
+} from 'src/shared/helpers/external_interfaces/http_codes';
 import {
   ConflictItems,
   ForbiddenAction,
   NoItemsFound,
-} from "src/shared/helpers/errors/errors";
-import { EntityError } from "src/shared/helpers/errors/errors";
+} from 'src/shared/helpers/errors/errors';
+import { EntityError } from 'src/shared/helpers/errors/errors';
 import {
   MissingParameters,
   WrongTypeParameters,
-} from "src/shared/helpers/errors/errors";
-import { UserAPIGatewayDTO } from "src/shared/infra/database/dtos/user_api_gateway_dto";
-import { CreateReviewViewModel } from "./create_review_viewmodel";
+} from 'src/shared/helpers/errors/errors';
+import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
+import { CreateReviewViewModel } from './create_review_viewmodel';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export class CreateReviewController {
   constructor(private readonly usecase: CreateReviewUseCase) {}
 
   async handle(req: IRequest, requesterUser: Record<string, any>) {
     try {
-      const parsedUserApiGateway =
-        UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
-      if (!parsedUserApiGateway)
-        throw new ForbiddenAction("Usuário não encontrado");
+      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
-      if (!parsedUserApiGateway.username)
-        throw new ForbiddenAction("Usuário não encontrado");
+      if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { rating, review, eventId } = req.data;
+      if (userApiGateway.role !== ROLE_TYPE.COMMON) {
+        throw new ForbiddenAction(
+          'Usuário nao tem permissão para criar uma review'
+        );
+      }
 
-      if (!rating) throw new MissingParameters("rating");
-      if (!review) throw new MissingParameters("review");
-      if (!eventId) throw new MissingParameters("eventId");
+      const { rating, review, eventId } = req.data.body;
 
-      if (typeof rating !== "number")
-        throw new WrongTypeParameters("rating", "number", typeof rating);
-      if (typeof review !== "string")
-        throw new WrongTypeParameters("review", "string", typeof review);
-      if (typeof eventId !== "string")
-        throw new WrongTypeParameters("eventId", "string", typeof eventId);
+      if (!rating) throw new MissingParameters('rating');
+      if (!review) throw new MissingParameters('review');
+      if (!eventId) throw new MissingParameters('eventId');
+
+      if (typeof rating !== 'number')
+        throw new WrongTypeParameters('rating', 'number', typeof rating);
+      if (typeof review !== 'string')
+        throw new WrongTypeParameters('review', 'string', typeof review);
+      if (typeof eventId !== 'string')
+        throw new WrongTypeParameters('eventId', 'string', typeof eventId);
 
       const reviewCreated = await this.usecase.execute(
         review,
         rating,
         eventId,
-        parsedUserApiGateway.userId
+        userApiGateway.userId
       );
 
       const viewmodel = new CreateReviewViewModel(reviewCreated);

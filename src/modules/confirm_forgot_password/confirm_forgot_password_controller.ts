@@ -1,4 +1,3 @@
-import { ForgotPasswordUseCase } from './forgot_password_usecase';
 import {
   MissingParameters,
   WrongTypeParameters,
@@ -19,25 +18,42 @@ import {
   ForbiddenAction,
   NoItemsFound,
 } from 'src/shared/helpers/errors/errors';
+import { ConfirmForgotPasswordUseCase } from './confirm_forgot_password_usecase';
 
-export class ForgotPasswordController {
-  constructor(private readonly usecase: ForgotPasswordUseCase) {}
+export class ConfirmForgotPasswordController {
+  constructor(private readonly usecase: ConfirmForgotPasswordUseCase) {}
 
   async handle(request: IRequest) {
-    const email = request.data.body.email;
-
     try {
+      const { email, newPassword, code } = request.data.body;
       if (!email) {
         throw new MissingParameters('email');
       }
-
       if (typeof email !== 'string') {
         throw new WrongTypeParameters('email', 'string', typeof email);
       }
 
-      await this.usecase.execute(email);
+      if (!newPassword) {
+        throw new MissingParameters('newPassword');
+      }
+      if (typeof newPassword !== 'string') {
+        throw new WrongTypeParameters(
+          'newPassword',
+          'string',
+          typeof newPassword
+        );
+      }
+
+      if (!code) {
+        throw new MissingParameters('code');
+      }
+      if (typeof code !== 'string') {
+        throw new WrongTypeParameters('code', 'string', typeof code);
+      }
+
+      await this.usecase.execute(email, newPassword, code);
       return new OK({
-        message: 'Uma mensagem de recuperação foi enviada para o seu e-mail',
+        message: 'Senha alterada com sucesso',
       });
     } catch (error: any) {
       if (error instanceof NoItemsFound) {

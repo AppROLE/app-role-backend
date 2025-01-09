@@ -1,4 +1,3 @@
-import { Profile } from 'src/shared/domain/entities/profile';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
@@ -20,9 +19,7 @@ export class ResendCodeUseCase {
     this.auth_repo = this.repository.auth_repo;
 
     if (!this.auth_repo)
-      throw new Error(
-        'Expected to have an instance of the institute repository'
-      );
+      throw new Error('Expected to have an instance of the auth repository');
   }
 
   async execute(email: string) {
@@ -35,9 +32,6 @@ export class ResendCodeUseCase {
     if (!user) {
       throw new NoItemsFound('email');
     }
-
-    const code = await this.auth_repo!.resendCode(email);
-
-    return code;
+    await this.auth_repo!.resendCode(email);
   }
 }

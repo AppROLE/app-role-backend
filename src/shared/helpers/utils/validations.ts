@@ -1,6 +1,6 @@
-import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
-import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
+import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
+import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export class Validations {
   static validateUserId(userId: string): boolean {
@@ -40,6 +40,14 @@ export class Validations {
 
   static validateCpf(cpf?: string): boolean {
     if (cpf && cpf.trim().length > 14) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static validateCode(code: string): boolean {
+    if (code.trim().length !== 6) {
       return false;
     }
 
@@ -128,6 +136,4 @@ export class Validations {
 
     return true;
   }
-
-
 }

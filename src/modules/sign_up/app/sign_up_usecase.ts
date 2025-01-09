@@ -35,15 +35,15 @@ export class SignUpUseCase {
     password: string,
     role = ROLE_TYPE.COMMON
   ) {
-    if (Validations.validateEmail(email) === false) {
+    if (!Validations.validateEmail(email) === false) {
       throw new EntityError('email');
     }
 
-    if (Validations.validateName(name) === false) {
+    if (!Validations.validateName(name) === false) {
       throw new EntityError('name');
     }
 
-    if (Validations.validatePassword(password) === false) {
+    if (!Validations.validatePassword(password) === false) {
       throw new EntityError('password');
     }
 

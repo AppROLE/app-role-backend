@@ -4,19 +4,20 @@ import {
   LambdaHttpRequest,
   LambdaHttpResponse,
 } from 'src/shared/helpers/external_interfaces/http_lambda_requests';
-import { ConfirmCodeUseCase } from './confirm_code_usecase';
+import { VerifyEmailUsecase } from './verify_email_usecase';
 import {
-  ConfirmCodeController,
+  VerifyEmailController,
   ConfirmCodeRequestBody,
-} from './confirm_code_controller';
+} from './verify_email_controller';
 
-const usecase = new ConfirmCodeUseCase();
-const controller = new ConfirmCodeController(usecase);
+const usecase = new VerifyEmailUsecase();
+const controller = new VerifyEmailController(usecase);
 
 export async function confirmCodePresenter(
   event: LambdaEvent<ConfirmCodeRequestBody>
 ) {
   const httpRequest = new LambdaHttpRequest(event);
+  await usecase.connect();
   const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,

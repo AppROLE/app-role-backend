@@ -1,4 +1,3 @@
-import { ForgotPasswordUseCase } from './forgot_password_usecase';
 import {
   MissingParameters,
   WrongTypeParameters,
@@ -19,26 +18,30 @@ import {
   ForbiddenAction,
   NoItemsFound,
 } from 'src/shared/helpers/errors/errors';
+import { RefreshTokenUsecase } from './refresh_token_usecase';
 
-export class ForgotPasswordController {
-  constructor(private readonly usecase: ForgotPasswordUseCase) {}
+export class RefreshTokenController {
+  constructor(private readonly usecase: RefreshTokenUsecase) {}
 
   async handle(request: IRequest) {
-    const email = request.data.body.email;
+    const refreshToken = request.data.body.refreshToken;
 
     try {
-      if (!email) {
+      if (!refreshToken) {
         throw new MissingParameters('email');
       }
 
-      if (typeof email !== 'string') {
-        throw new WrongTypeParameters('email', 'string', typeof email);
+      if (typeof refreshToken !== 'string') {
+        throw new WrongTypeParameters(
+          'refreshToken',
+          'string',
+          typeof refreshToken
+        );
       }
 
-      await this.usecase.execute(email);
-      return new OK({
-        message: 'Uma mensagem de recuperação foi enviada para o seu e-mail',
-      });
+      const result = await this.usecase.execute(refreshToken);
+
+      return new OK(result);
     } catch (error: any) {
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message);

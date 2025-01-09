@@ -26,11 +26,11 @@ export interface IAuthRepository {
     newPassword: string,
     code: string
   ): Promise<void>;
-  // refreshToken(refreshToken: string): Promise<{
-  //   accessToken: string;
-  //   idToken: string;
-  //   refreshToken: string;
-  // }>;
   deleteAccount(username: string, password: string): Promise<void>;
   adminUpdateUser(email: string, newRole: string): Promise<void>;
+  refreshToken(refreshToken: string): Promise<{
+    accessToken: string;
+    idToken: string;
+    refreshToken: string;
+  }>;
 }

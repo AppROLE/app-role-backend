@@ -5,6 +5,7 @@ import { EventMongoDTO } from '../dtos/event_mongo_dto';
 import {
   NoItemsFound,
   ConflictItems,
+  EntityError,
 } from '../../../../../src/shared/helpers/errors/errors';
 import { Collection, Connection } from 'mongoose';
 
@@ -24,15 +25,13 @@ export class EventRepositoryMongo implements IEventRepository {
       throw new Error('Erro ao criar evento no MongoDB.');
     }
 
-    const createdEventDoc = await this.eventCollection.findOne({
-      _id: event.eventId,
-    });
+    const createdEvent = await this.getEventById(event.eventId);
 
-    if (!createdEventDoc) {
+    if (!createdEvent) {
       throw new Error('Erro ao buscar o evento criado no MongoDB.');
     }
 
-    return EventMongoDTO.fromMongo(createdEventDoc).toEntity();
+    return createdEvent;
   }
 
   async deleteEvent(eventId: string): Promise<void> {
@@ -99,5 +98,28 @@ export class EventRepositoryMongo implements IEventRepository {
     }
 
     return EventMongoDTO.fromMongo(eventDoc).toEntity();
+  }
+
+  async updateEvent(
+    eventId: string,
+    updatedFields: Partial<Event>
+  ): Promise<Event> {
+    const updateData = { ...updatedFields };
+
+    const result = await this.eventCollection.updateOne(
+      { _id: eventId },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      throw new EntityError(`Event with id ${eventId} not found`);
+    }
+
+    const updatedEvent = await this.getEventById(eventId);
+    if (!updatedEvent) {
+      throw new EntityError(`Failed to fetch updated event with id ${eventId}`);
+    }
+
+    return updatedEvent;
   }
 }

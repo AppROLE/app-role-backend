@@ -22,7 +22,7 @@ interface CreateEventParams {
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  galery_images: {
+  galeryImages: {
     image: Buffer;
     mimetype: string;
   }[];
@@ -76,9 +76,9 @@ export class CreateEventUseCase {
     }
 
     let galeryUrls: string[] = [];
-    if (params.galery_images && params.galery_images.length > 0) {
-      for (let i = 0; i < params.galery_images.length; i++) {
-        const photo = params.galery_images[i];
+    if (params.galeryImages && params.galeryImages.length > 0) {
+      for (let i = 0; i < params.galeryImages.length; i++) {
+        const photo = params.galeryImages[i];
         const photoUrl = await this.file_repo!.uploadImage(
           `events/${event_id}/galery/${i}.${photo.mimetype.split('/')[1]}`,
           photo.image,

@@ -11,11 +11,9 @@ const controller = new CreateInstituteController(usecase);
 
 export async function lambda_handler(event: any) {
   const formDataParsed = await parseMultipartFormData(event);
-
+  const requesterUser = event.requestContext.authorizer.claims;
   await usecase.connect();
-
-  const response = await controller.handle(formDataParsed);
-
+  const response = await controller.handle(formDataParsed, requesterUser);
   const httpResponse = new LambdaHttpResponse(
     response?.body,
     response?.statusCode,

@@ -1,10 +1,7 @@
-import { EntityError } from 'src/shared/helpers/errors/errors';
-import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
-import { Validations } from 'src/shared/helpers/utils/validations';
 
-export class ForgotPasswordUseCase {
+export class RefreshTokenUsecase {
   repository: Repository;
   private auth_repo?: IAuthRepository;
 
@@ -22,16 +19,7 @@ export class ForgotPasswordUseCase {
       throw new Error('Expected to have an instance of the auth repository');
   }
 
-  async execute(email: string) {
-    if (!Validations.validateEmail(email)) {
-      throw new EntityError('email');
-    }
-
-    const user = await this.auth_repo!.getUserByEmail(email);
-    if (!user) {
-      throw new NoItemsFound('Email não encontrado');
-    }
-
-    await this.auth_repo!.forgotPassword(email);
+  async execute(refreshToken: string): Promise<{}> {
+    return await this.auth_repo!.refreshToken(refreshToken);
   }
 }

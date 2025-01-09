@@ -11,16 +11,16 @@ import {
   NotFound,
   InternalServerError,
 } from 'src/shared/helpers/external_interfaces/http_codes';
-import { ConfirmCodeUseCase } from './confirm_code_usecase';
-import { ConfirmCodeViewmodel } from './confirm_code_viewmodel';
+import { VerifyEmailUsecase } from './verify_email_usecase';
+import { VerifyEmailViewmodel } from './verify_email_viewmodel';
 
 export interface ConfirmCodeRequestBody {
   email: string;
   code: string;
 }
 
-export class ConfirmCodeController {
-  constructor(private readonly usecase: ConfirmCodeUseCase) {}
+export class VerifyEmailController {
+  constructor(private readonly usecase: VerifyEmailUsecase) {}
 
   async handle(request: IRequest<ConfirmCodeRequestBody>) {
     const { email, code } = request.data.body;
@@ -42,7 +42,7 @@ export class ConfirmCodeController {
       }
 
       await this.usecase.execute(email, code);
-      const viewmodel = new ConfirmCodeViewmodel(
+      const viewmodel = new VerifyEmailViewmodel(
         'Código validado com sucesso!'
       );
       return new OK(viewmodel.toJSON());

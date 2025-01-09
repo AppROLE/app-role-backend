@@ -26,11 +26,11 @@ export class SignInUseCase {
     email: string,
     password: string
   ): Promise<{ accessToken: string; idToken: string; refreshToken: string }> {
-    if (Validations.validateEmail(email)) {
+    if (!Validations.validateEmail(email)) {
       throw new EntityError('email');
     }
 
-    if (Validations.validatePassword(password)) {
+    if (!Validations.validatePassword(password)) {
       throw new EntityError('password');
     }
 
