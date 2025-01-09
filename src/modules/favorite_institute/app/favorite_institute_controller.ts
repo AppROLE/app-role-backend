@@ -24,7 +24,7 @@ export class FavoriteInstituteController {
   async handle(req: IRequest, requesterUser: Record<string, any>) {
     try {
       const parsedUserApiGateway =
-        UserAPIGatewayDTO.fromAPIGateway(requesterUser).getParsedData();
+        UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
       if (!parsedUserApiGateway) throw new ForbiddenAction('usuário');
 
