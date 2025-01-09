@@ -36,7 +36,7 @@ export class CreateProfileController {
       const profilePhoto = formData.files['profilePhoto'];
 
       if (profilePhoto === undefined) {
-        throw new MissingParameters('logoPhoto');
+        throw new MissingParameters('profilePhoto');
       }
 
       if (typeof username !== 'string') {
