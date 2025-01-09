@@ -1,12 +1,12 @@
 import { Presence } from "src/shared/domain/entities/presence";
-import presenceModel, { IPresence as PresenceDocument } from "../models/presence.model";
+import { IPresence, PresenceModel } from "../models/presence.model";
 
 export interface PresenceMongoDTOProps {
-  _id: string,
-  eventId: string,
-  userId: string,
-  promoterCode?: string,
-  createdAt: Date
+  _id: string;
+  eventId: string;
+  userId: string;
+  promoterCode?: string;
+  createdAt: Date;
 }
 
 export class PresenceMongoDTO {
@@ -30,17 +30,17 @@ export class PresenceMongoDTO {
       eventId: presence.event_id,
       userId: presence.username,
       promoterCode: presence.promoter_code,
-      createdAt: presence.createdAt
+      createdAt: presence.createdAt,
     });
   }
 
-  static toEntity(presenceMongoDTO: PresenceMongoDTO): Presence {
+  toEntity(): Presence {
     return new Presence({
-      presenceId: presenceMongoDTO._id,
-      eventId: presenceMongoDTO.eventId,
-      userId: presenceMongoDTO.userId,
-      promoterCode: presenceMongoDTO.promoterCode,
-      createdAt: presenceMongoDTO.createdAt
+      presenceId: this._id,
+      eventId: this.eventId,
+      userId: this.userId,
+      promoterCode: this.promoterCode,
+      createdAt: this.createdAt,
     });
   }
 
@@ -50,18 +50,17 @@ export class PresenceMongoDTO {
       eventId: presence.eventId,
       userId: presence.userId,
       promoterCode: presence.promoterCode,
-      createdAt: presence.createdAt
+      createdAt: presence.createdAt,
     });
   }
 
-  static toMongo(presenceMongoDTO: PresenceMongoDTO): PresenceDocument {
-    return new presenceModel({
-      _id: presenceMongoDTO._id,
-      event_id: presenceMongoDTO.eventId,
-      username: presenceMongoDTO.userId,
-      promoter_code: presenceMongoDTO.promoterCode,
-      createdAt: presenceMongoDTO.createdAt
-    })
-
+  toMongo(): IPresence {
+    return new PresenceModel({
+      _id: this._id,
+      event_id: this.eventId,
+      username: this.userId,
+      promoter_code: this.promoterCode,
+      createdAt: this.createdAt,
+    });
   }
 }

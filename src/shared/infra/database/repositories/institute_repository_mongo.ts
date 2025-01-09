@@ -9,7 +9,7 @@ import {
 import { Collection, Connection } from "mongoose";
 import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
 import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
-import { LocationProps } from "src/shared/domain/entities/event";
+import { Address } from "src/shared/domain/entities/address";
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
   private instituteCollection: Collection<IInstitute>;
@@ -19,8 +19,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
   }
 
   async createInstitute(institute: Institute): Promise<Institute> {
-    const dto = InstituteMongoDTO.fromEntity(institute);
-    const instituteDoc = InstituteMongoDTO.toMongo(dto);
+    const instituteDoc = InstituteMongoDTO.fromEntity(institute).toMongo();
 
     const existingInstitute = await this.instituteCollection.findOne({
       name: instituteDoc.name,
@@ -93,37 +92,22 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     );
   }
 
-  async updateInstitutePhoto(
-    instituteId: string,
-    institutePhoto: string
-  ): Promise<string> {
-    const result = await this.instituteCollection.updateOne(
-      { _id: instituteId },
-      { $set: { logoPhoto: institutePhoto } }
-    );
-
-    if (!result.modifiedCount) {
-      throw new Error("Failed to update institute photo.");
-    }
-
-    return institutePhoto;
-  }
   async updateInstitute(
     instituteId: string,
     description?: string,
-    institute_type?: INSTITUTE_TYPE,
-    partner_type?: PARTNER_TYPE,
+    instituteType?: INSTITUTE_TYPE,
+    partnerType?: PARTNER_TYPE,
     name?: string,
-    location?: LocationProps,
+    address?: Address,
     phone?: string
   ): Promise<Institute> {
     const updateFields: Partial<IInstitute> = {};
 
     if (description) updateFields.description = description;
-    if (institute_type) updateFields.institute_type = institute_type;
-    if (partner_type) updateFields.partner_type = partner_type;
+    if (instituteType) updateFields.instituteType = instituteType;
+    if (partnerType) updateFields.partnerType = partnerType;
     if (name) updateFields.name = name;
-    if (location) updateFields.address = location;
+    if (address) updateFields.address = address;
     if (phone) updateFields.phone = phone;
 
     const updatedInstitute = await this.instituteCollection.findOneAndUpdate(

@@ -3,16 +3,6 @@ import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
 import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
 
-interface IFollowing {
-  userFollowedId: string;
-  followedAt?: Date;
-}
-
-interface IFavorite {
-  instituteId: string;
-  favoritedAt?: Date;
-}
-
 export interface IProfile extends Document {
   _id: string;
   name: string;
@@ -33,21 +23,14 @@ export interface IProfile extends Document {
   linkTiktok?: string;
   backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy: PRIVACY_TYPE;  
-  following: IFollowing[];
-  favorites: IFavorite[];
+  privacy: PRIVACY_TYPE;
+  followers: string[];
+  following: string[];
+  favorites: string[];
   reviewsId: string[];
+  searchHistory: string[];
+  presencesId: string[];
 }
-
-const FollowingSchema = new Schema<IFollowing>({
-  userFollowedId: { type: String, ref: "User" },
-  followedAt: { type: Date, default: Date.now },
-});
-
-const FavoriteSchema = new Schema<IFavorite>({
-  instituteId: { type: String, ref: "Institute" },
-  favoritedAt: { type: Date, default: Date.now },
-});
 
 const ProfileSchema: Schema = new Schema<IProfile>({
   _id: { type: String, required: true },
@@ -70,9 +53,12 @@ const ProfileSchema: Schema = new Schema<IProfile>({
   backgroundPhoto: { type: String },
   profilePhoto: { type: String },
   privacy: { type: String },
-  following: [FollowingSchema],
-  favorites: [FavoriteSchema],
+  followers: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
+  following: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
+  favorites: [{ type: Schema.Types.ObjectId, ref: "Institute" }],
   reviewsId: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+  searchHistory: [{ type: String }],
+  presencesId: [{ type: Schema.Types.ObjectId, ref: "Presence" }],
 });
 
 export const ProfileModel = mongoose.model<IProfile>("Profile", ProfileSchema);

@@ -17,4 +17,7 @@ const PresenceSchema: Schema = new Schema<IPresence>({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model<IPresence>("Presence", PresenceSchema);
+export const PresenceModel = mongoose.model<IPresence>(
+  "Presence",
+  PresenceSchema
+);

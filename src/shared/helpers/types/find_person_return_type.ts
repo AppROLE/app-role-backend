@@ -1,5 +1,6 @@
 export type FindPersonReturnType = {
-  profilePhoto?: string;
-  username: string;
+  userId: string;
   nickname: string;
-}
+  username: string;
+  profilePhoto?: string;
+};

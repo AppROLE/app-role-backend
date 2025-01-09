@@ -25,19 +25,12 @@ interface ProfileProps {
   backgroundPhoto?: string;
   profilePhoto?: string;
   privacy: PRIVACY_TYPE;
-  following: FollowingProps[];
-  favorites: FavoriteProps[];
+  followers: string[];
+  following: string[];
+  favorites: string[];
   reviewsId: string[];
-}
-
-export interface FollowingProps {
-  userFollowedId: string;
-  followedAt?: Date;
-}
-
-export interface FavoriteProps {
-  instituteId: string;
-  favoritedAt?: Date;
+  searchHistory: string[];
+  presencesId: string[];
 }
 
 export class Profile {
@@ -61,9 +54,12 @@ export class Profile {
   backgroundPhoto?: string;
   profilePhoto?: string;
   privacy: PRIVACY_TYPE;
-  following: FollowingProps[];
-  favorites: FavoriteProps[];
+  followers: string[];
+  following: string[];
+  favorites: string[];
   reviewsId: string[];
+  searchHistory: string[];
+  presencesId: string[];
 
   constructor(props: ProfileProps) {
     if (Validations.validateUserId(props.userId)) {
@@ -120,7 +116,10 @@ export class Profile {
     }
     this.biography = props.biography;
 
-    if (props.backgroundPhoto && Validations.validateBackgroundPhoto(props.backgroundPhoto)) {
+    if (
+      props.backgroundPhoto &&
+      Validations.validateBackgroundPhoto(props.backgroundPhoto)
+    ) {
       throw new EntityError("backgroundPhoto");
     }
     this.backgroundPhoto = props.backgroundPhoto;
@@ -155,50 +154,20 @@ export class Profile {
     }
     this.gender = props.gender;
 
-    if (props.phoneNumber && Validations.validatePhoneNumber(props.phoneNumber)) {
+    if (
+      props.phoneNumber &&
+      Validations.validatePhoneNumber(props.phoneNumber)
+    ) {
       throw new EntityError("phoneNumber");
     }
     this.phoneNumber = props.phoneNumber;
-
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
-
-    if (!Profile.validateFollowing(props.following)) {
-      throw new EntityError("following");
-    }
     this.following = props.following || [];
-
-    if (!Profile.validateFavorites(props.favorites)) {
-      throw new EntityError("favorites");
-    }
     this.favorites = props.favorites || [];
-
     this.reviewsId = props.reviewsId || [];
+    this.searchHistory = props.searchHistory || [];
+    this.presencesId = props.presencesId || [];
+    this.followers = props.followers || [];
   }
-
-  static validateFollowing(following?: FollowingProps[]): boolean {
-    if (following && !Array.isArray(following)) {
-      return false;
-    }
-    following?.forEach((f) => {
-      if (!f.userFollowedId || f.userFollowedId.trim().length === 0) {
-        return false;
-      }
-    });
-
-    return true;
-  }
-
-  static validateFavorites(favorites?: FavoriteProps[]): boolean {
-    if (favorites && !Array.isArray(favorites)) {
-      return false;
-    }
-    favorites?.forEach((f) => {
-      if (!f.instituteId || f.instituteId.trim().length === 0) {
-        return false;
-      }
-    });
-    return true;
-  }
-
 }

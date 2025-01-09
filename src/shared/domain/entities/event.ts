@@ -27,6 +27,7 @@ interface EventProps {
   ticketUrl?: string;
   features: FEATURE[];
   reviewsId: string[];
+  presencesId: string[];
 }
 
 export class Event {
@@ -49,6 +50,7 @@ export class Event {
   ticketUrl?: string;
   features: FEATURE[];
   reviewsId: string[];
+  presencesId: string[];
 
   constructor(props: EventProps) {
     this.eventId = props.eventId;
@@ -70,6 +72,7 @@ export class Event {
     this.category = props.category;
     this.ticketUrl = props.ticketUrl;
     this.reviewsId = props.reviewsId || [];
+    this.presencesId = props.presencesId || [];
   }
 
   private validateName(name: string): void {

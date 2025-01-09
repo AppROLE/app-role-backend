@@ -21,6 +21,7 @@ export interface IEvent extends Document {
   ticketUrl: string;
   reviews: string[];
   eventStatus: string;
+  presencesId: string[];
 }
 
 const EventSchema: Schema = new Schema<IEvent>({
@@ -42,6 +43,7 @@ const EventSchema: Schema = new Schema<IEvent>({
   ticketUrl: { type: String },
   reviews: [{ type: String, ref: "Review" }],
   eventStatus: { type: String, required: true },
+  presencesId: [{ type: String, ref: "Presence" }],
 });
 
-export default mongoose.model<IEvent>("Event", EventSchema);
+export const EventModel = mongoose.model<IEvent>("Event", EventSchema);

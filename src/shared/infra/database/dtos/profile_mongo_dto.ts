@@ -1,9 +1,5 @@
 import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import {
-  FavoriteProps,
-  FollowingProps,
-  Profile,
-} from "src/shared/domain/entities/profile";
+import { Profile } from "src/shared/domain/entities/profile";
 import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
 import { IProfile, ProfileModel } from "../models/profile.model";
 import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
@@ -29,9 +25,12 @@ export interface UserMongoDTOProps {
   backgroundPhoto?: string;
   profilePhoto?: string;
   privacy: PRIVACY_TYPE;
-  following: FollowingProps[];
-  favorites: FavoriteProps[];
+  followers: string[];
+  following: string[];
+  favorites: string[];
   reviewsId: string[];
+  searchHistory: string[];
+  presencesId: string[];
 }
 
 export class ProfileMongoDTO {
@@ -55,9 +54,12 @@ export class ProfileMongoDTO {
   backgroundPhoto?: string;
   profilePhoto?: string;
   privacy: PRIVACY_TYPE;
-  following: FollowingProps[];
-  favorites: FavoriteProps[];
+  following: string[];
+  favorites: string[];
   reviewsId: string[];
+  searchHistory: string[];
+  followers: string[];
+  presencesId: string[];
 
   constructor(props: UserMongoDTOProps) {
     this._id = props._id;
@@ -76,16 +78,19 @@ export class ProfileMongoDTO {
     this.backgroundPhoto = props.backgroundPhoto;
     this.profilePhoto = props.profilePhoto;
     this.privacy = props.privacy;
+    this.followers = props.followers;
     this.following = props.following;
     this.favorites = props.favorites;
     this.reviewsId = props.reviewsId;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
     this.role = props.role;
+    this.acceptedTermsAt = props.acceptedTermsAt;
+    this.searchHistory = props.searchHistory;
+    this.presencesId = props.presencesId;
   }
 
   static fromMongo(profile: IProfile): ProfileMongoDTO {
-
     return new ProfileMongoDTO({
       _id: profile._id,
       name: profile.name,
@@ -105,51 +110,45 @@ export class ProfileMongoDTO {
       biography: profile.biography,
       profilePhoto: profile.profilePhoto,
       privacy: profile.privacy,
-      following: profile.following.map((following: any) => ({
-        userFollowedId: following.userFollowedId,
-        followedAt: following.followedAt,
-      })),
-      favorites: profile.favorites.map((favorite: any) => ({
-        instituteId: favorite.instituteId,
-        favoritedAt: favorite.favoritedAt,
-      })),
+      followers: profile.followers,
+      following: profile.following,
+      favorites: profile.favorites,
       reviewsId: profile.reviewsId,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
+      searchHistory: profile.searchHistory,
+      presencesId: profile.presencesId,
     });
   }
 
-  static toEntity(userMongoDTO: ProfileMongoDTO): Profile {
+  toEntity(): Profile {
     return new Profile({
-      userId: userMongoDTO._id,
-      name: userMongoDTO.name,
-      nickname: userMongoDTO.nickname,
-      username: userMongoDTO.username,
-      email: userMongoDTO.email,
-      acceptedTerms: userMongoDTO.acceptedTerms,
-      role: userMongoDTO.role,
-      acceptedTermsAt: userMongoDTO.acceptedTermsAt,
-      updatedAt: userMongoDTO.updatedAt,
-      createdAt: userMongoDTO.createdAt,
-      reviewsId: userMongoDTO.reviewsId,
-      dateBirth: userMongoDTO.dateBirth,
-      cpf: userMongoDTO.cpf,
-      gender: userMongoDTO.gender,
-      phoneNumber: userMongoDTO.phoneNumber,
-      linkInstagram: userMongoDTO.linkInstagram,
-      linkTiktok: userMongoDTO.linkTiktok,
-      backgroundPhoto: userMongoDTO.backgroundPhoto,
-      biography: userMongoDTO.biography,
-      profilePhoto: userMongoDTO.profilePhoto,
-      privacy: userMongoDTO.privacy,
-      following: userMongoDTO.following.map((following) => ({
-        userFollowedId: following.userFollowedId,
-        followedAt: following.followedAt,
-      })),
-      favorites: userMongoDTO.favorites.map((favorite) => ({
-        instituteId: favorite.instituteId,
-        favoritedAt: favorite.favoritedAt,
-      })),
+      userId: this._id,
+      name: this.name,
+      nickname: this.nickname,
+      username: this.username,
+      email: this.email,
+      acceptedTerms: this.acceptedTerms,
+      role: this.role,
+      acceptedTermsAt: this.acceptedTermsAt,
+      updatedAt: this.updatedAt,
+      createdAt: this.createdAt,
+      reviewsId: this.reviewsId,
+      dateBirth: this.dateBirth,
+      cpf: this.cpf,
+      gender: this.gender,
+      phoneNumber: this.phoneNumber,
+      linkInstagram: this.linkInstagram,
+      linkTiktok: this.linkTiktok,
+      backgroundPhoto: this.backgroundPhoto,
+      biography: this.biography,
+      profilePhoto: this.profilePhoto,
+      privacy: this.privacy,
+      followers: this.followers,
+      following: this.following,
+      favorites: this.favorites,
+      searchHistory: this.searchHistory,
+      presencesId: this.presencesId,
     });
   }
 
@@ -176,48 +175,42 @@ export class ProfileMongoDTO {
       biography: profile.biography,
       profilePhoto: profile.profilePhoto,
       privacy: profile.privacy as PRIVACY_TYPE,
-      following: profile.following.map((following) => ({
-        userFollowedId: following.userFollowedId,
-        followedAt: following.followedAt,
-      })),
-      favorites: profile.favorites.map((favorite) => ({
-        instituteId: favorite.instituteId,
-        favoritedAt: favorite.favoritedAt,
-      })),
+      followers: profile.followers,
+      following: profile.following,
+      favorites: profile.favorites,
+      searchHistory: profile.searchHistory,
+      presencesId: profile.presencesId,
     });
   }
 
-  static toMongo(userMongoDTO: ProfileMongoDTO): IProfile {
+  toMongo(): IProfile {
     return new ProfileModel({
-      _id: userMongoDTO._id,
-      name: userMongoDTO.name,
-      email: userMongoDTO.email,
-      nickname: userMongoDTO.nickname,
-      username: userMongoDTO.username,
-      acceptedTerms: userMongoDTO.acceptedTerms,
-      cpf: userMongoDTO.cpf,
-      role: userMongoDTO.role,
-      acceptedTermsAt: userMongoDTO.acceptedTermsAt,
-      updatedAt: userMongoDTO.updatedAt,
-      reviewsId: userMongoDTO.reviewsId,
-      dateBirth: userMongoDTO.dateBirth,
-      biography: userMongoDTO.biography,
-      phoneNumber: userMongoDTO.phoneNumber,
-      gender: userMongoDTO.gender,
-      linkInstagram: userMongoDTO.linkInstagram,
-      linkTiktok: userMongoDTO.linkTiktok,
-      backgroundPhoto: userMongoDTO.backgroundPhoto,
-      profilePhoto: userMongoDTO.profilePhoto,
-      privacy: userMongoDTO.privacy,
-      following: userMongoDTO.following.map((following) => ({
-        userFollowedId: following.userFollowedId,
-        followedAt: following.followedAt,
-      })),
-      favorites: userMongoDTO.favorites.map((favorite) => ({
-        instituteId: favorite.instituteId,
-        favoritedAt: favorite.favoritedAt,
-      })),
-      createdAt: userMongoDTO.createdAt,
+      _id: this._id,
+      name: this.name,
+      email: this.email,
+      nickname: this.nickname,
+      username: this.username,
+      acceptedTerms: this.acceptedTerms,
+      cpf: this.cpf,
+      role: this.role,
+      acceptedTermsAt: this.acceptedTermsAt,
+      updatedAt: this.updatedAt,
+      reviewsId: this.reviewsId,
+      dateBirth: this.dateBirth,
+      biography: this.biography,
+      phoneNumber: this.phoneNumber,
+      gender: this.gender,
+      linkInstagram: this.linkInstagram,
+      linkTiktok: this.linkTiktok,
+      backgroundPhoto: this.backgroundPhoto,
+      profilePhoto: this.profilePhoto,
+      privacy: this.privacy,
+      following: this.following,
+      favorites: this.favorites,
+      createdAt: this.createdAt,
+      searchHistory: this.searchHistory,
+      followers: this.followers,
+      presencesId: this.presencesId,
     });
   }
 }

@@ -40,8 +40,7 @@ export class EventRepositoryMongo implements IEventRepository {
   }
 
   async createEvent(event: Event): Promise<string> {
-    const dto = EventMongoDTO.fromEntity(event);
-    const eventDoc = EventMongoDTO.toMongo(dto);
+    const eventDoc = EventMongoDTO.fromEntity(event).toMongo();
 
     const result = await this.eventCollection.insertOne(eventDoc);
     if (!result.acknowledged) {

@@ -1,11 +1,9 @@
-import { EntityError } from "src/shared/helpers/errors/errors";
-
 interface PresenceProps {
-  presenceId: string,
-  eventId: string,
-  userId: string,
-  promoterCode?: string,
-  createdAt: Date
+  presenceId: string;
+  eventId: string;
+  userId: string;
+  promoterCode?: string;
+  createdAt: Date;
 }
 
 export class Presence {
