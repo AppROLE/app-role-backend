@@ -66,15 +66,76 @@ class LambdaDefaultHTTP {
   }
 }
 
+interface RequestIdentity {
+  cognitoIdentityPoolId: string | null;
+  cognitoIdentityId: string | null;
+  apiKey: string | null;
+  principalOrgId: string | null;
+  cognitoAuthenticationType: string | null;
+  userArn: string;
+  apiKeyId: string | null;
+  userAgent: string;
+  accountId: string | null;
+  caller: string;
+  sourceIp: string;
+  accessKey: string | null;
+  cognitoAuthenticationProvider: string | null;
+  user: string | null;
+}
+
+interface RequestContext {
+  resourceId: string;
+  resourcePath: string;
+  httpMethod: string;
+  extendedRequestId: string;
+  requestTime: string;
+  path: string;
+  accountId: string;
+  protocol: string;
+  stage: string;
+  domainPrefix: string;
+  requestTimeEpoch: number;
+  requestId: string;
+  identity: RequestIdentity;
+  domainName: string;
+  apiId: string;
+}
+
+interface ApiGatewayEvent {
+  resource: string;
+  path: string;
+  httpMethod: string;
+  headers: Record<string, string>;
+  multiValueHeaders: Record<string, string[]>;
+  queryStringParameters: Record<string, string> | null;
+  multiValueQueryStringParameters: Record<string, string[]> | null;
+  pathParameters: Record<string, string> | null;
+  stageVariables: Record<string, string> | null;
+  requestContext: RequestContext;
+  body: string | null;
+  isBase64Encoded: boolean;
+}
+
+
+
+
+
+
+
+
+
+
 export type LambdaEvent<
   Tbody extends Record<string, any> = Record<string, any>,
-  THeaders extends Record<string, any> = Record<string, any>
+  THeaders extends Record<string, any> = Record<string, any>,
+  TQueryParams extends Record<string, any> = Record<string, any>,
+
 > = {
   version: string;
   rawPath: string;
   rawQueryString: string;
   headers?: THeaders;
-  queryStringParameters?: string;
+  queryStringParameters?: TQueryParams;
   requestContext: Record<string, any>;
   body?: Tbody;
 };
@@ -92,9 +153,9 @@ class LambdaHttpRequest<
   http: LambdaDefaultHTTP;
   requesterUser: Record<string, any>;
 
-  constructor(data: LambdaEvent<TBody, THeaders>) {
+  constructor(data: LambdaEvent<TBody, THeaders, TQueryParams>) {
     const headers = data.headers || ({} as THeaders);
-    const queryStringParameters = JSON.parse(data.queryStringParameters || '');
+    const queryStringParameters = data.queryStringParameters || ({} as TQueryParams);
     // Processa o corpo da requisição
     let body: TBody;
     try {
