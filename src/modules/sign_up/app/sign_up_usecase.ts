@@ -47,9 +47,9 @@ export class SignUpUseCase {
       throw new EntityError('password');
     }
 
-    const userAlreadyExists = await this.auth_repo!.getUserByEmail(email);
+    const user = await this.auth_repo!.getUserByEmail(email);
 
-    if (userAlreadyExists) {
+    if (!user) {
       throw new UserNotConfirmed();
     }
 
