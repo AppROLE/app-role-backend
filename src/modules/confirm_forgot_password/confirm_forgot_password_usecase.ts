@@ -32,11 +32,11 @@ export class ConfirmForgotPasswordUseCase {
       throw new NoItemsFound('Email não encontrado');
     }
 
-    if (Validations.validatePassword(newPassword)) {
+    if (!Validations.validatePassword(newPassword)) {
       throw new EntityError('newPassword');
     }
 
-    if (Validations.validateCode(code)) {
+    if (!Validations.validateCode(code)) {
       throw new EntityError('code');
     }
 
