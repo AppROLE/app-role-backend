@@ -1,8 +1,7 @@
-import { Institute } from "src/shared/domain/entities/institute";
-import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
-import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
-import { IInstituteRepository } from "src/shared/domain/repositories/institute_repository_interface";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
+import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
+import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class UpdateInstituteUseCase {
   repository: Repository;
@@ -20,15 +19,15 @@ export class UpdateInstituteUseCase {
 
     if (!this.institute_repo)
       throw new Error(
-        "Expected to have an instance of the institute repository"
+        'Expected to have an instance of the institute repository'
       );
   }
 
   async execute(
     instituteId: string,
     description?: string,
-    institute_type?: INSTITUTE_TYPE,
-    partner_type?: PARTNER_TYPE,
+    instituteType?: INSTITUTE_TYPE,
+    partnerType?: PARTNER_TYPE,
     name?: string,
     phone?: string
   ) {
@@ -46,11 +45,11 @@ export class UpdateInstituteUseCase {
     if (description) {
       institute.instituteDescription = description;
     }
-    if (institute_type) {
-      institute.instituteInstituteType = institute_type;
+    if (instituteType) {
+      institute.instituteInstituteType = instituteType;
     }
-    if (partner_type) {
-      institute.institutePartnerType = partner_type;
+    if (partnerType) {
+      institute.institutePartnerType = partnerType;
     }
     if (name) {
       institute.instituteName = name;

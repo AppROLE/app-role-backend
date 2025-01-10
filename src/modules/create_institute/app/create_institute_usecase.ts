@@ -18,8 +18,8 @@ export interface CreateInstituteParams {
   name: string;
   logoPhoto: ParsedFile;
   description: string;
-  institute_type: INSTITUTE_TYPE;
-  partner_type: PARTNER_TYPE;
+  instituteType: INSTITUTE_TYPE;
+  partnerType: PARTNER_TYPE;
   phone?: string;
   address: Address;
   price?: number;
@@ -87,16 +87,18 @@ export class CreateInstituteUseCase {
     const institute = new Institute({
       instituteId,
       address: params.address,
-      createdAt: new Date().getTime(),
       description: params.description,
       eventsId: [],
       logoPhoto: logoUrl,
       name: params.name,
-      partnerType: PARTNER_TYPE[params.partner_type],
-      instituteType: INSTITUTE_TYPE[params.institute_type],
+      partnerType:
+        PARTNER_TYPE[params.partnerType as keyof typeof PARTNER_TYPE],
+      instituteType:
+        INSTITUTE_TYPE[params.instituteType as keyof typeof INSTITUTE_TYPE],
       phone: params.phone,
       photosUrl: photosUrls,
-      price: params.price || 0,
+      price: params.price,
+      createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
     });
 

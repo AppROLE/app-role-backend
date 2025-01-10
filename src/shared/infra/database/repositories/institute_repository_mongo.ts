@@ -89,7 +89,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     partnerType: PARTNER_TYPE
   ): Promise<Institute[]> {
     const instituteDocs = await this.instituteCollection
-      .find({ partner_type: partnerType })
+      .find({ partnerType: partnerType })
       .toArray();
 
     if (!instituteDocs || instituteDocs.length === 0) {

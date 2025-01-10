@@ -30,8 +30,8 @@ import {
 export interface InstituteFormDataFields extends Address {
   name: string;
   description: string;
-  institute_type: INSTITUTE_TYPE;
-  partner_type: PARTNER_TYPE;
+  instituteType: INSTITUTE_TYPE;
+  partnerType: PARTNER_TYPE;
   phone?: string;
   price?: number;
 }
@@ -52,8 +52,8 @@ export class CreateInstituteController {
     try {
       let {
         description,
-        institute_type,
-        partner_type,
+        instituteType,
+        partnerType,
         name,
         latitude,
         longitude,
@@ -99,12 +99,12 @@ export class CreateInstituteController {
         throw new MissingParameters('description');
       }
 
-      if (institute_type === undefined || institute_type === null) {
-        throw new MissingParameters('institute_type');
+      if (instituteType === undefined || instituteType === null) {
+        throw new MissingParameters('instituteType');
       }
 
-      if (partner_type === undefined || partner_type === null) {
-        throw new MissingParameters('partner_type');
+      if (partnerType === undefined || partnerType === null) {
+        throw new MissingParameters('partnerType');
       }
 
       if (name === undefined || name === null) {
@@ -145,8 +145,8 @@ export class CreateInstituteController {
       const institute = await this.usecase.execute({
         name,
         description,
-        institute_type,
-        partner_type,
+        instituteType,
+        partnerType,
         phone,
         address: {
           latitude,

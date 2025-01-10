@@ -1,11 +1,11 @@
 import {
   PARTNER_TYPE,
   toEnumPartnerType,
-} from "src/shared/domain/enums/partner_type_enum";
-import { Institute } from "../../../domain/entities/institute";
-import { INSTITUTE_TYPE } from "../../../domain/enums/institute_type_enum";
-import { IInstitute, InstituteModel } from "../models/institute.model";
-import { Address } from "src/shared/domain/entities/address";
+} from 'src/shared/domain/enums/partner_type_enum';
+import { Institute } from '../../../domain/entities/institute';
+import { INSTITUTE_TYPE } from '../../../domain/enums/institute_type_enum';
+import { IInstitute, InstituteModel } from '../models/institute.model';
+import { Address } from 'src/shared/domain/entities/address';
 
 export interface InstituteMongoDTOProps {
   instituteId: string;
@@ -96,8 +96,8 @@ export class InstituteMongoDTO {
       name: this.name,
       logoPhoto: this.logoPhoto,
       description: this.description,
-      institute_type: this.instituteType,
-      partner_type: this.partnerType,
+      instituteType: this.instituteType,
+      partnerType: this.partnerType,
       phone: this.phone,
       address: this.address,
       price: this.price,

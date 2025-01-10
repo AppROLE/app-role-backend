@@ -25,8 +25,8 @@ import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 export interface UpdateInstituteRequestBody {
   instituteId: string;
   description?: string;
-  institute_type?: INSTITUTE_TYPE;
-  partner_type?: PARTNER_TYPE;
+  instituteType?: INSTITUTE_TYPE;
+  partnerType?: PARTNER_TYPE;
   name?: string;
   phone?: string;
 }
@@ -46,8 +46,8 @@ export class UpdateInstituteController {
       const {
         instituteId,
         description,
-        institute_type,
-        partner_type,
+        instituteType,
+        partnerType,
         name,
         phone,
       } = request.data.body;
@@ -73,21 +73,21 @@ export class UpdateInstituteController {
           );
         }
       }
-      if (institute_type !== undefined) {
-        if (typeof institute_type !== 'string') {
+      if (instituteType !== undefined) {
+        if (typeof instituteType !== 'string') {
           throw new WrongTypeParameters(
-            'institute_type',
+            'instituteType',
             'string',
-            typeof institute_type
+            typeof instituteType
           );
         }
       }
-      if (partner_type !== undefined) {
-        if (typeof partner_type !== 'string') {
+      if (partnerType !== undefined) {
+        if (typeof partnerType !== 'string') {
           throw new WrongTypeParameters(
-            'partner_type',
+            'partnerType',
             'string',
-            typeof partner_type
+            typeof partnerType
           );
         }
       }
@@ -106,8 +106,8 @@ export class UpdateInstituteController {
       await this.usecase.execute(
         instituteId,
         description,
-        INSTITUTE_TYPE[institute_type as keyof typeof INSTITUTE_TYPE],
-        PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
+        INSTITUTE_TYPE[instituteType as keyof typeof INSTITUTE_TYPE],
+        PARTNER_TYPE[partnerType as keyof typeof PARTNER_TYPE],
         name,
         phone
       );

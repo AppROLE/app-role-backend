@@ -8,8 +8,8 @@ export class InstituteViewModel {
   private name: string;
   private logoPhoto?: string;
   private description: string;
-  private institute_type: INSTITUTE_TYPE;
-  private partner_type: PARTNER_TYPE;
+  private instituteType: INSTITUTE_TYPE;
+  private partnerType: PARTNER_TYPE;
   private phone?: string;
   private address: Address;
   private price?: number;
@@ -21,8 +21,8 @@ export class InstituteViewModel {
     this.name = institute.name;
     this.logoPhoto = institute.logoPhoto;
     this.description = institute.description;
-    this.institute_type = institute.instituteType;
-    this.partner_type = institute.partnerType;
+    this.instituteType = institute.instituteType;
+    this.partnerType = institute.partnerType;
     this.phone = institute.phone;
     this.address = institute.address;
     this.price = institute.price;
@@ -36,8 +36,8 @@ export class InstituteViewModel {
       name: this.name,
       logoPhoto: this.logoPhoto,
       description: this.description,
-      instituteType: this.institute_type,
-      partnerType: this.partner_type,
+      instituteType: this.instituteType,
+      partnerType: this.partnerType,
       phone: this.phone,
       address: this.address,
       price: this.price,

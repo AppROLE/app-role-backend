@@ -1,7 +1,7 @@
-import { INSTITUTE_TYPE, toEnum } from "../enums/institute_type_enum";
-import { EntityError } from "../../helpers/errors/errors";
-import { PARTNER_TYPE, toEnumPartnerType } from "../enums/partner_type_enum";
-import { Address } from "./address";
+import { INSTITUTE_TYPE, toEnum } from '../enums/institute_type_enum';
+import { EntityError } from '../../helpers/errors/errors';
+import { PARTNER_TYPE, toEnumPartnerType } from '../enums/partner_type_enum';
+import { Address } from './address';
 
 interface InstituteProps {
   instituteId: string;
@@ -62,29 +62,29 @@ export class Institute {
 
   private validateName(name: string): void {
     if (!name || name.trim().length < 3) {
-      throw new EntityError("Nome deve conter pelo menos 3 caracteres");
+      throw new EntityError('Nome deve conter pelo menos 3 caracteres');
     }
   }
 
-  private validateInstituteType(institute_type: string): void {
+  private validateInstituteType(instituteType: string): void {
     try {
-      toEnum(institute_type);
+      toEnum(instituteType);
     } catch (error) {
-      throw new EntityError("Tipo de instituto");
+      throw new EntityError('Tipo de instituto');
     }
   }
 
-  private validatePartnerType(partner_type: string): void {
+  private validatePartnerType(partnerType: string): void {
     try {
-      toEnumPartnerType(partner_type);
+      toEnumPartnerType(partnerType);
     } catch (error) {
-      throw new EntityError("partner type");
+      throw new EntityError('partner type');
     }
   }
 
   private validatePhone(phone: string): void {
     if (!phone || phone.trim().length < 8) {
-      throw new EntityError("Telefone");
+      throw new EntityError('Telefone');
     }
   }
 }
