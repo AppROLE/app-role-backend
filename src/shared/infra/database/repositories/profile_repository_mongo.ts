@@ -1,17 +1,17 @@
-import { DuplicatedItem, NoItemsFound } from "src/shared/helpers/errors/errors";
-import { IProfile } from "../models/profile.model";
-import { ProfileMongoDTO } from "../dtos/profile_mongo_dto";
-import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import { IProfileRepository } from "src/shared/domain/repositories/profile_repository_interface";
-import { Collection, Connection } from "mongoose";
-import { Profile } from "src/shared/domain/entities/profile";
-import { FindPersonReturnType } from "src/shared/helpers/types/find_person_return_type";
+import { DuplicatedItem, NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { IProfile } from '../models/profile.model';
+import { ProfileMongoDTO } from '../dtos/profile_mongo_dto';
+import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
+import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
+import { Collection, Connection } from 'mongoose';
+import { Profile } from 'src/shared/domain/entities/profile';
+import { FindPersonReturnType } from 'src/shared/helpers/types/find_person_return_type';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   private userCollection: Collection<IProfile>;
 
   constructor(connection: Connection) {
-    this.userCollection = connection.collection<IProfile>("user");
+    this.userCollection = connection.collection<IProfile>('Profile');
   }
 
   async getByEmail(email: string): Promise<Profile | null> {
@@ -64,7 +64,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     const result = await this.userCollection.insertOne(profileDoc);
 
     if (!result.acknowledged) {
-      throw new Error("Erro ao criar usuário no MongoDB.");
+      throw new Error('Erro ao criar usuário no MongoDB.');
     }
 
     const createdUserDoc = await this.userCollection.findOne({
@@ -72,7 +72,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     });
 
     if (!createdUserDoc) {
-      throw new Error("Erro ao buscar o usuário criado no MongoDB.");
+      throw new Error('Erro ao buscar o usuário criado no MongoDB.');
     }
 
     return ProfileMongoDTO.fromMongo(createdUserDoc).toEntity();
@@ -90,8 +90,8 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     const profiles = await this.userCollection
       .find({
         $or: [
-          { username: { $regex: `^${searchTerm}`, $options: "i" } },
-          { nickname: { $regex: `^${searchTerm}`, $options: "i" } },
+          { username: { $regex: `^${searchTerm}`, $options: 'i' } },
+          { nickname: { $regex: `^${searchTerm}`, $options: 'i' } },
         ],
       })
       .limit(10)
@@ -141,13 +141,13 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     if (!result.modifiedCount) {
-      throw new Error("Erro ao atualizar o perfil.");
+      throw new Error('Erro ao atualizar o perfil.');
     }
 
     const updatedUserDoc = await this.userCollection.findOne({ _id: userId });
 
     if (!updatedUserDoc) {
-      throw new Error("Erro ao buscar o perfil atualizado.");
+      throw new Error('Erro ao buscar o perfil atualizado.');
     }
 
     return ProfileMongoDTO.fromMongo(updatedUserDoc).toEntity();
@@ -164,7 +164,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     });
 
     if (followedUser) {
-      throw new DuplicatedItem("O usuário já está seguindo este perfil.");
+      throw new DuplicatedItem('O usuário já está seguindo este perfil.');
     }
 
     // Adiciona follower ao seguido
@@ -174,7 +174,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     if (!resultFollowed.modifiedCount) {
-      throw new Error("Erro ao adicionar seguidor ao perfil seguido.");
+      throw new Error('Erro ao adicionar seguidor ao perfil seguido.');
     }
 
     // Adiciona seguido ao follower
@@ -189,7 +189,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
         { _id: followedUserId },
         { $pull: { followers: followerUserId } }
       );
-      throw new Error("Erro ao adicionar seguido ao perfil do seguidor.");
+      throw new Error('Erro ao adicionar seguido ao perfil do seguidor.');
     }
   }
 
@@ -210,7 +210,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     if (!resultFollowed.modifiedCount && !resultFollowing.modifiedCount) {
-      throw new Error("Erro ao remover seguidor/seguido.");
+      throw new Error('Erro ao remover seguidor/seguido.');
     }
   }
 
@@ -224,7 +224,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     if (!result.modifiedCount) {
-      throw new Error("Erro ao adicionar instituto favorito.");
+      throw new Error('Erro ao adicionar instituto favorito.');
     }
   }
 
@@ -238,7 +238,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     if (!result.modifiedCount) {
-      throw new Error("Erro ao remover instituto favorito.");
+      throw new Error('Erro ao remover instituto favorito.');
     }
   }
 
@@ -249,7 +249,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     if (!result.modifiedCount) {
-      throw new Error("Erro ao remover todos os institutos favoritos.");
+      throw new Error('Erro ao remover todos os institutos favoritos.');
     }
   }
 }

@@ -2,10 +2,12 @@ import {
   ForbiddenAction,
   MissingParameters,
   NoItemsFound,
+  UserAlreadyExists,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import {
   BadRequest,
+  Conflict,
   Created,
   InternalServerError,
   NotFound,
@@ -85,6 +87,10 @@ export class CreateProfileController {
 
       if (error instanceof NoItemsFound) {
         return new NotFound(error.message);
+      }
+
+      if (error instanceof UserAlreadyExists) {
+        return new Conflict(error.message);
       }
 
       if (error instanceof Error) {
