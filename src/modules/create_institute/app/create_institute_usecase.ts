@@ -17,7 +17,7 @@ export interface CreateInstituteParams {
   phone?: string;
   address: Address;
   price?: number;
-  photos?: ParsedFile[];
+  photos: ParsedFile[];
 }
 
 export class CreateInstituteUseCase {
