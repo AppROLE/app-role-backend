@@ -50,7 +50,7 @@ export class CreateInstituteController {
     if (userApiGateway.role === ROLE_TYPE.COMMON)
       throw new ForbiddenAction('Usuário não tem permissão');
     try {
-      const {
+      let {
         description,
         institute_type,
         partner_type,
@@ -67,12 +67,14 @@ export class CreateInstituteController {
         phone,
       } = formData.fields;
 
+      number = Number(number);
+      latitude = Number(latitude);
+      longitude = Number(longitude);
+
       const { logoPhoto: logoPhotoFile, photos: photoFiles } = formData.files;
 
       let photos: ParsedFile[];
       let logoPhoto: ParsedFile | undefined;
-      //validar se logoPhoto realmente existe
-
       !Array.isArray(photoFiles) ? (photos = []) : (photos = photoFiles);
       Array.isArray(logoPhotoFile)
         ? (logoPhoto = logoPhotoFile[0])
@@ -82,69 +84,53 @@ export class CreateInstituteController {
         throw new MissingParameters('logoPhoto');
       }
 
-      if (typeof description !== 'string') {
-        throw new WrongTypeParameters(
-          'description',
-          'string',
-          typeof description
-        );
-      }
-      if (typeof institute_type !== 'string') {
-        throw new WrongTypeParameters(
-          'institute_type',
-          'string',
-          typeof institute_type
-        );
-      }
-      if (typeof partner_type !== 'string') {
-        throw new WrongTypeParameters(
-          'partner_type',
-          'string',
-          typeof partner_type
-        );
-      }
-      if (typeof name !== 'string') {
-        throw new WrongTypeParameters('name', 'string', typeof name);
+      if (description === undefined || description === null) {
+        throw new MissingParameters('description');
       }
 
-      if (typeof latitude !== 'number') {
-        throw new WrongTypeParameters('latitude', 'number', typeof latitude);
-      }
-      if (typeof longitude !== 'number') {
-        throw new WrongTypeParameters('longitude', 'number', typeof longitude);
-      }
-      if (typeof street !== 'string') {
-        throw new WrongTypeParameters('address', 'string', typeof street);
-      }
-      if (typeof neighborhood !== 'string') {
-        throw new WrongTypeParameters(
-          'neighborhood',
-          'string',
-          typeof neighborhood
-        );
-      }
-      if (typeof city !== 'string') {
-        throw new WrongTypeParameters('city', 'string', typeof city);
-      }
-      if (typeof state !== 'string') {
-        throw new WrongTypeParameters('state', 'string', typeof state);
-      }
-      if (typeof cep !== 'string') {
-        throw new WrongTypeParameters('cep', 'string', typeof cep);
+      if (institute_type === undefined || institute_type === null) {
+        throw new MissingParameters('institute_type');
       }
 
-      if (price !== undefined) {
-        if (typeof price !== 'number') {
-          throw new WrongTypeParameters('price', 'number', typeof price);
-        }
+      if (partner_type === undefined || partner_type === null) {
+        throw new MissingParameters('partner_type');
       }
 
-      if (phone !== undefined) {
-        if (typeof phone !== 'string') {
-          throw new WrongTypeParameters('phone', 'string', typeof phone);
-        }
+      if (name === undefined || name === null) {
+        throw new MissingParameters('name');
       }
 
+      if (latitude === undefined || latitude === null) {
+        throw new MissingParameters('latitude');
+      }
+
+      if (longitude === undefined || longitude === null) {
+        throw new MissingParameters('longitude');
+      }
+
+      if (street === undefined || street === null) {
+        throw new MissingParameters('street');
+      }
+
+      if (number === undefined || number === null) {
+        throw new MissingParameters('number');
+      }
+
+      if (neighborhood === undefined || neighborhood === null) {
+        throw new MissingParameters('neighborhood');
+      }
+
+      if (city === undefined || city === null) {
+        throw new MissingParameters('city');
+      }
+
+      if (state === undefined || state === null) {
+        throw new MissingParameters('state');
+      }
+
+      if (cep === undefined || cep === null) {
+        throw new MissingParameters('cep');
+      }
       const institute = await this.usecase.execute({
         name,
         description,
