@@ -19,7 +19,6 @@ interface CreateEventParams {
   ageRange: AGE_ENUM;
   eventDate: number;
   instituteId: string;
-  eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   galeryImages: {
@@ -98,7 +97,7 @@ export class CreateEventUseCase {
       ageRange: params.ageRange,
       eventDate: params.eventDate,
       instituteId: params.instituteId,
-      eventStatus: params.eventStatus,
+      eventStatus: STATUS.ACTIVE,
       musicType: params.musicType,
       category: params.category,
       menuLink: params.menuLink,

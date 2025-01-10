@@ -42,7 +42,7 @@ export class CreateEventController {
         description,
         latitude,
         longitude,
-        address,
+        street,
         number,
         neighborhood,
         city,
@@ -51,7 +51,6 @@ export class CreateEventController {
         price,
         ageRange,
         instituteId,
-        eventStatus,
         musicType,
         menuLink,
         features,
@@ -102,8 +101,8 @@ export class CreateEventController {
       if (typeof longitude !== 'number') {
         throw new WrongTypeParameters('longitude', 'number', typeof longitude);
       }
-      if (typeof address !== 'string') {
-        throw new WrongTypeParameters('address', 'string', typeof address);
+      if (typeof street !== 'string') {
+        throw new WrongTypeParameters('street', 'string', typeof street);
       }
       if (typeof neighborhood !== 'string') {
         throw new WrongTypeParameters(
@@ -139,13 +138,6 @@ export class CreateEventController {
           typeof instituteId
         );
       }
-      if (typeof eventStatus !== 'string') {
-        throw new WrongTypeParameters(
-          'eventStatus',
-          'string',
-          typeof eventStatus
-        );
-      }
 
       const eventId = await this.usecase.execute({
         name,
@@ -153,7 +145,7 @@ export class CreateEventController {
         address: {
           latitude,
           longitude,
-          street: address,
+          street,
           number,
           neighborhood,
           city,
@@ -166,7 +158,6 @@ export class CreateEventController {
           : AGE_ENUM.DEFAULT,
         eventDate: eventDate,
         instituteId,
-        eventStatus: STATUS[eventStatus as keyof typeof STATUS],
         musicType: musicType,
         menuLink: typeof menuLink === 'string' ? menuLink : undefined,
         galeryImages: gallery,
