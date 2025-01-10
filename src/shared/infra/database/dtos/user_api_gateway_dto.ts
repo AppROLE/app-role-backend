@@ -25,11 +25,11 @@ export class UserAPIGatewayDTO {
 
   static fromAPIGateway(data: Record<string, any>): UserAPIGatewayDTO {
     return new UserAPIGatewayDTO({
-      userId: data.userId,
-      username: data.username,
-      email: data.email,
-      name: data.name,
-      role: data.role,
+      userId: data['sub'],
+      username: data['username'],
+      email: data['email'],
+      name: data['name'],
+      role: data['custom:role'],
     });
   }
 }
