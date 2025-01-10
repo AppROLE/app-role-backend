@@ -1,21 +1,21 @@
-import { Institute } from "../../../domain/entities/institute";
-import { IInstituteRepository } from "../../../domain/repositories/institute_repository_interface";
-import { IInstitute } from "../models/institute.model";
-import { InstituteMongoDTO } from "../dtos/institute_mongo_dto";
+import { Institute } from '../../../domain/entities/institute';
+import { IInstituteRepository } from '../../../domain/repositories/institute_repository_interface';
+import { IInstitute } from '../models/institute.model';
+import { InstituteMongoDTO } from '../dtos/institute_mongo_dto';
 import {
   NoItemsFound,
   DuplicatedItem,
-} from "../../../../../src/shared/helpers/errors/errors";
-import { Collection, Connection } from "mongoose";
-import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
-import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
-import { Address } from "src/shared/domain/entities/address";
+} from '../../../../../src/shared/helpers/errors/errors';
+import { Collection, Connection } from 'mongoose';
+import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
+import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
+import { Address } from 'src/shared/domain/entities/address';
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
   private instituteCollection: Collection<IInstitute>;
 
   constructor(connection: Connection) {
-    this.instituteCollection = connection.collection<IInstitute>("Institute");
+    this.instituteCollection = connection.collection<IInstitute>('institutes');
   }
 
   async createInstitute(institute: Institute): Promise<Institute> {
@@ -23,7 +23,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
     const result = await this.instituteCollection.insertOne(instituteDoc);
     if (!result.acknowledged) {
-      throw new Error("Failed to create institute in MongoDB.");
+      throw new Error('Failed to create institute in MongoDB.');
     }
 
     const createdInstituteDoc = await this.instituteCollection.findOne({
@@ -31,7 +31,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     });
 
     if (!createdInstituteDoc) {
-      throw new NoItemsFound("institute");
+      throw new NoItemsFound('institute');
     }
 
     return InstituteMongoDTO.fromMongo(createdInstituteDoc).toEntity();
@@ -53,7 +53,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     const instituteDocs = await this.instituteCollection.find().toArray();
 
     if (!instituteDocs || instituteDocs.length === 0) {
-      throw new NoItemsFound("institutes");
+      throw new NoItemsFound('institutes');
     }
 
     return instituteDocs.map((doc) =>
@@ -81,7 +81,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     });
 
     if (!result.deletedCount || result.deletedCount === 0) {
-      throw new NoItemsFound("institute");
+      throw new NoItemsFound('institute');
     }
   }
 
@@ -93,7 +93,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       .toArray();
 
     if (!instituteDocs || instituteDocs.length === 0) {
-      throw new NoItemsFound("institutes");
+      throw new NoItemsFound('institutes');
     }
 
     return instituteDocs.map((doc) =>
@@ -122,11 +122,11 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     const result = await this.instituteCollection.findOneAndUpdate(
       { _id: instituteId },
       { $set: updateFields },
-      { returnDocument: "after" }
+      { returnDocument: 'after' }
     );
 
     if (!result) {
-      throw new NoItemsFound("institute");
+      throw new NoItemsFound('institute');
     }
 
     const updatedInstituteDoc = await this.instituteCollection.findOne({
@@ -134,7 +134,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     });
 
     if (!updatedInstituteDoc) {
-      throw new NoItemsFound("institute");
+      throw new NoItemsFound('institute');
     }
 
     return InstituteMongoDTO.fromMongo(updatedInstituteDoc).toEntity();

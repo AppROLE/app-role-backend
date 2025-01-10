@@ -11,7 +11,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   private userCollection: Collection<IProfile>;
 
   constructor(connection: Connection) {
-    this.userCollection = connection.collection<IProfile>('Profile');
+    this.userCollection = connection.collection<IProfile>('profiles');
   }
 
   async getByEmail(email: string): Promise<Profile | null> {

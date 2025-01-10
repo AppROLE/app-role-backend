@@ -1,8 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
-import { AddressSchema, IAddress } from "../schemas/address_schema";
-import { INSTITUTE_TYPE } from "src/shared/domain/enums/institute_type_enum";
-import { PARTNER_TYPE } from "src/shared/domain/enums/partner_type_enum";
+import mongoose, { Schema, Document } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import { AddressSchema, IAddress } from '../schemas/address_schema';
+import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
+import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 
 export interface IInstitute extends Document {
   _id: string;
@@ -31,12 +31,12 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   address: { type: AddressSchema, required: true },
   price: { type: Number },
   photosUrl: [{ type: String, required: true }],
-  eventsId: [{ type: String, ref: "Event" }],
+  eventsId: [{ type: String, ref: 'events' }],
   createdAt: { type: Number },
   updatedAt: { type: Number },
 });
 
 export const InstituteModel = mongoose.model<IInstitute>(
-  "Institute",
+  'institutes',
   InstituteSchema
 );

@@ -9,7 +9,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
   private presenceCollection: Collection<IPresence>;
 
   constructor(connection: Connection) {
-    this.presenceCollection = connection.collection<IPresence>('Presence');
+    this.presenceCollection = connection.collection<IPresence>('presences');
   }
 
   async createPresence(presence: Presence): Promise<Presence> {

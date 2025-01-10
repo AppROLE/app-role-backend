@@ -35,7 +35,7 @@ export interface IEvent extends Document {
 
 const EventSchema: Schema = new Schema<IEvent>({
   _id: { type: String, default: uuidv4 },
-  instituteId: { type: String, ref: 'Institute' },
+  instituteId: { type: String, ref: 'institutes' },
   name: { type: String, required: true },
   address: { type: AddressSchema, required: true },
   price: { type: Number },
@@ -49,12 +49,12 @@ const EventSchema: Schema = new Schema<IEvent>({
   packageType: [{ type: String }],
   category: { type: String },
   ticketUrl: { type: String },
-  reviewsId: [{ type: String, ref: 'Review' }],
+  reviewsId: [{ type: String, ref: 'reviews' }],
   eventStatus: { type: String, required: true },
-  presencesId: [{ type: String, ref: 'Presence' }],
+  presencesId: [{ type: String, ref: 'presences' }],
   eventPhoto: { type: String, required: true },
   createdAt: { type: Number },
   updatedAt: { type: Number },
 });
 
-export const EventModel = mongoose.model<IEvent>('Event', EventSchema);
+export const EventModel = mongoose.model<IEvent>('events', EventSchema);

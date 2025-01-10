@@ -13,7 +13,7 @@ export class EventRepositoryMongo implements IEventRepository {
   private eventCollection: Collection<IEvent>;
 
   constructor(connection: Connection) {
-    this.eventCollection = connection.collection<IEvent>('Event');
+    this.eventCollection = connection.collection<IEvent>('events');
   }
 
   async createEvent(event: Event): Promise<Event> {
