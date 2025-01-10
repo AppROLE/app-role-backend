@@ -1,7 +1,7 @@
-import { FindPersonReturnType } from "src/shared/helpers/types/find_person_return_type";
-import { Profile } from "../entities/profile";
-import { GENDER_TYPE } from "../enums/gender_enum";
-import { GetProfileReturnType } from "../types/get_profile_return_type";
+import { FindPersonReturnType } from 'src/shared/helpers/types/find_person_return_type';
+import { Profile } from '../entities/profile';
+import { GENDER_TYPE } from '../enums/gender_enum';
+import { GetProfileReturnType } from '../types/get_profile_return_type';
 
 export interface IProfileRepository {
   getByEmail(email: string): Promise<Profile | null>;
@@ -13,14 +13,7 @@ export interface IProfileRepository {
   findProfile(searchTerm: string): Promise<FindPersonReturnType[]>;
   updateProfile(
     userId: string,
-    username?: string,
-    newUsername?: string,
-    nickname?: string,
-    biography?: string,
-    instagramLink?: string,
-    tiktokLink?: string,
-    profilePhoto?: string,
-    backgroundPhoto?: string
+    updateFields: Partial<Profile>
   ): Promise<Profile>;
   addFollower(followerUserId: string, followedUserId: string): Promise<void>;
   removeFollower(followerUserId: string, followedUserId: string): Promise<void>;

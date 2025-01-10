@@ -27,6 +27,7 @@ export class LambdaStack extends Construct {
   favoriteInstituteFunction: lambda.Function;
   getMyProfileFunction: lambda.Function;
   createProfileFunction: lambda.Function;
+  updateProfileFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -194,6 +195,14 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
+    this.updateProfileFunction = this.createLambdaApiGatewayIntegration(
+      'update_profile',
+      'PUT',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
     // institute routes
     this.createInstituteFunction = this.createLambdaApiGatewayIntegration(
       'create_institute',
@@ -349,6 +358,7 @@ export class LambdaStack extends Construct {
       this.favoriteInstituteFunction,
       this.getMyProfileFunction,
       this.createProfileFunction,
+      this.updateProfileFunction,
 
       // institute routes
       this.createInstituteFunction,
@@ -383,6 +393,7 @@ export class LambdaStack extends Construct {
       this.deleteInstituteFunction,
       this.updateEventFunction,
       this.updateInstituteFunction,
+      this.updateProfileFunction,
     ];
   }
 }

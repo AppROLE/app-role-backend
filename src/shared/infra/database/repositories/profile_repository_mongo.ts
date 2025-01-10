@@ -115,25 +115,10 @@ export class ProfileRepositoryMongo implements IProfileRepository {
 
   async updateProfile(
     userId: string,
-    username?: string,
-    nickname?: string,
-    biography?: string,
-    instagramLink?: string,
-    tiktokLink?: string,
-    profilePhoto?: string,
-    backgroundPhoto?: string,
-    privacy?: PRIVACY_TYPE
+    updateFields: Partial<Profile>
   ): Promise<Profile> {
-    const updateFields: Partial<IProfile> = {};
-
-    if (username) updateFields.username = username;
-    if (nickname) updateFields.nickname = nickname;
-    if (biography) updateFields.biography = biography;
-    if (instagramLink) updateFields.linkInstagram = instagramLink;
-    if (tiktokLink) updateFields.linkTiktok = tiktokLink;
-    if (profilePhoto) updateFields.profilePhoto = profilePhoto;
-    if (backgroundPhoto) updateFields.backgroundPhoto = backgroundPhoto;
-    if (privacy) updateFields.privacy = privacy;
+    const updateData = { ...updateFields };
+    updateData.updatedAt = new Date().getTime();
 
     const result = await this.userCollection.updateOne(
       { _id: userId },
