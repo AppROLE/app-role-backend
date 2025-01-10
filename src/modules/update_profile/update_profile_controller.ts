@@ -25,7 +25,6 @@ import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gatew
 import { UpdateProfileViewmodel } from './update_profile_viewmodel';
 
 export interface ProfileFormDataFields {
-  name?: string;
   username?: string;
   nickname?: string;
   dateBirth?: number;
@@ -50,7 +49,6 @@ export class UpdateProfileController {
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
       let {
-        name,
         username,
         nickname,
         dateBirth,
@@ -82,7 +80,6 @@ export class UpdateProfileController {
 
       const eventUpdated = await this.usecase.execute({
         userId: userApiGateway.userId,
-        name,
         username,
         nickname,
         dateBirth,

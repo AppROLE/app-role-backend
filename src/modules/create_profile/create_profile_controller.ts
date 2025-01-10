@@ -14,32 +14,46 @@ import {
   Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import { EntityError } from 'src/shared/helpers/errors/errors';
-import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
-import { DuplicatedItem } from 'src/shared/helpers/errors/errors';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
-import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 import { CreateProfileUsecase } from './create_profile_usecase';
 import { CreateProfileViewmodel } from './create_profile_viewmodel';
+import {
+  FormData,
+  ParsedFile,
+} from 'src/shared/helpers/functions/export_busboy';
+
+interface ProfileFormDataFields {
+  username: string;
+  nickname: string;
+  acceptedTerms: string;
+}
 
 export class CreateProfileController {
   constructor(private readonly usecase: CreateProfileUsecase) {}
 
   async handle(
-    formData: Record<string, any>,
+    formData: FormData<ProfileFormDataFields>,
     requesterUser: Record<string, any>
   ) {
     try {
+      console.log('formData:', formData);
       const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { username, nickname, acceptedTerms } = formData.fields;
+      let { username, nickname, acceptedTerms } = formData.fields;
 
-      const profilePhoto = formData.files['profilePhoto'];
+      const profileImage = formData.files['profileImage'];
 
-      if (profilePhoto === undefined) {
-        throw new MissingParameters('profilePhoto');
+      if (profileImage === undefined) {
+        throw new MissingParameters('profileImage');
       }
+
+      let photoImage: ParsedFile;
+
+      !Array.isArray(profileImage)
+        ? (photoImage = profileImage)
+        : (photoImage = profileImage[0]);
 
       if (typeof username !== 'string') {
         throw new WrongTypeParameters('username', 'string', typeof username);
@@ -66,7 +80,7 @@ export class CreateProfileController {
         nickname: nickname,
         email: userApiGateway.email,
         acceptedTerms: boolAcceptedTerms,
-        image: profilePhoto,
+        image: photoImage,
       });
 
       const viewmodel = new CreateProfileViewmodel(profile);

@@ -117,12 +117,17 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     userId: string,
     updateFields: Partial<Profile>
   ): Promise<Profile> {
-    const updateData = { ...updateFields };
-    updateData.updatedAt = new Date().getTime();
+    // Remove campos nulos ou undefined de updateFields
+    const sanitizedFields = Object.fromEntries(
+      Object.entries(updateFields).filter(([_, value]) => value != null) // Filtra null e undefined
+    );
+
+    // Adiciona o timestamp de atualização
+    sanitizedFields.updatedAt = new Date().getTime();
 
     const result = await this.userCollection.updateOne(
       { _id: userId },
-      { $set: updateFields }
+      { $set: sanitizedFields }
     );
 
     if (!result.modifiedCount) {
