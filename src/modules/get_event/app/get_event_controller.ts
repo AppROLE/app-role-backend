@@ -28,7 +28,7 @@ export class GetEventController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { eventId } = req.data.body;
+      const { eventId } = req.data.query_params;
       const event = await this.usecase.execute(eventId as string);
       const viewModel = new GetEventViewmodel(event);
       return new OK(viewModel.toJSON());

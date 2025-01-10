@@ -32,7 +32,7 @@ export class GetInstituteController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { instituteId } = req.data.body;
+      const { instituteId } = req.data.query_params;
 
       if (!instituteId) {
         throw new MissingParameters('instituteId');

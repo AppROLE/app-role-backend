@@ -73,7 +73,7 @@ export class CreateInstituteController {
 
       const { logoPhoto, photos } = formData.files;
 
-      if (logoPhoto === undefined || description === null) {
+      if (logoPhoto === undefined || logoPhoto === null) {
         throw new MissingParameters('logoPhoto');
       }
 

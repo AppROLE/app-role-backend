@@ -1,4 +1,3 @@
-import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import { CreateEventUseCase } from 'src/modules/create_event/app/create_event_usecase';
 import {
   ConflictItems,
@@ -16,17 +15,40 @@ import {
   Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import { EntityError } from 'src/shared/helpers/errors/errors';
-import { STATUS } from 'src/shared/domain/enums/status_enum';
 import { CATEGORY } from 'src/shared/domain/enums/category_enum';
 import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import { Address } from 'src/shared/domain/entities/address';
+import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
+import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
+import { FEATURE } from 'src/shared/domain/enums/feature_enum';
+import {
+  FormData,
+  ParsedFile,
+} from 'src/shared/helpers/functions/export_busboy';
+
+export interface EventFormDataFields extends Address {
+  name: string;
+  description: string;
+  address: Address;
+  price: number;
+  ageRange: AGE_ENUM;
+  eventDate: number;
+  instituteId: string;
+  musicType: MUSIC_TYPE[];
+  menuLink?: string;
+  packageType: PACKAGE_TYPE[];
+  category?: CATEGORY;
+  ticketUrl?: string;
+  features: FEATURE[];
+}
 
 export class CreateEventController {
   constructor(private readonly usecase: CreateEventUseCase) {}
 
   async handle(
-    formData: Record<string, any>,
+    formData: FormData<EventFormDataFields>,
     requesterUser: Record<string, any>
   ) {
     try {
@@ -37,7 +59,7 @@ export class CreateEventController {
       if (userApiGateway.role === ROLE_TYPE.COMMON)
         throw new ForbiddenAction('Usuário não tem permissão');
 
-      const {
+      let {
         name,
         description,
         latitude,
@@ -60,83 +82,100 @@ export class CreateEventController {
         eventDate,
       } = formData.fields;
 
-      const photo = formData.files['photo'];
+      eventDate = Number(eventDate);
+      price = Number(price);
+      latitude = Number(latitude);
+      longitude = Number(longitude);
+      number = Number(number);
 
-      if (photo === undefined) {
+      const { gallery, photo } = formData.files;
+
+      if (photo === undefined || photo === null) {
         throw new MissingParameters('photo');
       }
 
-      const gallery = formData.files['gallery'] || [];
+      let photoImage: ParsedFile;
 
-      const requiredParams = [
-        'name',
-        'description',
-        'location',
-        'price',
-        'ageRange',
-        'eventDate',
-        'instituteId',
-        'eventStatus',
-      ];
+      !Array.isArray(photo) ? (photoImage = photo) : (photoImage = photo[0]);
 
-      for (const param of requiredParams) {
-        if (formData.fields[param] === undefined) {
-          throw new MissingParameters(param);
-        }
+      let galleryImages: ParsedFile[];
+
+      if (gallery === undefined || gallery === null) {
+        galleryImages = [];
+      } else if (Array.isArray(gallery)) {
+        galleryImages = gallery;
+      } else if (!Array.isArray(gallery)) {
+        galleryImages = [gallery];
+      } else {
+        throw new MissingParameters('photos');
       }
 
-      if (typeof name !== 'string') {
-        throw new WrongTypeParameters('name', 'string', typeof name);
-      }
-      if (typeof description !== 'string') {
-        throw new WrongTypeParameters(
-          'description',
-          'string',
-          typeof description
-        );
-      }
-      if (typeof latitude !== 'number') {
-        throw new WrongTypeParameters('latitude', 'number', typeof latitude);
-      }
-      if (typeof longitude !== 'number') {
-        throw new WrongTypeParameters('longitude', 'number', typeof longitude);
-      }
-      if (typeof street !== 'string') {
-        throw new WrongTypeParameters('street', 'string', typeof street);
-      }
-      if (typeof neighborhood !== 'string') {
-        throw new WrongTypeParameters(
-          'neighborhood',
-          'string',
-          typeof neighborhood
-        );
-      }
-      if (typeof city !== 'string') {
-        throw new WrongTypeParameters('city', 'string', typeof city);
-      }
-      if (typeof state !== 'string') {
-        throw new WrongTypeParameters('state', 'string', typeof state);
-      }
-      if (typeof cep !== 'string') {
-        throw new WrongTypeParameters('cep', 'string', typeof cep);
-      }
-      if (typeof price !== 'number') {
-        throw new WrongTypeParameters('price', 'number', typeof price);
-      }
-      if (typeof ageRange !== 'string') {
-        throw new WrongTypeParameters('ageRange', 'string', typeof ageRange);
+      if (name === undefined || name === null) {
+        throw new MissingParameters('name');
       }
 
-      if (!(eventDate instanceof number) || isNaN(eventDate.getTime())) {
-        throw new WrongTypeParameters('eventDate', 'number', typeof eventDate);
+      if (description === undefined || description === null) {
+        throw new MissingParameters('description');
       }
 
-      if (typeof instituteId !== 'string') {
-        throw new WrongTypeParameters(
-          'instituteId',
-          'string',
-          typeof instituteId
-        );
+      if (latitude === undefined || latitude === null) {
+        throw new MissingParameters('latitude');
+      }
+
+      if (longitude === undefined || longitude === null) {
+        throw new MissingParameters('longitude');
+      }
+
+      if (street === undefined || street === null) {
+        throw new MissingParameters('street');
+      }
+
+      if (number === undefined || number === null) {
+        throw new MissingParameters('number');
+      }
+
+      if (neighborhood === undefined || neighborhood === null) {
+        throw new MissingParameters('neighborhood');
+      }
+
+      if (city === undefined || city === null) {
+        throw new MissingParameters('city');
+      }
+
+      if (state === undefined || state === null) {
+        throw new MissingParameters('state');
+      }
+
+      if (cep === undefined || cep === null) {
+        throw new MissingParameters('cep');
+      }
+
+      if (price === undefined || price === null) {
+        throw new MissingParameters('price');
+      }
+
+      if (ageRange === undefined || ageRange === null) {
+        throw new MissingParameters('ageRange');
+      }
+
+      if (instituteId === undefined || instituteId === null) {
+        throw new MissingParameters('instituteId');
+      }
+
+      if (musicType === undefined || musicType === null) {
+        throw new MissingParameters('musicType');
+      }
+
+      if (features === undefined || features === null) {
+        throw new MissingParameters('features');
+      }
+
+      if (packageType === undefined || packageType === null) {
+        throw new MissingParameters('packageType');
+      }
+
+      if (eventDate === undefined || eventDate === null) {
+        throw new MissingParameters('eventDate');
       }
 
       const eventId = await this.usecase.execute({
@@ -153,21 +192,17 @@ export class CreateEventController {
           cep,
         },
         price,
-        ageRange: Object.values(AGE_ENUM).includes(ageRange as AGE_ENUM)
-          ? (ageRange as AGE_ENUM)
-          : AGE_ENUM.DEFAULT,
-        eventDate: eventDate,
+        ageRange,
+        eventDate,
         instituteId,
-        musicType: musicType,
-        menuLink: typeof menuLink === 'string' ? menuLink : undefined,
-        galeryImages: gallery,
-        eventImage: photo,
-        features: features,
-        packageType: packageType,
-        category: category
-          ? CATEGORY[category as keyof typeof CATEGORY]
-          : undefined,
-        ticketUrl: typeof ticketUrl === 'string' ? ticketUrl : undefined,
+        musicType,
+        menuLink,
+        galeryImages: galleryImages,
+        eventImage: photoImage,
+        features,
+        packageType,
+        category,
+        ticketUrl,
       });
 
       return new Created({
