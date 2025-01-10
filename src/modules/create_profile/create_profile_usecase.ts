@@ -7,6 +7,19 @@ import { IProfileRepository } from 'src/shared/domain/repositories/profile_repos
 import { UserAlreadyExists } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
+interface CreateProfileParams {
+  userId: string;
+  name: string;
+  username: string;
+  nickname: string;
+  email: string;
+  acceptedTerms: boolean;
+  image?: {
+    image: Buffer;
+    mimetype: string;
+  };
+}
+
 export class CreateProfileUsecase {
   repository: Repository;
   private profile_repo?: IProfileRepository;
@@ -35,19 +48,10 @@ export class CreateProfileUsecase {
       throw new Error('Expected to have an instance of the file repository');
   }
 
-  async execute(
-    userId: string,
-    name: string,
-    username: string,
-    nickname: string,
-    email: string,
-    acceptedTerms: boolean,
-    image?: {
-      image: Buffer;
-      mimetype: string;
-    }
-  ): Promise<Profile> {
-    const profileValidation = await this.profile_repo!.getByUserId(userId);
+  async execute(params: CreateProfileParams): Promise<Profile> {
+    const profileValidation = await this.profile_repo!.getByUserId(
+      params.userId
+    );
 
     if (profileValidation) {
       throw new UserAlreadyExists();
@@ -55,22 +59,24 @@ export class CreateProfileUsecase {
 
     let profilePhoto = undefined;
 
-    if (image) {
+    if (params.image) {
       profilePhoto = await this.file_repo!.uploadImage(
-        `profiles/${userId}/profile-photo.${image.mimetype.split('/')[1]}`,
-        image.image,
-        image.mimetype
+        `profiles/${params.userId}/profile-photo.${
+          params.image.mimetype.split('/')[1]
+        }`,
+        params.image.image,
+        params.image.mimetype
       );
     }
 
     const profile = new Profile({
-      userId: userId,
-      name: name,
-      username: username,
-      nickname: nickname,
-      email: email,
+      userId: params.userId,
+      name: params.name,
+      username: params.username,
+      nickname: params.nickname,
+      email: params.email,
       role: ROLE_TYPE.COMMON,
-      acceptedTerms: acceptedTerms,
+      acceptedTerms: params.acceptedTerms,
       acceptedTermsAt: new Date().getTime(),
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
@@ -86,7 +92,7 @@ export class CreateProfileUsecase {
 
     const profileCreated = await this.profile_repo!.createProfile(profile);
 
-    await this.auth_repo!.updateUser(email, username);
+    await this.auth_repo!.updateUser(params.email, params.username);
 
     return profileCreated;
   }

@@ -1,5 +1,12 @@
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
-import { Validations } from 'src/shared/helpers/utils/validations';
+
+interface UserAPIGatewayProps {
+  userId: string;
+  username?: string;
+  email: string;
+  name: string;
+  role: ROLE_TYPE;
+}
 
 export class UserAPIGatewayDTO {
   userId: string;
@@ -8,27 +15,21 @@ export class UserAPIGatewayDTO {
   name: string;
   role: ROLE_TYPE;
 
-  constructor(
-    userId: string,
-    email: string,
-    name: string,
-    role: ROLE_TYPE,
-    username?: string
-  ) {
-    this.userId = userId;
-    this.email = email;
-    this.name = name;
-    this.username = username;
-    this.role = role;
+  constructor(props: UserAPIGatewayProps) {
+    this.userId = props.userId;
+    this.username = props.username;
+    this.email = props.email;
+    this.name = props.name;
+    this.role = props.role;
   }
 
   static fromAPIGateway(data: Record<string, any>): UserAPIGatewayDTO {
-    return new UserAPIGatewayDTO(
-      data['sub'],
-      data['username'],
-      data['email'],
-      data['name'],
-      data['custom:role']
-    );
+    return new UserAPIGatewayDTO({
+      userId: data.userId,
+      username: data.username,
+      email: data.email,
+      name: data.name,
+      role: data.role,
+    });
   }
 }

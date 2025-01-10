@@ -57,18 +57,15 @@ export class CreateProfileController {
         );
       }
 
-      const profile = await this.usecase.execute(
-        userApiGateway.userId,
-        userApiGateway.name,
-        username,
-        nickname,
-        userApiGateway.email,
-        boolAcceptedTerms,
-        {
-          image: profilePhoto.image,
-          mimetype: profilePhoto.mimetype,
-        }
-      );
+      const profile = await this.usecase.execute({
+        userId: userApiGateway.userId,
+        name: userApiGateway.name,
+        username: username,
+        nickname: nickname,
+        email: userApiGateway.email,
+        acceptedTerms: boolAcceptedTerms,
+        image: profilePhoto,
+      });
 
       const viewmodel = new CreateProfileViewmodel(profile);
 
