@@ -6,23 +6,18 @@ import { Repository } from 'src/shared/infra/database/repositories/repository';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
 import { Address } from 'src/shared/domain/entities/address';
 import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
+import { ParsedFile } from 'src/shared/helpers/functions/export_busboy';
 
 export interface CreateInstituteParams {
   name: string;
-  logoPhoto: {
-    image: Buffer;
-    mimetype: string;
-  };
+  logoPhoto: ParsedFile;
   description: string;
   institute_type: string;
   partner_type: string;
   phone?: string;
   address: Address;
   price?: number;
-  photos?: {
-    image: Buffer;
-    mimetype: string;
-  }[];
+  photos?: ParsedFile[];
 }
 
 export class CreateInstituteUseCase {

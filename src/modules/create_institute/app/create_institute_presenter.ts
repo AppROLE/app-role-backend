@@ -2,15 +2,21 @@ import {
   LambdaHttpRequest,
   LambdaHttpResponse,
 } from 'src/shared/helpers/external_interfaces/http_lambda_requests';
-import { CreateInstituteUseCase as CreateInstituteUsecase } from './create_institute_usecase';
-import { CreateInstituteController } from './create_institute_controller';
+import { CreateInstituteUseCase } from './create_institute_usecase';
+import {
+  CreateInstituteController,
+  InstituteFormDataFields,
+} from './create_institute_controller';
 import { parseMultipartFormData } from 'src/shared/helpers/functions/export_busboy';
 
-const usecase = new CreateInstituteUsecase();
+const usecase = new CreateInstituteUseCase();
 const controller = new CreateInstituteController(usecase);
 
 export async function lambda_handler(event: any) {
-  const formDataParsed = await parseMultipartFormData(event);
+  const formDataParsed = await parseMultipartFormData<InstituteFormDataFields>(
+    event
+  );
+
   const requesterUser = event.requestContext.authorizer.claims;
   await usecase.connect();
   const response = await controller.handle(formDataParsed, requesterUser);

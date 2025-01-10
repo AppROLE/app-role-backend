@@ -21,21 +21,35 @@ import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 import { DuplicatedItem } from 'src/shared/helpers/errors/errors';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import { Address } from 'src/shared/domain/entities/address';
+import {
+  FormData,
+  ParsedFile,
+} from 'src/shared/helpers/functions/export_busboy';
+
+export interface InstituteFormDataFields extends Address {
+  name: string;
+  description: string;
+  institute_type: INSTITUTE_TYPE;
+  partner_type: PARTNER_TYPE;
+  phone?: string;
+  price?: number;
+}
 
 export class CreateInstituteController {
   constructor(private readonly usecase: CreateInstituteUseCase) {}
 
   async handle(
-    formData: Record<string, any>,
+    formData: FormData<InstituteFormDataFields>,
     requesterUser: Record<string, any>
   ) {
+    const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
+
+    if (!userApiGateway) throw new ForbiddenAction('Usuário');
+
+    if (userApiGateway.role === ROLE_TYPE.COMMON)
+      throw new ForbiddenAction('Usuário não tem permissão');
     try {
-      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-      if (!userApiGateway) throw new ForbiddenAction('Usuário');
-
-      if (userApiGateway.role === ROLE_TYPE.COMMON)
-        throw new ForbiddenAction('Usuário não tem permissão');
       const {
         description,
         institute_type,
@@ -43,7 +57,7 @@ export class CreateInstituteController {
         name,
         latitude,
         longitude,
-        address,
+        street,
         number,
         neighborhood,
         city,
@@ -53,25 +67,19 @@ export class CreateInstituteController {
         phone,
       } = formData.fields;
 
-      const logo = formData.files['logoPhoto'];
+      const { logoPhoto: logoPhotoFile, photos: photoFiles } = formData.files;
 
-      if (logo === undefined) {
+      let photos: ParsedFile[];
+      let logoPhoto: ParsedFile | undefined;
+      //validar se logoPhoto realmente existe
+
+      !Array.isArray(photoFiles) ? (photos = []) : (photos = photoFiles);
+      Array.isArray(logoPhotoFile)
+        ? (logoPhoto = logoPhotoFile[0])
+        : logoPhotoFile;
+
+      if (logoPhoto === undefined) {
         throw new MissingParameters('logoPhoto');
-      }
-
-      const photos = formData.files['photos'] || [];
-
-      const requiredParams = [
-        'description',
-        'institute_type',
-        'partner_type',
-        'name',
-      ];
-
-      for (const param of requiredParams) {
-        if (formData.fields[param] === undefined) {
-          throw new MissingParameters(param);
-        }
       }
 
       if (typeof description !== 'string') {
@@ -105,8 +113,8 @@ export class CreateInstituteController {
       if (typeof longitude !== 'number') {
         throw new WrongTypeParameters('longitude', 'number', typeof longitude);
       }
-      if (typeof address !== 'string') {
-        throw new WrongTypeParameters('address', 'string', typeof address);
+      if (typeof street !== 'string') {
+        throw new WrongTypeParameters('address', 'string', typeof street);
       }
       if (typeof neighborhood !== 'string') {
         throw new WrongTypeParameters(
@@ -138,24 +146,23 @@ export class CreateInstituteController {
       }
 
       const institute = await this.usecase.execute({
-        name: name,
-        description: description,
-        institute_type:
-          INSTITUTE_TYPE[institute_type as keyof typeof INSTITUTE_TYPE],
-        partner_type: PARTNER_TYPE[partner_type as keyof typeof PARTNER_TYPE],
-        phone: phone,
+        name,
+        description,
+        institute_type,
+        partner_type,
+        phone,
         address: {
-          latitude: latitude,
-          longitude: longitude,
-          street: address,
-          number: number,
-          neighborhood: neighborhood,
-          city: city,
-          state: state,
+          latitude,
+          longitude,
+          street,
+          number,
+          neighborhood,
+          city,
+          state,
           cep: cep,
         },
-        price: price,
-        logoPhoto: logo,
+        price,
+        logoPhoto,
         photos: photos,
       });
 

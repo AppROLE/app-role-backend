@@ -1,12 +1,17 @@
 import Busboy from 'busboy';
 
-export async function parseMultipartFormData(
+export type ParsedFormData = ReturnType<typeof parseMultipartFormData>;
+
+export type ParsedFile = { image: Buffer; mimetype: string };
+
+export interface FormData<TFields = Record<string, unknown>> {
+  files: Record<string, ParsedFile | ParsedFile[]>;
+  fields: TFields;
+}
+
+export async function parseMultipartFormData<TFields = Record<string, unknown>>(
   request: Record<string, any>
-): Promise<{
-  files: Record<string, { image: Buffer; mimetype: string }>;
-  fields: Record<string, any>;
-}> {
-  console.info('parseMultipartFormData:', request);
+): Promise<FormData<TFields>> {
   const contentType =
     request.headers['content-type'] || request.headers['Content-Type'];
   if (!contentType || !contentType.includes('multipart/form-data')) {
@@ -19,15 +24,12 @@ export async function parseMultipartFormData(
     },
   });
 
-  const result: {
-    files: Record<string, { image: Buffer; mimetype: string }>;
-    fields: Record<string, any>;
-  } = {
+  const result: FormData = {
     files: {},
     fields: {},
   };
 
-  return new Promise((resolve, reject) => {
+  return new Promise<FormData<TFields>>((resolve, reject) => {
     try {
       busboy.on('file', (fieldname, file, infos) => {
         const { mimeType } = infos;
@@ -51,7 +53,7 @@ export async function parseMultipartFormData(
       });
 
       busboy.on('finish', () => {
-        resolve(result);
+        resolve(result as FormData<TFields>);
       });
 
       busboy.on('error', (error) => {
