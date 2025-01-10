@@ -22,7 +22,7 @@ import {
   ParsedFile,
 } from 'src/shared/helpers/functions/export_busboy';
 
-interface ProfileFormDataFields {
+export interface ProfileFormDataFields {
   username: string;
   nickname: string;
   acceptedTerms: string;
