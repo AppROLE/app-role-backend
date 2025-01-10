@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Institute } from 'src/shared/domain/entities/institute';
 import { toEnum } from 'src/shared/domain/enums/institute_type_enum';
 import { toEnumPartnerType } from 'src/shared/domain/enums/partner_type_enum';
@@ -6,6 +5,7 @@ import { IInstituteRepository } from 'src/shared/domain/repositories/institute_r
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
 import { Address } from 'src/shared/domain/entities/address';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 
 export interface CreateInstituteParams {
   name: string;

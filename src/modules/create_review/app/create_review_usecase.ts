@@ -1,8 +1,9 @@
-import { Review } from "src/shared/domain/entities/review";
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { IReviewRepository } from "src/shared/domain/repositories/review_repository_interface";
-import { EntityError, NoItemsFound } from "src/shared/helpers/errors/errors";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { Review } from 'src/shared/domain/entities/review';
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
+import { EntityError, NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class CreateReviewUseCase {
   repository: Repository;
@@ -22,10 +23,10 @@ export class CreateReviewUseCase {
     this.review_repo = this.repository.review_repo;
 
     if (!this.event_repo)
-      throw new Error("Expected to have an instance of the event repository");
+      throw new Error('Expected to have an instance of the event repository');
 
     if (!this.review_repo)
-      throw new Error("Expected to have an instance of the review repository");
+      throw new Error('Expected to have an instance of the review repository');
   }
 
   async execute(
@@ -35,15 +36,15 @@ export class CreateReviewUseCase {
     userId: string
   ): Promise<Review> {
     if (rating < 0 || rating > 5) {
-      throw new EntityError("rating");
+      throw new EntityError('rating');
     }
     if (review.length < 5 || review.length > 250) {
-      throw new EntityError("review");
+      throw new EntityError('review');
     }
 
     const event = await this.event_repo!.getEventById(eventId);
 
-    if (!event) throw new NoItemsFound("event");
+    if (!event) throw new NoItemsFound('event');
 
     const createdReview = new Review({
       reviewId: uuidv4(),
@@ -56,7 +57,4 @@ export class CreateReviewUseCase {
 
     return await this.review_repo!.createReview(createdReview);
   }
-}
-function uuidv4(): string {
-  throw new Error("Function not implemented.");
 }

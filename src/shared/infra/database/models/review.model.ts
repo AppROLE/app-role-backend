@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 
 export interface IReview extends Document {
   _id: string;

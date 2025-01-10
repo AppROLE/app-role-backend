@@ -1,12 +1,12 @@
-import { Presence } from "src/shared/domain/entities/presence";
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
+import { Presence } from 'src/shared/domain/entities/presence';
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
 import {
   NoItemsFound,
   UserAlreadyConfirmedEvent,
-} from "src/shared/helpers/errors/errors";
-import { Repository } from "src/shared/infra/database/repositories/repository";
-import { v4 as uuidv4 } from "uuid";
+} from 'src/shared/helpers/errors/errors';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class ConfirmPresenceUsecase {
   repository: Repository;
@@ -26,11 +26,11 @@ export class ConfirmPresenceUsecase {
     this.presence_repo = this.repository.presence_repo;
 
     if (!this.event_repo)
-      throw new Error("Expected to have an instance of the event repository");
+      throw new Error('Expected to have an instance of the event repository');
 
     if (!this.presence_repo)
       throw new Error(
-        "Expected to have an instance of the presence repository"
+        'Expected to have an instance of the presence repository'
       );
   }
 
@@ -41,7 +41,7 @@ export class ConfirmPresenceUsecase {
   ): Promise<Presence> {
     const event = await this.event_repo!.getEventById(eventId);
 
-    if (!event) throw new NoItemsFound("eventId");
+    if (!event) throw new NoItemsFound('eventId');
 
     const alreadyConfirmed =
       await this.presence_repo!.getPresencesByEventAndUser(eventId, userId);

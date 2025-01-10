@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
-import { AddressSchema, IAddress } from '../schemas/address_schema';
+import { AddressSchema } from '../schemas/address_schema';
 import { Address } from 'src/shared/domain/entities/address';
 import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
 import { STATUS } from 'src/shared/domain/enums/status_enum';
@@ -8,6 +7,7 @@ import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
 import { PACKAGE_TYPE } from 'src/shared/domain/enums/package_type_enum';
 import { CATEGORY } from 'src/shared/domain/enums/category_enum';
 import { FEATURE } from 'src/shared/domain/enums/feature_enum';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 
 export interface IEvent extends Document {
   _id: string;

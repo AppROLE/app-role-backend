@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 import { AddressSchema, IAddress } from '../schemas/address_schema';
 import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 
 export interface IInstitute extends Document {
   _id: string;

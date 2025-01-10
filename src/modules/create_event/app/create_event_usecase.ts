@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Event } from 'src/shared/domain/entities/event';
 import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
 import { CATEGORY } from 'src/shared/domain/enums/category_enum';
@@ -10,6 +9,7 @@ import { Repository } from 'src/shared/infra/database/repositories/repository';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
 import { Address } from 'src/shared/domain/entities/address';
 import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
+import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 
 interface CreateEventParams {
   name: string;
