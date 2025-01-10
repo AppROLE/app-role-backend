@@ -1,6 +1,12 @@
 import { Institute } from 'src/shared/domain/entities/institute';
-import { toEnum } from 'src/shared/domain/enums/institute_type_enum';
-import { toEnumPartnerType } from 'src/shared/domain/enums/partner_type_enum';
+import {
+  INSTITUTE_TYPE,
+  toEnum,
+} from 'src/shared/domain/enums/institute_type_enum';
+import {
+  PARTNER_TYPE,
+  toEnumPartnerType,
+} from 'src/shared/domain/enums/partner_type_enum';
 import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
@@ -12,8 +18,8 @@ export interface CreateInstituteParams {
   name: string;
   logoPhoto: ParsedFile;
   description: string;
-  institute_type: string;
-  partner_type: string;
+  institute_type: INSTITUTE_TYPE;
+  partner_type: PARTNER_TYPE;
   phone?: string;
   address: Address;
   price?: number;
@@ -87,7 +93,7 @@ export class CreateInstituteUseCase {
       logoPhoto: logoUrl,
       name: params.name,
       partnerType: toEnumPartnerType(params.partner_type),
-      instituteType: toEnum(params.institute_type),
+      instituteType: params.institute_type,
       phone: params.phone,
       photosUrl: photosUrls,
       price: params.price || 0,

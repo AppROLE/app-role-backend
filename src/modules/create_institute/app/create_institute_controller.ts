@@ -73,11 +73,9 @@ export class CreateInstituteController {
 
       const { logoPhoto, photos } = formData.files;
 
-      let photosImages: ParsedFile[];
-
-      !Array.isArray(photos)
-        ? (photosImages = [photos])
-        : (photosImages = photos);
+      if (logoPhoto === undefined || description === null) {
+        throw new MissingParameters('logoPhoto');
+      }
 
       let logoImage: ParsedFile;
 
@@ -85,8 +83,16 @@ export class CreateInstituteController {
         ? (logoImage = logoPhoto)
         : (logoImage = logoPhoto[0]);
 
-      if (logoPhoto === undefined || description === null) {
-        throw new MissingParameters('logoPhoto');
+      let photosImages: ParsedFile[];
+
+      if (photos === undefined || photos === null) {
+        photosImages = [];
+      } else if (Array.isArray(photos)) {
+        photosImages = photos;
+      } else if (!Array.isArray(photos)) {
+        photosImages = [photos];
+      } else {
+        throw new MissingParameters('photos');
       }
 
       if (description === undefined || description === null) {
