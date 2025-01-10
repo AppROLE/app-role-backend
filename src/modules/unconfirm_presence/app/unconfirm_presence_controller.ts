@@ -1,5 +1,5 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { UnConfirmEventUseCase } from './unconfirm_event_usecase';
+import { UnconfirmPresenceUsecase } from './unconfirm_presence_usecase';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import {
   ConflictItems,
@@ -20,8 +20,8 @@ import {
   Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
 
-export class UnConfirmEventController {
-  constructor(private readonly usecase: UnConfirmEventUseCase) {}
+export class UnconfirmPresenceController {
+  constructor(private readonly usecase: UnconfirmPresenceUsecase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {

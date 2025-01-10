@@ -1,9 +1,9 @@
-import { IEventRepository } from "src/shared/domain/repositories/event_repository_interface";
-import { IPresenceRepository } from "src/shared/domain/repositories/presence_repository_interface";
-import { NoItemsFound } from "src/shared/helpers/errors/errors";
-import { Repository } from "src/shared/infra/database/repositories/repository";
+import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class UnConfirmEventUseCase {
+export class UnconfirmPresenceUsecase {
   repository: Repository;
   private event_repo?: IEventRepository;
   private presence_repo?: IPresenceRepository;
@@ -21,24 +21,24 @@ export class UnConfirmEventUseCase {
     this.presence_repo = this.repository.presence_repo;
 
     if (!this.event_repo)
-      throw new Error("Expected to have an instance of the event repository");
+      throw new Error('Expected to have an instance of the event repository');
     if (!this.presence_repo)
       throw new Error(
-        "Expected to have an instance of the presence repository"
+        'Expected to have an instance of the presence repository'
       );
   }
 
   async execute(eventId: string, userId: string) {
     const event = await this.event_repo!.getEventById(eventId);
 
-    if (!event) throw new NoItemsFound("eventId");
+    if (!event) throw new NoItemsFound('eventId');
 
     const presenceExists = await this.presence_repo!.getPresencesByEventAndUser(
       eventId,
       userId
     );
 
-    if (!presenceExists) throw new NoItemsFound("presence");
+    if (!presenceExists) throw new NoItemsFound('presence');
 
     await this.presence_repo!.deletePresence(eventId, userId);
   }

@@ -46,7 +46,7 @@ export class LambdaStack extends Construct {
   getAllEventsByFilterFunction: lambda.Function;
   getAllPresencesByEventIdFunction: lambda.Function;
   getTopEventsFunction: lambda.Function;
-  unconfirmEventFunction: lambda.Function;
+  unconfirmPresenceFunction: lambda.Function;
   updateEventFunction: lambda.Function;
   getOtherProfileFunction: lambda.Function;
 
@@ -319,8 +319,8 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
-    this.unconfirmEventFunction = this.createLambdaApiGatewayIntegration(
-      'unconfirm_event',
+    this.unconfirmPresenceFunction = this.createLambdaApiGatewayIntegration(
+      'unconfirm_presence',
       'DELETE',
       apiGatewayResource,
       environmentVariables,
@@ -377,7 +377,7 @@ export class LambdaStack extends Construct {
       this.getAllEventsByFilterFunction,
       this.getAllPresencesByEventIdFunction,
       this.getTopEventsFunction,
-      this.unconfirmEventFunction,
+      this.unconfirmPresenceFunction,
       this.updateEventFunction,
       this.getOtherProfileFunction,
 

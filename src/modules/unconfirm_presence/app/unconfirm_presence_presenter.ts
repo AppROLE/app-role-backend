@@ -2,11 +2,11 @@ import {
   LambdaHttpRequest,
   LambdaHttpResponse,
 } from 'src/shared/helpers/external_interfaces/http_lambda_requests';
-import { UnConfirmEventController } from './unconfirm_event_controller';
-import { UnConfirmEventUseCase } from './unconfirm_event_usecase';
+import { UnconfirmPresenceController } from './unconfirm_presence_controller';
+import { UnconfirmPresenceUsecase } from './unconfirm_presence_usecase';
 
-const usecase = new UnConfirmEventUseCase();
-const controller = new UnConfirmEventController(usecase);
+const usecase = new UnconfirmPresenceUsecase();
+const controller = new UnconfirmPresenceController(usecase);
 
 export async function lambda_handler(event: any, context: any) {
   const requesterUser = event.requestContext.authorizer.claims;
