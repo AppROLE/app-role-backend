@@ -375,6 +375,7 @@ export class LambdaStack extends Construct {
     ];
 
     this.functionsThatNeedS3Permissions = [
+      this.createProfileFunction,
       this.createEventFunction,
       this.createInstituteFunction,
       this.deleteEventFunction,
