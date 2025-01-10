@@ -47,7 +47,9 @@ export class CreateProfileController {
         throw new WrongTypeParameters('nickname', 'string', typeof nickname);
       }
 
-      if (typeof acceptedTerms !== 'boolean') {
+      const boolAcceptedTerms = acceptedTerms === 'true' ? true : false;
+
+      if (typeof boolAcceptedTerms !== 'boolean') {
         throw new WrongTypeParameters(
           'acceptedTerms',
           'boolean',
@@ -61,7 +63,7 @@ export class CreateProfileController {
         username,
         nickname,
         userApiGateway.email,
-        acceptedTerms,
+        boolAcceptedTerms,
         {
           image: profilePhoto.image,
           mimetype: profilePhoto.mimetype,
