@@ -348,6 +348,7 @@ export class LambdaStack extends Construct {
       // profile routes
       this.favoriteInstituteFunction,
       this.getMyProfileFunction,
+      this.createProfileFunction,
 
       // institute routes
       this.createInstituteFunction,
