@@ -139,4 +139,17 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
     return InstituteMongoDTO.fromMongo(updatedInstituteDoc).toEntity();
   }
+
+  async addEventToInstitute(instituteId: string, eventId: string): Promise<void> {
+    const result = await this.instituteCollection.findOneAndUpdate(
+      { _id: instituteId },
+      { $addToSet: { eventsId: eventId } },
+      { returnDocument: 'after' }
+    );
+
+    if (!result) {
+      throw new NoItemsFound('institute');
+    }
+    
+  }
 }

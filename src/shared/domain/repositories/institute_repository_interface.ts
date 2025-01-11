@@ -21,4 +21,5 @@ export interface IInstituteRepository {
     address?: Address,
     phone?: string
   ): Promise<Institute>;
+  addEventToInstitute(instituteId: string, eventId: string): Promise<void>;
 }

@@ -38,10 +38,10 @@ export interface EventFormDataFields extends Address {
   instituteId: string;
   musicType: string; // json parse
   menuLink?: string;
-  packageType: PACKAGE_TYPE[];
+  packageType: string; // json parse
   category?: CATEGORY;
   ticketUrl?: string;
-  features: FEATURE[];
+  features: string; // json parse
 }
 
 export class CreateEventController {
@@ -88,6 +88,8 @@ export class CreateEventController {
       longitude = Number(longitude);
       number = Number(number);
       const musicTypeList = JSON.parse(musicType) as MUSIC_TYPE[];
+      const packageTypeList = JSON.parse(packageType) as PACKAGE_TYPE[];
+      const featuresList = JSON.parse(features) as FEATURE[];
 
       const { gallery, photo } = formData.files;
 
@@ -200,8 +202,8 @@ export class CreateEventController {
         menuLink,
         galleryImages: galleryImages,
         eventImage: photoImage,
-        features,
-        packageType,
+        features: featuresList,
+        packageType: packageTypeList,
         category,
         ticketUrl,
       });

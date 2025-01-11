@@ -129,6 +129,13 @@ export class CreateEventUseCase {
       updatedAt: new Date().getTime(),
     });
 
-    return await this.event_repo!.createEvent(event);
+    const createEvent = await this.event_repo!.createEvent(event);
+
+    await this.institute_repo!.addEventToInstitute(
+      params.instituteId,
+      eventId
+    );
+
+    return createEvent;
   }
 }
