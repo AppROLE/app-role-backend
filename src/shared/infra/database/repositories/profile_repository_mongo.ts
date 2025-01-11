@@ -205,7 +205,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   ): Promise<void> {
     const result = await this.profileCollection.updateOne(
       { _id: userId },
-      { $addToSet: { favoriteInstitutes: instituteId } }
+      { $addToSet: { favorites: instituteId } }
     );
 
     if (!result.modifiedCount) {
@@ -219,7 +219,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   ): Promise<void> {
     const result = await this.profileCollection.updateOne(
       { _id: userId },
-      { $pull: { favoriteInstitutes: instituteId } }
+      { $pull: { favorites: instituteId } }
     );
 
     if (!result.modifiedCount) {
@@ -230,7 +230,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   async removeAllFavoriteInstitute(userId: string): Promise<void> {
     const result = await this.profileCollection.updateOne(
       { _id: userId },
-      { $set: { favoriteInstitutes: [] } }
+      { $set: { favorites: [] } }
     );
 
     if (!result.modifiedCount) {
