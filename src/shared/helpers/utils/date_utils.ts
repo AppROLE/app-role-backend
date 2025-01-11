@@ -23,5 +23,10 @@ export function getUpcomingWeekdays() {
     nextSaturday = startOfDay(addDays(today, (6 - dayOfWeek + 7) % 7)); // Próximo sábado
   }
 
-  return { nextThursday, nextFriday, nextSaturday };
+  // Retornar os timestamps em vez de objetos Date
+  return {
+    nextThursday: nextThursday.getTime(),
+    nextFriday: nextFriday.getTime(),
+    nextSaturday: nextSaturday.getTime(),
+  };
 }

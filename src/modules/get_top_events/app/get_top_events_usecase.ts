@@ -29,18 +29,30 @@ export class GetTopEventsUseCase {
       );
   }
 
-  async execute(): Promise<any> {
+  async execute(): Promise<Event[]> {
+    // Obter os timestamps de quinta, sexta e sábado
     const { nextThursday, nextFriday, nextSaturday } = getUpcomingWeekdays();
 
+    // Definir o filtro para eventos dentro do intervalo
     const filter = {
       eventDate: {
-        $gte: nextThursday.getTime(), // De quinta-feira (início do dia)
-        $lte: nextSaturday.getTime(), // Até sábado (final do dia)
+        $gte: nextThursday, // Timestamp de quinta-feira
+        $lte: nextSaturday, // Timestamp de sábado
       },
     };
 
+    console.log('Filter being applied:', filter);
+
+    // Buscar eventos no repositório com base no filtro
     const events = await this.event_repo!.getEventsByFilter(filter);
 
+    // Se nenhum evento for encontrado, retornar uma lista vazia
+    if (!events || events.length === 0) {
+      console.log('No events found for the given filter.');
+      return [];
+    }
+
+    // Ordenar eventos por quantidade de presenças e pegar os 3 principais
     const topEvents = events
       .sort((a, b) => b.presencesId.length - a.presencesId.length)
       .slice(0, 3);

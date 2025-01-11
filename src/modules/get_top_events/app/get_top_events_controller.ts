@@ -31,7 +31,7 @@ export class GetTopEventsController {
 
       return new OK({
         message: 'Top eventos retornados com sucesso',
-        data: topEventsByDate,
+        events: topEventsByDate,
       });
     } catch (error: any) {
       if (

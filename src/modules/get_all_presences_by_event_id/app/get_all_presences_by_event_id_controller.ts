@@ -38,7 +38,9 @@ export class GetAllPresencesByEventIdController {
       const presences = await this.usecase.execute(eventId);
 
       if (!presences || presences.length === 0) {
-        return new OK({ message: 'Nenhuma presença encontrada' });
+        return new OK(
+          { profile: [],
+            message: 'Nenhuma presença encontrada' });
       }
 
       const viewmodel = new GetAllPresencesByEventIdViewmodel(presences);
