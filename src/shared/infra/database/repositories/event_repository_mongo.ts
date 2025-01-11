@@ -109,9 +109,11 @@ export class EventRepositoryMongo implements IEventRepository {
       Object.entries(updatedFields).filter(([_, value]) => value != null) // Filtra null e undefined
     );
 
+    sanitizedFields.updatedAt = new Date() as any
+
     const result = await this.eventCollection.findOneAndUpdate(
       { _id: eventId },
-      { $set: sanitizedFields, updatedAt: Date.now() },
+      { $set: sanitizedFields },
       { returnDocument: 'after' }
     );
 
