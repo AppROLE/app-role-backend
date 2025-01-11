@@ -53,8 +53,6 @@ const EventSchema: Schema = new Schema<IEvent>({
   eventStatus: { type: String, required: true },
   presencesId: [{ type: String, ref: 'presences' }],
   eventPhoto: { type: String, required: true },
-  createdAt: { type: Date },
-  updatedAt: { type: Date },
-});
+}, { timestamps: true });
 
 export const EventModel = mongoose.model<IEvent>('events', EventSchema);
