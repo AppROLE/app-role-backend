@@ -21,7 +21,7 @@ export interface EventMongoDTOProps {
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   eventPhoto: string;
-  galeryLink: string[];
+  galleryLink: string[];
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -45,7 +45,7 @@ export class EventMongoDTO {
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   eventPhoto: string;
-  galeryLink: string[];
+  galleryLink: string[];
   package_type: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -68,7 +68,7 @@ export class EventMongoDTO {
     this.musicType = props.musicType || [];
     this.menuLink = props.menuLink;
     this.eventPhoto = props.eventPhoto;
-    this.galeryLink = props.galeryLink || [];
+    this.galleryLink = props.galleryLink || [];
     this.package_type = props.packageType || [];
     this.category = props.category;
     this.ticketUrl = props.ticketUrl;
@@ -94,7 +94,7 @@ export class EventMongoDTO {
       musicType: eventDoc.musicType,
       menuLink: eventDoc.menuLink,
       eventPhoto: eventDoc.eventPhoto,
-      galeryLink: eventDoc.galeryLink,
+      galleryLink: eventDoc.galleryLink,
       packageType: eventDoc.packageType,
       category: eventDoc.category,
       ticketUrl: eventDoc.ticketUrl,
@@ -121,7 +121,7 @@ export class EventMongoDTO {
       musicType: (this.musicType || []).map((type) => type as MUSIC_TYPE),
       menuLink: this.menuLink,
       eventPhoto: this.eventPhoto,
-      galeryLink: this.galeryLink || [],
+      galleryLink: this.galleryLink || [],
       instituteId: this.instituteId,
       packageType: (this.package_type || []).map(
         (type) => type as PACKAGE_TYPE
@@ -150,7 +150,7 @@ export class EventMongoDTO {
       musicType: event.musicType,
       menuLink: event.menuLink || '',
       eventPhoto: event.eventPhoto || '',
-      galeryLink: event.galeryLink || [],
+      galleryLink: event.galleryLink || [],
       packageType: event.packageType || [],
       category: event.category,
       ticketUrl: event.ticketUrl || '',
@@ -176,7 +176,7 @@ export class EventMongoDTO {
       musicType: this.musicType,
       menuLink: this.menuLink,
       eventPhoto: this.eventPhoto,
-      galeryLink: this.galeryLink,
+      galleryLink: this.galleryLink,
       package_type: this.package_type,
       category: this.category,
       ticketUrl: this.ticketUrl,

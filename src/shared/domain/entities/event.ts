@@ -20,7 +20,7 @@ interface EventProps {
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   eventPhoto: string;
-  galeryLink: string[];
+  galleryLink: string[];
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -44,7 +44,7 @@ export class Event {
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   eventPhoto: string;
-  galeryLink: string[];
+  galleryLink: string[];
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -67,7 +67,7 @@ export class Event {
     this.musicType = props.musicType;
     this.menuLink = props.menuLink;
     this.eventPhoto = props.eventPhoto;
-    this.galeryLink = props.galeryLink;
+    this.galleryLink = props.galleryLink;
     this.features = props.features || [];
     this.packageType = props.packageType || [];
     this.category = props.category;

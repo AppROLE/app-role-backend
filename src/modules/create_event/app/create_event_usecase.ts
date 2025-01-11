@@ -10,6 +10,8 @@ import { IFileRepository } from 'src/shared/domain/repositories/file_repository_
 import { Address } from 'src/shared/domain/entities/address';
 import { MUSIC_TYPE } from 'src/shared/domain/enums/music_type_enum';
 import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
+import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 
 interface CreateEventParams {
   name: string;
@@ -21,7 +23,7 @@ interface CreateEventParams {
   instituteId: string;
   musicType: MUSIC_TYPE[];
   menuLink?: string;
-  galeryImages: {
+  galleryImages: {
     image: Buffer;
     mimetype: string;
   }[];
@@ -39,11 +41,13 @@ export class CreateEventUseCase {
   repository: Repository;
   private event_repo?: IEventRepository;
   private file_repo?: IFileRepository;
+  private institute_repo?: IInstituteRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       file_repo: true,
+      institute_repo: true,
     });
   }
 
@@ -51,21 +55,34 @@ export class CreateEventUseCase {
     await this.repository.connectRepository();
     this.event_repo = this.repository.event_repo;
     this.file_repo = this.repository.file_repo;
+    this.institute_repo = this.repository.institute_repo;
 
     if (!this.event_repo)
       throw new Error('Expected to have an instance of the event repository');
 
     if (!this.file_repo)
       throw new Error('Expected to have an instance of the file repository');
+
+    if (!this.institute_repo)
+      throw new Error(
+        'Expected to have an instance of the institute repository'
+      );
   }
 
   async execute(params: CreateEventParams): Promise<Event> {
-    const event_id = uuidv4();
+    const eventId = uuidv4();
+
+    const institute = await this.institute_repo!.getInstituteById(
+      params.instituteId
+    );
+    if (!institute) {
+      throw new NoItemsFound('Instituto não encontrado');
+    }
 
     let eventPhoto = '';
     if (params.eventImage) {
       eventPhoto = await this.file_repo!.uploadImage(
-        `events/${event_id}/event-photo.${
+        `events/${eventId}/event-photo.${
           params.eventImage.mimetype.split('/')[1]
         }`,
         params.eventImage.image,
@@ -74,22 +91,22 @@ export class CreateEventUseCase {
       );
     }
 
-    let galeryUrls: string[] = [];
-    if (params.galeryImages && params.galeryImages.length > 0) {
-      for (let i = 0; i < params.galeryImages.length; i++) {
-        const photo = params.galeryImages[i];
+    let galleryUrls: string[] = [];
+    if (params.galleryImages && params.galleryImages.length > 0) {
+      for (let i = 0; i < params.galleryImages.length; i++) {
+        const photo = params.galleryImages[i];
         const photoUrl = await this.file_repo!.uploadImage(
-          `events/${event_id}/galery/${i}.${photo.mimetype.split('/')[1]}`,
+          `events/${eventId}/gallery/${i}.${photo.mimetype.split('/')[1]}`,
           photo.image,
           photo.mimetype,
           true
         );
-        galeryUrls.push(photoUrl);
+        galleryUrls.push(photoUrl);
       }
     }
 
     const event = new Event({
-      eventId: event_id,
+      eventId: eventId,
       name: params.name,
       description: params.description,
       address: params.address,
@@ -101,7 +118,7 @@ export class CreateEventUseCase {
       musicType: params.musicType,
       category: params.category,
       menuLink: params.menuLink,
-      galeryLink: galeryUrls,
+      galleryLink: galleryUrls,
       eventPhoto: eventPhoto,
       features: params.features,
       packageType: params.packageType,

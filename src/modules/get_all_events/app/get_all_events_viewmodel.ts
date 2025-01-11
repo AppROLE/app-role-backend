@@ -20,7 +20,7 @@ export class EventViewModel {
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   eventPhoto: string;
-  galeryLink: string[];
+  galleryLink: string[];
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -43,7 +43,7 @@ export class EventViewModel {
     this.musicType = event.musicType;
     this.menuLink = event.menuLink;
     this.eventPhoto = event.eventPhoto;
-    this.galeryLink = event.galeryLink;
+    this.galleryLink = event.galleryLink;
     this.packageType = event.packageType;
     this.category = event.category;
     this.ticketUrl = event.ticketUrl;
@@ -77,7 +77,7 @@ export class EventViewModel {
       musicType: this.musicType,
       menuLink: this.menuLink,
       eventPhoto: this.eventPhoto,
-      galeryLink: this.galeryLink,
+      galleryLink: this.galleryLink,
       packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,

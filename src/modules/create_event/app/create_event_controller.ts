@@ -36,7 +36,7 @@ export interface EventFormDataFields extends Address {
   ageRange: AGE_ENUM;
   eventDate: number;
   instituteId: string;
-  musicType: MUSIC_TYPE[];
+  musicType: string; // json parse
   menuLink?: string;
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
@@ -87,6 +87,7 @@ export class CreateEventController {
       latitude = Number(latitude);
       longitude = Number(longitude);
       number = Number(number);
+      const musicTypeList = JSON.parse(musicType) as MUSIC_TYPE[];
 
       const { gallery, photo } = formData.files;
 
@@ -195,9 +196,9 @@ export class CreateEventController {
         ageRange,
         eventDate,
         instituteId,
-        musicType,
+        musicType: musicTypeList,
         menuLink,
-        galeryImages: galleryImages,
+        galleryImages: galleryImages,
         eventImage: photoImage,
         features,
         packageType,

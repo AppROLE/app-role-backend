@@ -150,7 +150,7 @@ export class UpdateEventController {
           : undefined,
         musicType,
         menuLink: typeof menuLink === 'string' ? menuLink : undefined,
-        galeryImages: gallery,
+        galleryImages: gallery,
         eventImage: photo,
         features,
         packageType,

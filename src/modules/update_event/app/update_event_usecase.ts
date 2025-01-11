@@ -23,7 +23,7 @@ interface UpdateEventParams {
   eventStatus?: STATUS;
   musicType?: MUSIC_TYPE[];
   menuLink?: string;
-  galeryImages?: {
+  galleryImages?: {
     image: Buffer;
     mimetype: string;
   }[];
@@ -35,7 +35,7 @@ interface UpdateEventParams {
   packageType?: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
-  galeryLink?: string[];
+  galleryLink?: string[];
   eventPhoto?: string;
 }
 
@@ -63,7 +63,7 @@ export class UpdateEventUsecase {
   }
 
   async execute(params: UpdateEventParams): Promise<Event> {
-    const { eventId, galeryImages, eventImage, ...updatedFields } = params;
+    const { eventId, galleryImages: galleryImages, eventImage, ...updatedFields } = params;
 
     // Verificar se o evento existe
     const eventToUpdate = await this.event_repo!.getEventById(eventId);
@@ -71,19 +71,19 @@ export class UpdateEventUsecase {
       throw new EntityError(`Event with id ${eventId} not found`);
     }
 
-    if (galeryImages && galeryImages.length > 0) {
-      const galeryUrls: string[] = [];
-      for (let i = 0; i < galeryImages.length; i++) {
-        const photo = galeryImages[i];
+    if (galleryImages && galleryImages.length > 0) {
+      const galleryUrls: string[] = [];
+      for (let i = 0; i < galleryImages.length; i++) {
+        const photo = galleryImages[i];
         const photoUrl = await this.file_repo!.uploadImage(
-          `events/${eventId}/galery/${i}.${photo.mimetype.split('/')[1]}`,
+          `events/${eventId}/gallery/${i}.${photo.mimetype.split('/')[1]}`,
           photo.image,
           photo.mimetype,
           true
         );
-        galeryUrls.push(photoUrl);
+        galleryUrls.push(photoUrl);
       }
-      updatedFields.galeryLink = galeryUrls;
+      updatedFields.galleryLink = galleryUrls;
     }
 
     if (eventImage) {

@@ -22,7 +22,7 @@ export interface IEvent extends Document {
   musicType: MUSIC_TYPE[];
   menuLink?: string;
   eventPhoto: string;
-  galeryLink: string[];
+  galleryLink: string[];
   packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
@@ -45,7 +45,7 @@ const EventSchema: Schema = new Schema<IEvent>({
   features: [{ type: String }],
   musicType: [{ type: String }],
   menuLink: { type: String },
-  galeryLink: [{ type: String }],
+  galleryLink: [{ type: String }],
   packageType: [{ type: String }],
   category: { type: String },
   ticketUrl: { type: String },
