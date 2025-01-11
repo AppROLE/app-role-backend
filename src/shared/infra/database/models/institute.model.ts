@@ -16,8 +16,8 @@ export interface IInstitute extends Document {
   price?: number;
   photosUrl: string[];
   eventsId: string[];
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const InstituteSchema: Schema = new Schema<IInstitute>({
@@ -32,8 +32,8 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   price: { type: Number },
   photosUrl: [{ type: String, required: true }],
   eventsId: [{ type: String, ref: 'events' }],
-  createdAt: { type: Number },
-  updatedAt: { type: Number },
+  createdAt: { type: Date },
+  updatedAt: { type: Date },
 });
 
 export const InstituteModel = mongoose.model<IInstitute>(

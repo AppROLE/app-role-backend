@@ -121,8 +121,8 @@ export class InstituteMongoDTO {
       price: institute.price,
       photosUrl: institute.photosUrl,
       eventsId: institute.eventsId,
-      createdAt: institute.createdAt,
-      updatedAt: institute.updatedAt,
+      createdAt: institute.createdAt.getTime(),
+      updatedAt: institute.updatedAt.getTime(),
     });
   }
 }

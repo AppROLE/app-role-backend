@@ -33,7 +33,7 @@ export class ReviewDTO {
       eventId: review.eventId,
       review: review.review,
       rating: review.rating,
-      createdAt: review.createdAt,
+      createdAt: review.createdAt.getTime(),
     });
   }
 

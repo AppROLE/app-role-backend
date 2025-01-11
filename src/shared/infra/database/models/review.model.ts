@@ -7,7 +7,7 @@ export interface IReview extends Document {
   eventId: string;
   review: string;
   rating: number;
-  createdAt: number;
+  createdAt: Date;
 }
 
 const ReviewSchema = new Schema<IReview>({
@@ -16,7 +16,7 @@ const ReviewSchema = new Schema<IReview>({
   eventId: { type: String, ref: 'events', required: true },
   review: { type: String, required: true },
   rating: { type: Number, required: true },
-  createdAt: { type: Number },
+  createdAt: { type: Date },
 });
 
 export const ReviewModel = mongoose.model<IReview>('reviews', ReviewSchema);

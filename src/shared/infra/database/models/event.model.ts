@@ -16,7 +16,7 @@ export interface IEvent extends Document {
   address: Address;
   price: number;
   ageRange: AGE_ENUM;
-  eventDate: number;
+  eventDate: Date;
   instituteId: string;
   eventStatus: STATUS;
   musicType: MUSIC_TYPE[];
@@ -29,8 +29,8 @@ export interface IEvent extends Document {
   features: FEATURE[];
   reviewsId: string[];
   presencesId: string[];
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const EventSchema: Schema = new Schema<IEvent>({
@@ -41,7 +41,7 @@ const EventSchema: Schema = new Schema<IEvent>({
   price: { type: Number },
   description: { type: String },
   ageRange: { type: String },
-  eventDate: { type: Number, required: true },
+  eventDate: { type: Date, required: true },
   features: [{ type: String }],
   musicType: [{ type: String }],
   menuLink: { type: String },
@@ -53,8 +53,8 @@ const EventSchema: Schema = new Schema<IEvent>({
   eventStatus: { type: String, required: true },
   presencesId: [{ type: String, ref: 'presences' }],
   eventPhoto: { type: String, required: true },
-  createdAt: { type: Number },
-  updatedAt: { type: Number },
+  createdAt: { type: Date },
+  updatedAt: { type: Date },
 });
 
 export const EventModel = mongoose.model<IEvent>('events', EventSchema);

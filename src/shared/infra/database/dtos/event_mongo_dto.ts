@@ -88,7 +88,7 @@ export class EventMongoDTO {
       price: eventDoc.price,
       description: eventDoc.description,
       ageRange: eventDoc.ageRange,
-      eventDate: eventDoc.eventDate,
+      eventDate: eventDoc.eventDate.getTime(),
       features: eventDoc.features,
       eventStatus: eventDoc.eventStatus,
       musicType: eventDoc.musicType,
@@ -100,8 +100,8 @@ export class EventMongoDTO {
       ticketUrl: eventDoc.ticketUrl,
       reviewsId: eventDoc.reviewsId,
       presencesId: eventDoc.presencesId,
-      createdAt: eventDoc.createdAt,
-      updatedAt: eventDoc.updatedAt,
+      createdAt: eventDoc.createdAt.getTime(),
+      updatedAt: eventDoc.updatedAt.getTime(),
     });
   }
 
