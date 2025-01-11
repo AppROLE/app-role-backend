@@ -1,6 +1,4 @@
-import { Address } from '../entities/address';
 import { Institute } from '../entities/institute';
-import { INSTITUTE_TYPE } from '../enums/institute_type_enum';
 import { PARTNER_TYPE } from '../enums/partner_type_enum';
 
 export interface IInstituteRepository {
@@ -13,13 +11,7 @@ export interface IInstituteRepository {
   getInstitutesByIds(institutesId: string[]): Promise<Institute[]>;
   deleteInstituteById(instituteId: string): Promise<void>;
   updateInstitute(
-    instituteId: string,
-    description?: string,
-    instituteType?: INSTITUTE_TYPE,
-    partnerType?: PARTNER_TYPE,
-    name?: string,
-    address?: Address,
-    phone?: string
+    instituteId: string, updatedFields: Partial<Institute>
   ): Promise<Institute>;
   addEventToInstitute(instituteId: string, eventId: string): Promise<void>;
 }

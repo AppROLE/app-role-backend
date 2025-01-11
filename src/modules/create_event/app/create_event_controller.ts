@@ -171,7 +171,7 @@ export class CreateEventController {
         throw new MissingParameters('eventDate');
       }
 
-      const eventId = await this.usecase.execute({
+      const eventCreated = await this.usecase.execute({
         name,
         description,
         address: {
@@ -200,7 +200,7 @@ export class CreateEventController {
 
       return new Created({
         message: 'Evento criado com sucesso',
-        id: eventId,
+        event: eventCreated,
       });
     } catch (error: any) {
       if (

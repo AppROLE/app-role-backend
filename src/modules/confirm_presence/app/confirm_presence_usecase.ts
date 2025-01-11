@@ -1,6 +1,7 @@
 import { Presence } from 'src/shared/domain/entities/presence';
 import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
 import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
+import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import {
   NoItemsFound,
   UserAlreadyConfirmedEvent,
@@ -12,11 +13,13 @@ export class ConfirmPresenceUsecase {
   repository: Repository;
   private event_repo?: IEventRepository;
   private presence_repo?: IPresenceRepository;
+  private profile_repo?: IProfileRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       presence_repo: true,
+      profile_repo: true,
     });
   }
 
@@ -24,6 +27,7 @@ export class ConfirmPresenceUsecase {
     await this.repository.connectRepository();
     this.event_repo = this.repository.event_repo;
     this.presence_repo = this.repository.presence_repo;
+    this.profile_repo = this.repository.profile_repo;
 
     if (!this.event_repo)
       throw new Error('Expected to have an instance of the event repository');
@@ -32,6 +36,9 @@ export class ConfirmPresenceUsecase {
       throw new Error(
         'Expected to have an instance of the presence repository'
       );
+
+    if (!this.profile_repo)
+      throw new Error('Expected to have an instance of the profile repository');
   }
 
   async execute(
@@ -39,9 +46,13 @@ export class ConfirmPresenceUsecase {
     userId: string,
     promoterCode?: string
   ): Promise<Presence> {
+    const profile = await this.profile_repo!.getByUserId(userId);
+
+    if (!profile) throw new NoItemsFound('Perfil não encontrado');
+
     const event = await this.event_repo!.getEventById(eventId);
 
-    if (!event) throw new NoItemsFound('eventId');
+    if (!event) throw new NoItemsFound('Evento não encontrado');
 
     const alreadyConfirmed =
       await this.presence_repo!.getPresencesByEventAndUser(eventId, userId);
@@ -56,6 +67,18 @@ export class ConfirmPresenceUsecase {
       createdAt: new Date().getTime(),
     });
 
-    return await this.presence_repo!.createPresence(presence);
+    const presenceCreated = await this.presence_repo!.createPresence(presence);
+
+    await this.profile_repo!.updateProfile(userId, 
+      {
+        presencesId: [...profile.presencesId, presenceCreated.presenceId],
+      }
+    );
+
+    await this.event_repo!.updateEvent(eventId, {
+      presencesId: [...event.presencesId, presenceCreated.presenceId],
+    });
+
+    return presenceCreated;
   }
 }

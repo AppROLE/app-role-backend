@@ -4,7 +4,6 @@ import { IEvent } from '../models/event.model';
 import { EventMongoDTO } from '../dtos/event_mongo_dto';
 import {
   NoItemsFound,
-  ConflictItems,
   EntityError,
 } from '../../../../../src/shared/helpers/errors/errors';
 import { Collection, Connection } from 'mongoose';
@@ -104,22 +103,22 @@ export class EventRepositoryMongo implements IEventRepository {
     eventId: string,
     updatedFields: Partial<Event>
   ): Promise<Event> {
-    const updateData = { ...updatedFields };
-
-    const result = await this.eventCollection.updateOne(
-      { _id: eventId },
-      { $set: updateData }
+    const sanitizedFields = Object.fromEntries(
+      Object.entries(updatedFields).filter(([_, value]) => value != null) // Filtra null e undefined
     );
 
-    if (result.matchedCount === 0) {
-      throw new EntityError(`Event with id ${eventId} not found`);
+    sanitizedFields.updatedAt = new Date().getTime();
+
+    const result = await this.eventCollection.findOneAndUpdate(
+      { _id: eventId },
+      { $set: sanitizedFields },
+      { returnDocument: 'after' }
+    );
+
+    if (!result) {
+      throw new NoItemsFound('Evento não atualizado');
     }
 
-    const updatedEvent = await this.getEventById(eventId);
-    if (!updatedEvent) {
-      throw new EntityError(`Failed to fetch updated event with id ${eventId}`);
-    }
-
-    return updatedEvent;
+    return EventMongoDTO.fromMongo(result).toEntity();
   }
 }

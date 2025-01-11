@@ -5,6 +5,7 @@ import { InstituteMongoDTO } from '../dtos/institute_mongo_dto';
 import {
   NoItemsFound,
   DuplicatedItem,
+  MissingParameters,
 } from '../../../../../src/shared/helpers/errors/errors';
 import { Collection, Connection } from 'mongoose';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
@@ -102,42 +103,25 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
   }
 
   async updateInstitute(
-    instituteId: string,
-    description?: string,
-    instituteType?: INSTITUTE_TYPE,
-    partnerType?: PARTNER_TYPE,
-    name?: string,
-    address?: Address,
-    phone?: string
+    instituteId: string, updatedFields: Partial<Institute>
   ): Promise<Institute> {
-    const updateFields: Partial<IInstitute> = {};
+    const sanitizedFields = Object.fromEntries(
+      Object.entries(updatedFields).filter(([_, value]) => value != null) // Filtra null e undefined
+    );
 
-    if (description) updateFields.description = description;
-    if (instituteType) updateFields.instituteType = instituteType;
-    if (partnerType) updateFields.partnerType = partnerType;
-    if (name) updateFields.name = name;
-    if (address) updateFields.address = address;
-    if (phone) updateFields.phone = phone;
+    sanitizedFields.updatedAt = new Date().getTime();
 
     const result = await this.instituteCollection.findOneAndUpdate(
       { _id: instituteId },
-      { $set: updateFields },
+      { $set: sanitizedFields },
       { returnDocument: 'after' }
     );
 
     if (!result) {
-      throw new NoItemsFound('institute');
+      throw new NoItemsFound('Instituto não atualizado');
     }
 
-    const updatedInstituteDoc = await this.instituteCollection.findOne({
-      _id: instituteId,
-    });
-
-    if (!updatedInstituteDoc) {
-      throw new NoItemsFound('institute');
-    }
-
-    return InstituteMongoDTO.fromMongo(updatedInstituteDoc).toEntity();
+    return InstituteMongoDTO.fromMongo(result).toEntity();
   }
 
   async addEventToInstitute(instituteId: string, eventId: string): Promise<void> {

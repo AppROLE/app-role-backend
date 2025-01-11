@@ -8,14 +8,14 @@ import { Profile } from 'src/shared/domain/entities/profile';
 import { FindPersonReturnType } from 'src/shared/helpers/types/find_person_return_type';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
-  private userCollection: Collection<IProfile>;
+  private profileCollection: Collection<IProfile>;
 
   constructor(connection: Connection) {
-    this.userCollection = connection.collection<IProfile>('profiles');
+    this.profileCollection = connection.collection<IProfile>('profiles');
   }
 
   async getByEmail(email: string): Promise<Profile | null> {
-    const userDoc = await this.userCollection.findOne({ email: email });
+    const userDoc = await this.profileCollection.findOne({ email: email });
 
     if (!userDoc) {
       return null;
@@ -25,7 +25,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async getByUsername(username: string): Promise<Profile | null> {
-    const userDoc = await this.userCollection.findOne({ username: username });
+    const userDoc = await this.profileCollection.findOne({ username: username });
 
     if (!userDoc) {
       return null;
@@ -35,7 +35,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async getByUserId(userId: string): Promise<Profile | null> {
-    const userDoc = await this.userCollection.findOne({ _id: userId });
+    const userDoc = await this.profileCollection.findOne({ _id: userId });
 
     if (!userDoc) {
       return null;
@@ -45,7 +45,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async getProfilesByIds(profilesId: string[]): Promise<Profile[]> {
-    const profiles = await this.userCollection
+    const profiles = await this.profileCollection
       .find({ _id: { $in: profilesId } })
       .toArray();
 
@@ -61,13 +61,13 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   async createProfile(profile: Profile): Promise<Profile> {
     const profileDoc = ProfileMongoDTO.fromEntity(profile).toMongo();
 
-    const result = await this.userCollection.insertOne(profileDoc);
+    const result = await this.profileCollection.insertOne(profileDoc);
 
     if (!result.acknowledged) {
       throw new Error('Erro ao criar usuário no MongoDB.');
     }
 
-    const createdUserDoc = await this.userCollection.findOne({
+    const createdUserDoc = await this.profileCollection.findOne({
       _id: profile.userId,
     });
 
@@ -79,7 +79,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async deleteProfile(userId: string): Promise<void> {
-    const result = await this.userCollection.deleteOne({ _id: userId });
+    const result = await this.profileCollection.deleteOne({ _id: userId });
 
     if (!result.deletedCount || result.deletedCount === 0) {
       throw new Error(`Usuário com ID ${userId} nao encontrado.`);
@@ -87,7 +87,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async findProfile(searchTerm: string): Promise<FindPersonReturnType[]> {
-    const profiles = await this.userCollection
+    const profiles = await this.profileCollection
       .find({
         $or: [
           { username: { $regex: `^${searchTerm}`, $options: 'i' } },
@@ -125,22 +125,17 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     // Adiciona o timestamp de atualização
     sanitizedFields.updatedAt = new Date().getTime();
 
-    const result = await this.userCollection.updateOne(
+    const result = await this.profileCollection.findOneAndUpdate(
       { _id: userId },
-      { $set: sanitizedFields }
+      { $set: sanitizedFields },
+      { returnDocument: 'after' }
     );
 
-    if (!result.modifiedCount) {
-      throw new Error('Erro ao atualizar o perfil.');
+    if (!result) {
+      throw new NoItemsFound('Evento não atualizado');
     }
 
-    const updatedUserDoc = await this.userCollection.findOne({ _id: userId });
-
-    if (!updatedUserDoc) {
-      throw new Error('Erro ao buscar o perfil atualizado.');
-    }
-
-    return ProfileMongoDTO.fromMongo(updatedUserDoc).toEntity();
+    return ProfileMongoDTO.fromMongo(result).toEntity();
   }
 
   async addFollower(
@@ -148,7 +143,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     followedUserId: string
   ): Promise<void> {
     // Verificar se já existe o seguidor no array de followers
-    const followedUser = await this.userCollection.findOne({
+    const followedUser = await this.profileCollection.findOne({
       _id: followedUserId,
       followers: followerUserId,
     });
@@ -158,7 +153,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     }
 
     // Adiciona follower ao seguido
-    const resultFollowed = await this.userCollection.updateOne(
+    const resultFollowed = await this.profileCollection.updateOne(
       { _id: followedUserId },
       { $addToSet: { followers: followerUserId } }
     );
@@ -168,14 +163,14 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     }
 
     // Adiciona seguido ao follower
-    const resultFollowing = await this.userCollection.updateOne(
+    const resultFollowing = await this.profileCollection.updateOne(
       { _id: followerUserId },
       { $addToSet: { following: followedUserId } }
     );
 
     if (!resultFollowing.modifiedCount) {
       // Em caso de falha no segundo update, desfaz o primeiro
-      await this.userCollection.updateOne(
+      await this.profileCollection.updateOne(
         { _id: followedUserId },
         { $pull: { followers: followerUserId } }
       );
@@ -188,13 +183,13 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     followedUserId: string
   ): Promise<void> {
     // Remove do array followers do usuário seguido
-    const resultFollowed = await this.userCollection.updateOne(
+    const resultFollowed = await this.profileCollection.updateOne(
       { _id: followedUserId },
       { $pull: { followers: followerUserId } }
     );
 
     // Remove do array following do usuário seguidor
-    const resultFollowing = await this.userCollection.updateOne(
+    const resultFollowing = await this.profileCollection.updateOne(
       { _id: followerUserId },
       { $pull: { following: followedUserId } }
     );
@@ -208,7 +203,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     userId: string,
     instituteId: string
   ): Promise<void> {
-    const result = await this.userCollection.updateOne(
+    const result = await this.profileCollection.updateOne(
       { _id: userId },
       { $addToSet: { favoriteInstitutes: instituteId } }
     );
@@ -222,7 +217,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     userId: string,
     instituteId: string
   ): Promise<void> {
-    const result = await this.userCollection.updateOne(
+    const result = await this.profileCollection.updateOne(
       { _id: userId },
       { $pull: { favoriteInstitutes: instituteId } }
     );
@@ -233,7 +228,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async removeAllFavoriteInstitute(userId: string): Promise<void> {
-    const result = await this.userCollection.updateOne(
+    const result = await this.profileCollection.updateOne(
       { _id: userId },
       { $set: { favoriteInstitutes: [] } }
     );
