@@ -92,7 +92,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       .toArray();
 
     if (!instituteDocs || instituteDocs.length === 0) {
-      throw new NoItemsFound('institutes');
+      return [];
     }
 
     return instituteDocs.map((doc) =>

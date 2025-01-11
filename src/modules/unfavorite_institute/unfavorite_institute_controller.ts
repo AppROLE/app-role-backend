@@ -41,7 +41,7 @@ export class UnfavoriteInstituteController {
 
       await this.usecase.execute(parsedUserApiGateway.userId, instituteId);
 
-      return new OK({ message: 'Instituto favoritado com sucesso' });
+      return new OK({ message: 'Instituto retirado dos favoritos com sucesso' });
     } catch (error: any) {
       if (error instanceof EntityError) {
         return new BadRequest(error.message);

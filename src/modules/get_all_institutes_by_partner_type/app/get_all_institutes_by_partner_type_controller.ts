@@ -11,7 +11,6 @@ import {
   PARTNER_TYPE,
   toEnumPartnerType,
 } from 'src/shared/domain/enums/partner_type_enum';
-import { GetAllInstitutesByPartnerTypeViewModel } from './get_all_institutes_by_partner_type_viewmodel';
 import {
   BadRequest,
   Conflict,
@@ -39,7 +38,7 @@ export class GetAllInstitutesByPartnerTypeController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { partnerType } = req.data.body;
+      const { partnerType } = req.data.query_params;
       if (typeof partnerType !== 'string') {
         throw new WrongTypeParameters(
           'partnerType',
@@ -52,9 +51,11 @@ export class GetAllInstitutesByPartnerTypeController {
 
       const institutes = await this.usecase.execute(partnerTypeEnum);
 
-      const viewmodel = new GetAllInstitutesByPartnerTypeViewModel(institutes);
 
-      return new OK(viewmodel.toJSON());
+      return new OK({
+        institutes: institutes,
+        message: "Institutos retornados com sucesso",
+      });
     } catch (error: any) {
       if (
         error instanceof EntityError ||

@@ -1,3 +1,4 @@
+import { Institute } from 'src/shared/domain/entities/institute';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
@@ -23,9 +24,7 @@ export class GetAllInstitutesByPartnerTypeUseCase {
       );
   }
 
-  async execute(partnerType: PARTNER_TYPE) {
-    const institutes =
-      this.institute_repo!.getAllInstitutesByPartnerType(partnerType);
-    return institutes;
+  async execute(partnerType: PARTNER_TYPE) : Promise<Institute[]> {
+    return this.institute_repo!.getAllInstitutesByPartnerType(partnerType);
   }
 }
