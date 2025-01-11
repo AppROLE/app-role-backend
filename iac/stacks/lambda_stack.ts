@@ -38,7 +38,7 @@ export class LambdaStack extends Construct {
   updateInstituteFunction: lambda.Function;
 
   // event routes
-  confirmPresenceFunction: lambda.Function;
+  createPresenceFunction: lambda.Function;
   createEventFunction: lambda.Function;
   deleteEventFunction: lambda.Function;
   getEventFunction: lambda.Function;
@@ -46,7 +46,7 @@ export class LambdaStack extends Construct {
   getAllEventsByFilterFunction: lambda.Function;
   getAllPresencesByEventIdFunction: lambda.Function;
   getTopEventsFunction: lambda.Function;
-  unconfirmPresenceFunction: lambda.Function;
+  deletePresenceFunction: lambda.Function;
   updateEventFunction: lambda.Function;
   getOtherProfileFunction: lambda.Function;
 
@@ -254,8 +254,8 @@ export class LambdaStack extends Construct {
     );
 
     // event routes
-    this.confirmPresenceFunction = this.createLambdaApiGatewayIntegration(
-      'confirm_presence',
+    this.createPresenceFunction = this.createLambdaApiGatewayIntegration(
+      'create_presence',
       'POST',
       apiGatewayResource,
       environmentVariables,
@@ -319,8 +319,8 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
-    this.unconfirmPresenceFunction = this.createLambdaApiGatewayIntegration(
-      'unconfirm_presence',
+    this.deletePresenceFunction = this.createLambdaApiGatewayIntegration(
+      'delete_presence',
       'DELETE',
       apiGatewayResource,
       environmentVariables,
@@ -369,7 +369,7 @@ export class LambdaStack extends Construct {
       this.updateInstituteFunction,
 
       // event routes
-      this.confirmPresenceFunction,
+      this.createPresenceFunction,
       this.createEventFunction,
       this.deleteEventFunction,
       this.getEventFunction,
@@ -377,7 +377,7 @@ export class LambdaStack extends Construct {
       this.getAllEventsByFilterFunction,
       this.getAllPresencesByEventIdFunction,
       this.getTopEventsFunction,
-      this.unconfirmPresenceFunction,
+      this.deletePresenceFunction,
       this.updateEventFunction,
       this.getOtherProfileFunction,
 

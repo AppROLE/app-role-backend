@@ -1,5 +1,5 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { ConfirmPresenceUsecase } from './confirm_presence_usecase';
+import { CreatePresenceUsecase } from './create_presence_usecase';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import {
   MissingParameters,
@@ -11,7 +11,6 @@ import {
   NoItemsFound,
   UserAlreadyConfirmedEvent,
 } from 'src/shared/helpers/errors/errors';
-import { ConfirmPresenceViewmodel } from './confirm_presence_viewmodel';
 import {
   BadRequest,
   InternalServerError,
@@ -21,13 +20,13 @@ import {
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
-interface ConfirmPresenceData {
+interface CreaterPresenceData {
   eventId: string;
   promoterCode?: string;
 }
 
-export class ConfirmPresenceController {
-  constructor(private readonly usecase: ConfirmPresenceUsecase) {}
+export class CreatePresenceController {
+  constructor(private readonly usecase: CreatePresenceUsecase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
@@ -36,7 +35,7 @@ export class ConfirmPresenceController {
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
       const { eventId, promoterCode } =
-        request.data as unknown as ConfirmPresenceData;
+        request.data as unknown as CreaterPresenceData;
 
       if (!eventId) throw new MissingParameters('eventId');
       if (typeof eventId !== 'string')
@@ -49,13 +48,12 @@ export class ConfirmPresenceController {
           typeof promoterCode
         );
 
-      await this.usecase.execute(eventId, userApiGateway.userId, promoterCode);
+      const presence = await this.usecase.execute(eventId, userApiGateway.userId, promoterCode);
 
-      const viewmodel = new ConfirmPresenceViewmodel(
-        'Presença confirmada com sucesso'
-      );
-
-      return new OK(viewmodel.toJSON());
+      return new OK({
+        presence: presence,
+        message: 'Presença confirmada com sucesso',
+      });
     } catch (error: any) {
       if (
         error instanceof EntityError ||

@@ -2,11 +2,11 @@ import {
   LambdaHttpRequest,
   LambdaHttpResponse,
 } from 'src/shared/helpers/external_interfaces/http_lambda_requests';
-import { ConfirmPresenceUsecase } from './confirm_presence_usecase';
-import { ConfirmPresenceController } from './confirm_presence_controller';
+import { DeletePresenceController } from './delete_presence_controller';
+import { DeletePresenceUsecase } from './delete_presence_usecase';
 
-const usecase = new ConfirmPresenceUsecase();
-const controller = new ConfirmPresenceController(usecase);
+const usecase = new DeletePresenceUsecase();
+const controller = new DeletePresenceController(usecase);
 
 export async function lambda_handler(event: any, context: any) {
   const requesterUser = event.requestContext.authorizer.claims;
