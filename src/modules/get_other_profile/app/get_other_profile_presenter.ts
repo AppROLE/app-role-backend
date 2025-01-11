@@ -11,6 +11,7 @@ const controller = new GetOtherProfileController(usecase);
 export async function lambda_handler(event: any, context: any) {
   const requesterUser = event.requestContext.authorizer.claims;
   const httpRequest = new LambdaHttpRequest(event);
+  await usecase.connect();
   const response = await controller.handle(httpRequest, requesterUser);
   const httpResponse = new LambdaHttpResponse(
     response?.body,
