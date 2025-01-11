@@ -6,7 +6,7 @@ export interface IPresence extends Document {
   eventId: string;
   userId: string;
   promoterCode?: string;
-  createdAt: number;
+  createdAt: Date;
 }
 
 const PresenceSchema: Schema = new Schema<IPresence>({
@@ -14,7 +14,7 @@ const PresenceSchema: Schema = new Schema<IPresence>({
   eventId: { type: String, ref: 'events', required: true },
   userId: { type: String, ref: 'profiles', required: true },
   promoterCode: { type: String },
-  createdAt: { type: Number, required: true },
+  createdAt: { type: Date, required: true },
 });
 
 export const PresenceModel = mongoose.model<IPresence>(

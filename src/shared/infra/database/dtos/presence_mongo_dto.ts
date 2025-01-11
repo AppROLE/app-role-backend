@@ -30,7 +30,7 @@ export class PresenceMongoDTO {
       eventId: presence.eventId,
       userId: presence.userId,
       promoterCode: presence.promoterCode,
-      createdAt: presence.createdAt,
+      createdAt: presence.createdAt.getTime(),
     });
   }
 
