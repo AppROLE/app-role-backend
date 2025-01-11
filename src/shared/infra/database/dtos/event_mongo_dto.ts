@@ -46,7 +46,7 @@ export class EventMongoDTO {
   menuLink?: string;
   eventPhoto: string;
   galleryLink: string[];
-  package_type: PACKAGE_TYPE[];
+  packageType: PACKAGE_TYPE[];
   category?: CATEGORY;
   ticketUrl?: string;
   features: FEATURE[];
@@ -69,7 +69,7 @@ export class EventMongoDTO {
     this.menuLink = props.menuLink;
     this.eventPhoto = props.eventPhoto;
     this.galleryLink = props.galleryLink || [];
-    this.package_type = props.packageType || [];
+    this.packageType = props.packageType || [];
     this.category = props.category;
     this.ticketUrl = props.ticketUrl;
     this.features = props.features || [];
@@ -123,7 +123,7 @@ export class EventMongoDTO {
       eventPhoto: this.eventPhoto,
       galleryLink: this.galleryLink || [],
       instituteId: this.instituteId,
-      packageType: (this.package_type || []).map(
+      packageType: (this.packageType || []).map(
         (type) => type as PACKAGE_TYPE
       ),
       category: this.category as CATEGORY,
@@ -177,7 +177,7 @@ export class EventMongoDTO {
       menuLink: this.menuLink,
       eventPhoto: this.eventPhoto,
       galleryLink: this.galleryLink,
-      package_type: this.package_type,
+      packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,
       reviewsId: this.reviewsId,
