@@ -82,6 +82,8 @@ export class EventRepositoryMongo implements IEventRepository {
 
     const events = await this.eventCollection.find(filter).toArray();
 
+    console.log('events filtered: ', events);
+
     if (!events || events.length === 0) {
       return [];
     }
