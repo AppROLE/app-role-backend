@@ -32,15 +32,22 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
     return PresenceMongoDTO.fromMongo(createdPresenceDoc).toEntity();
   }
 
-  async deletePresence(eventId: string, userId: string): Promise<void> {
-    const result = await this.presenceCollection.deleteOne({
-      event_id: eventId,
-      username: userId,
-    });
+  async deletePresence(presenceId: string): Promise<void> {
+    const result = await this.presenceCollection.deleteOne({ _id: presenceId });
 
-    if (!result.deletedCount) {
-      throw new NoItemsFound('presence');
+    if (!result.deletedCount || result.deletedCount === 0) {
+      throw new NoItemsFound('Presença não encontrada');
     }
+  }
+
+  async getPresenceById(presenceId: string): Promise<Presence | null> {
+    const result = await this.presenceCollection.findOne({ _id: presenceId });
+
+    if (!result) {
+      return null;
+    }
+
+    return PresenceMongoDTO.fromMongo(result).toEntity();
   }
 
   async getPresencesByIds(presencesIds: string[]): Promise<Presence[]> {

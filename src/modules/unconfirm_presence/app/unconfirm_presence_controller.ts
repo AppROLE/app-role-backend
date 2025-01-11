@@ -29,16 +29,16 @@ export class UnconfirmPresenceController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { eventId } = request.data.body;
+      const { presenceId } = request.data.body;
 
-      if (!eventId) throw new MissingParameters('eventId');
-      if (typeof eventId !== 'string')
-        throw new WrongTypeParameters('eventId', 'string', typeof eventId);
+      if (!presenceId) throw new MissingParameters('presenceId');
+      if (typeof presenceId !== 'string')
+        throw new WrongTypeParameters('presenceId', 'string', typeof presenceId);
 
-      await this.usecase.execute(eventId, userApiGateway.userId);
+      await this.usecase.execute(presenceId, userApiGateway.userId);
 
       return new OK({
-        message: 'Presença desconfirmada com sucesso',
+        message: 'Presença cancelada com sucesso',
       });
     } catch (error: any) {
       if (

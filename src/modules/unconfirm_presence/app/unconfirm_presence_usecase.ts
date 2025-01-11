@@ -35,33 +35,33 @@ export class UnconfirmPresenceUsecase {
       throw new Error('Expected to have an instance of the profile repository');
   }
 
-  async execute(eventId: string, userId: string) {
+  async execute(presenceId: string, userId: string) {
     const profile = await this.profile_repo!.getByUserId(userId);
 
     if (!profile) throw new NoItemsFound('Perfil não encontrado');
 
-    const event = await this.event_repo!.getEventById(eventId);
-
-    if (!event) throw new NoItemsFound('eventId');
-
-    const presenceExists = await this.presence_repo!.getPresencesByEventAndUser(
-      eventId,
-      userId
+    const presence = await this.presence_repo!.getPresenceById(presenceId
     );
 
-    if (!presenceExists) throw new NoItemsFound('Usuário não confirmou presença ainda');
+    if (!presence) throw new NoItemsFound('Usuário não confirmou presença ainda');
 
-    await this.presence_repo!.deletePresence(eventId, userId);
+    await this.presence_repo!.deletePresence(presenceId);
 
     await this.profile_repo!.updateProfile(userId, {
       presencesId: profile.presencesId.filter(
-        (presenceId) => presenceId !== presenceExists.presenceId
+        (presenceId) => presenceId !== presence.presenceId
       ),
     });
 
+    const eventId = presence.eventId;
+
+    const event = await this.event_repo!.getEventById(eventId);
+
+    if (!event) return;
+
     await this.event_repo!.updateEvent(eventId, {
       presencesId: event.presencesId.filter(
-        (presenceId) => presenceId !== presenceExists.presenceId
+        (presenceId) => presenceId !== presence.presenceId
       ),
     });
   }
