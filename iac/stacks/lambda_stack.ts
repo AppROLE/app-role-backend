@@ -29,6 +29,8 @@ export class LambdaStack extends Construct {
   getMyProfileFunction: lambda.Function;
   createProfileFunction: lambda.Function;
   updateProfileFunction: lambda.Function;
+  getMyFollowingFunction: lambda.Function;
+  getMyFollowersFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -207,6 +209,22 @@ export class LambdaStack extends Construct {
     this.updateProfileFunction = this.createLambdaApiGatewayIntegration(
       'update_profile',
       'PUT',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.getMyFollowingFunction = this.createLambdaApiGatewayIntegration(
+      'get_my_following',
+      'GET',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.getMyFollowersFunction = this.createLambdaApiGatewayIntegration(
+      'get_my_followers',
+      'GET',
       apiGatewayResource,
       environmentVariables,
       authorizer
