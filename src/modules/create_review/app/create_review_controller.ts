@@ -31,12 +31,6 @@ export class CreateReviewController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      if (userApiGateway.role !== ROLE_TYPE.COMMON) {
-        throw new ForbiddenAction(
-          'Usuário nao tem permissão para criar uma review'
-        );
-      }
-
       const { rating, review, eventId } = req.data.body;
 
       if (!rating) throw new MissingParameters('rating');

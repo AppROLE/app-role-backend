@@ -1,5 +1,6 @@
 import { Review } from 'src/shared/domain/entities/review';
 import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
+import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
 import { EntityError, NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
@@ -9,11 +10,13 @@ export class CreateReviewUseCase {
   repository: Repository;
   private event_repo?: IEventRepository;
   private review_repo?: IReviewRepository;
+  private profile_repo?: IProfileRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       review_repo: true,
+      profile_repo: true,
     });
   }
 
@@ -21,12 +24,16 @@ export class CreateReviewUseCase {
     await this.repository.connectRepository();
     this.event_repo = this.repository.event_repo;
     this.review_repo = this.repository.review_repo;
+    this.profile_repo = this.repository.profile_repo;
 
     if (!this.event_repo)
       throw new Error('Expected to have an instance of the event repository');
 
     if (!this.review_repo)
       throw new Error('Expected to have an instance of the review repository');
+
+    if (!this.profile_repo)
+      throw new Error('Expected to have an instance of the profile repository');
   }
 
   async execute(
@@ -46,15 +53,20 @@ export class CreateReviewUseCase {
 
     if (!event) throw new NoItemsFound('event');
 
-    const createdReview = new Review({
+    const reviewToCreate = new Review({
       reviewId: uuidv4(),
       userId: userId,
-      eventId: event.eventId,
+      eventId: eventId,
       review: review,
       rating: rating,
       createdAt: new Date().getTime(),
     });
 
-    return await this.review_repo!.createReview(createdReview);
+    const reviewCreated = await this.review_repo!.createReview(reviewToCreate);
+
+    await this.event_repo!.updateEvent(eventId, { reviewsId: [...event.reviewsId, reviewCreated.reviewId] });
+    await this.profile_repo!.updateProfile(userId, { reviewsId: [...event.reviewsId, reviewCreated.reviewId] });
+
+    return reviewCreated;
   }
 }
