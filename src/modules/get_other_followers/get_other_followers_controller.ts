@@ -1,5 +1,4 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { DeleteEventUsecase } from './delete_event_usecase';
 import {
   BadRequest,
   Conflict,
@@ -8,39 +7,39 @@ import {
   OK,
   Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
+import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import {
   ConflictItems,
   EntityError,
   ForbiddenAction,
   MissingParameters,
   NoItemsFound,
-  WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
-import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
-import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
+import { WrongTypeParameters } from 'src/shared/helpers/errors/errors';
+import { GetOtherFollowersUsecase } from './get_other_followers_usecase';
+import { GetOtherFollowersViewmodel } from './get_other_followers_viewmodel';
 
-export class DeleteEventController {
-  constructor(private readonly usecase: DeleteEventUsecase) {}
+export class GetOtherFollowersController {
+  constructor(private readonly usecase: GetOtherFollowersUsecase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>) {
+  async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
       const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      if (userApiGateway.role === ROLE_TYPE.COMMON) {
-        throw new ForbiddenAction(
-          'Usuário nao tem permissão para deletar um evento'
-        );
-      }
+      const { otherUserId } = request.data.query_params;
 
-      const { eventId } = req.data.body;
+      if (!otherUserId) throw new MissingParameters('otherUserId');
 
-      await this.usecase.execute(eventId as string);
+      const profiles = await this.usecase.execute(
+        userApiGateway.userId,
+        otherUserId
+      );
 
-      return new OK({
-        message: 'Evento deletado com sucesso',
-      });
+      const viewmodel = new GetOtherFollowersViewmodel(profiles);
+
+      return new OK(viewmodel.toJSON());
     } catch (error: any) {
       if (
         error instanceof EntityError ||

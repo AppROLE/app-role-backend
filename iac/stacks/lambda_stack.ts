@@ -29,8 +29,11 @@ export class LambdaStack extends Construct {
   getMyProfileFunction: lambda.Function;
   createProfileFunction: lambda.Function;
   updateProfileFunction: lambda.Function;
+  getOtherProfileFunction: lambda.Function;
   getMyFollowingFunction: lambda.Function;
   getMyFollowersFunction: lambda.Function;
+  getOtherFollowingFunction: lambda.Function;
+  getOtherFollowersFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -51,7 +54,6 @@ export class LambdaStack extends Construct {
   getTopEventsFunction: lambda.Function;
   deletePresenceFunction: lambda.Function;
   updateEventFunction: lambda.Function;
-  getOtherProfileFunction: lambda.Function;
 
   // review routes
   createReviewFunction: lambda.Function;
@@ -230,6 +232,22 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
+    this.getOtherFollowingFunction = this.createLambdaApiGatewayIntegration(
+      'get_other_following',
+      'GET',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.getOtherFollowersFunction = this.createLambdaApiGatewayIntegration(
+      'get_other_followers',
+      'GET',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
     // institute routes
     this.createInstituteFunction = this.createLambdaApiGatewayIntegration(
       'create_institute',
@@ -383,9 +401,15 @@ export class LambdaStack extends Construct {
 
       // profile routes
       this.favoriteInstituteFunction,
+      this.unfavoriteInstituteFunction,
       this.getMyProfileFunction,
       this.createProfileFunction,
       this.updateProfileFunction,
+      this.getOtherProfileFunction,
+      this.getMyFollowingFunction,
+      this.getMyFollowersFunction,
+      this.getOtherFollowingFunction,
+      this.getOtherFollowersFunction,
 
       // institute routes
       this.createInstituteFunction,
@@ -406,7 +430,6 @@ export class LambdaStack extends Construct {
       this.getTopEventsFunction,
       this.deletePresenceFunction,
       this.updateEventFunction,
-      this.getOtherProfileFunction,
 
       // review routes
       this.createReviewFunction,

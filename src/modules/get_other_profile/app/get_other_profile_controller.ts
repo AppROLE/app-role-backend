@@ -30,6 +30,8 @@ export class GetOtherProfileController {
 
       const { otherUserId } = request.data.query_params;
 
+      if (!otherUserId) throw new MissingParameters('otherUserId');
+
       const [profile, confirmedEvents] = await this.usecase.execute(
         userApiGateway.userId,
         otherUserId
