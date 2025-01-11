@@ -101,17 +101,7 @@ export class CreateEventController {
 
       !Array.isArray(photo) ? (photoImage = photo) : (photoImage = photo[0]);
 
-      let galleryImages: ParsedFile[];
-
-      if (gallery === undefined || gallery === null) {
-        galleryImages = [];
-      } else if (Array.isArray(gallery)) {
-        galleryImages = gallery;
-      } else if (!Array.isArray(gallery)) {
-        galleryImages = [gallery];
-      } else {
-        throw new MissingParameters('photos');
-      }
+      const galleryImages = Array.isArray(gallery) ? gallery : gallery ? [gallery] : [];
 
       if (name === undefined || name === null) {
         throw new MissingParameters('name');

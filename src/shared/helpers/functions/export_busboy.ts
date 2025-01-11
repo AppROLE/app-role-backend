@@ -1,7 +1,5 @@
 import Busboy from 'busboy';
 
-export type ParsedFormData = ReturnType<typeof parseMultipartFormData>;
-
 export type ParsedFile = { image: Buffer; mimetype: string };
 
 export interface FormData<TFields = Record<string, unknown>> {
@@ -41,10 +39,15 @@ export async function parseMultipartFormData<TFields = Record<string, unknown>>(
           })
           .on('end', () => {
             const completeFile = Buffer.concat(chunks);
-            result.files[fieldname] = {
-              image: completeFile,
-              mimetype: mimeType,
-            };
+            if (!result.files[fieldname]) {
+              result.files[fieldname] = [];
+            }
+            if (Array.isArray(result.files[fieldname])) {
+              (result.files[fieldname] as ParsedFile[]).push({
+                image: completeFile,
+                mimetype: mimeType,
+              });
+            }
           });
       });
 
