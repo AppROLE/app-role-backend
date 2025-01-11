@@ -16,7 +16,6 @@ import {
 } from 'src/shared/helpers/errors/errors';
 import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
-import { UpdateInstituteViewModel } from './update_institute_viewmodel';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
@@ -103,20 +102,19 @@ export class UpdateInstituteController {
         }
       }
 
-      await this.usecase.execute(
-        instituteId,
+      const institute = await this.usecase.execute(
+        {instituteId,
         description,
-        INSTITUTE_TYPE[instituteType as keyof typeof INSTITUTE_TYPE],
-        PARTNER_TYPE[partnerType as keyof typeof PARTNER_TYPE],
+        instituteType,
+        partnerType,
         name,
-        phone
+        phone}
       );
 
-      const viewmodel = new UpdateInstituteViewModel(
-        'Instituto atualizado com sucesso'
-      );
-
-      return new OK(viewmodel.toJSON());
+      return new OK({
+        institute: institute,
+        message: 'Instituição atualizada com sucesso',
+      });
     } catch (error: any) {
       if (
         error instanceof EntityError ||

@@ -9,8 +9,6 @@ import {
 } from '../../../../../src/shared/helpers/errors/errors';
 import { Collection, Connection } from 'mongoose';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
-import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
-import { Address } from 'src/shared/domain/entities/address';
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
   private instituteCollection: Collection<IInstitute>;

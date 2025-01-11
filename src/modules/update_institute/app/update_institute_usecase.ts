@@ -1,7 +1,18 @@
+import { Institute } from 'src/shared/domain/entities/institute';
 import { INSTITUTE_TYPE } from 'src/shared/domain/enums/institute_type_enum';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
+
+interface UpdateInstituteParams {
+  instituteId: string;
+    description?: string;
+    instituteType?: INSTITUTE_TYPE;
+    partnerType?: PARTNER_TYPE;
+    name?: string;
+    phone?: string
+}
 
 export class UpdateInstituteUseCase {
   repository: Repository;
@@ -23,49 +34,18 @@ export class UpdateInstituteUseCase {
       );
   }
 
-  async execute(
-    instituteId: string,
-    description?: string,
-    instituteType?: INSTITUTE_TYPE,
-    partnerType?: PARTNER_TYPE,
-    name?: string,
-    phone?: string
-  ) {
-    const institute: {
-      instituteId: string;
-      instituteDescription?: string;
-      instituteInstituteType?: INSTITUTE_TYPE;
-      institutePartnerType?: PARTNER_TYPE;
-      instituteName?: string;
-      institutePrice?: number;
-      institutePhone?: string;
-    } = {
-      instituteId: instituteId,
-    };
-    if (description) {
-      institute.instituteDescription = description;
-    }
-    if (instituteType) {
-      institute.instituteInstituteType = instituteType;
-    }
-    if (partnerType) {
-      institute.institutePartnerType = partnerType;
-    }
-    if (name) {
-      institute.instituteName = name;
-    }
-    if (phone) {
-      institute.institutePhone = phone;
+  async execute(params: UpdateInstituteParams): Promise<Institute> {
+
+    const institute = await this.institute_repo!.getInstituteById(
+      params.instituteId
+    );
+    if (!institute) {
+      throw new NoItemsFound('Instituto não encontrado');
     }
 
-    await this.institute_repo!.updateInstitute(
-      institute.instituteId,
-      institute.instituteDescription,
-      institute.instituteInstituteType,
-      institute.institutePartnerType,
-      institute.instituteName,
-      undefined,
-      institute.institutePhone
+    return await this.institute_repo!.updateInstitute(
+      params.instituteId,
+      params
     );
   }
 }
