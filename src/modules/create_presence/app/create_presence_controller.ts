@@ -35,7 +35,7 @@ export class CreatePresenceController {
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
       const { eventId, promoterCode } =
-        request.data as unknown as CreaterPresenceData;
+        request.data.body;
 
       if (!eventId) throw new MissingParameters('eventId');
       if (typeof eventId !== 'string')

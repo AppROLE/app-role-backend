@@ -64,6 +64,11 @@ export class UpdateProfileController {
 
       dateBirth = Number(dateBirth);
 
+      if (isNaN(dateBirth)) {
+        dateBirth = undefined;
+      }
+
+
       const { backgroundImage, profileImage } = formData.files;
 
       let backgroundPhoto: ParsedFile | undefined;
