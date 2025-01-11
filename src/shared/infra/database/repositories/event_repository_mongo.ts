@@ -111,7 +111,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
     const result = await this.eventCollection.findOneAndUpdate(
       { _id: eventId },
-      { $set: sanitizedFields },
+      { $set: sanitizedFields, updatedAt: Date.now() },
       { returnDocument: 'after' }
     );
 
