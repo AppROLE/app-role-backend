@@ -28,7 +28,7 @@ export class GetEventsByFilterController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const filters = this.validateAndSanitizeFilters(req.data.body);
+      const filters = this.validateAndSanitizeFilters(req.data.query_params);
 
       const events = await this.usecase.execute(filters);
 

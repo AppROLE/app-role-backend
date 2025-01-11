@@ -14,7 +14,7 @@ const PresenceSchema: Schema = new Schema<IPresence>({
   eventId: { type: String, ref: 'events', required: true },
   userId: { type: String, ref: 'profiles', required: true },
   promoterCode: { type: String },
-  createdAt: { type: Number },
+  createdAt: { type: Number, required: true },
 });
 
 export const PresenceModel = mongoose.model<IPresence>(

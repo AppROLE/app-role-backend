@@ -57,9 +57,9 @@ export class PresenceMongoDTO {
   toMongo(): IPresence {
     return new PresenceModel({
       presenceId: this.presenceId,
-      event_id: this.eventId,
-      username: this.userId,
-      promoter_code: this.promoterCode,
+      eventId: this.eventId,
+      userId: this.userId,
+      promoterCode: this.promoterCode,
       createdAt: this.createdAt,
     });
   }

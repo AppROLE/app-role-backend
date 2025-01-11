@@ -66,7 +66,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
 
   async getPresencesByEvent(eventId: string): Promise<Presence[]> {
     const presenceDocs = await this.presenceCollection
-      .find({ event_id: eventId })
+      .find({ eventId: eventId })
       .toArray();
 
     if (!presenceDocs || presenceDocs.length === 0) {
@@ -97,7 +97,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
     userId: string
   ): Promise<Presence | null> {
     const presenceDocs = await this.presenceCollection.findOne({
-      event_id: eventId,
+      eventId: eventId,
       username: userId,
     });
 
