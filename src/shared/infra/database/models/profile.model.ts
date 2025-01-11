@@ -44,7 +44,7 @@ const ProfileSchema: Schema = new Schema<IProfile>({
   updatedAt: { type: Number },
   phoneNumber: { type: String },
   dateBirth: { type: Number },
-  cpf: { type: String, unique: true },
+  cpf: { type: String },
   gender: { type: String },
   biography: { type: String },
   createdAt: { type: Number },

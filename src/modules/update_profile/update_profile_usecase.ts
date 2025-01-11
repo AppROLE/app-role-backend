@@ -28,6 +28,7 @@ interface UpdateProfileParams {
   linkTiktok?: string;
   profilePhoto?: string;
   backgroundPhoto?: string;
+  cpf?: string;
 }
 
 export class UpdateProfileUsecase {

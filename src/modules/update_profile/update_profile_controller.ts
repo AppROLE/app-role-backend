@@ -34,6 +34,7 @@ export interface ProfileFormDataFields {
   biography?: string;
   linkInstagram?: string;
   linkTiktok?: string;
+  cpf?: string;
 }
 
 export class UpdateProfileController {
@@ -58,6 +59,7 @@ export class UpdateProfileController {
         biography,
         linkInstagram,
         linkTiktok,
+        cpf,
       } = formData.fields;
 
       dateBirth = Number(dateBirth);
@@ -89,6 +91,7 @@ export class UpdateProfileController {
         biography,
         linkInstagram,
         linkTiktok,
+        cpf,
         profileImage: profilePhoto,
         backgroundImage: backgroundPhoto,
       });
