@@ -123,7 +123,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     // Adiciona o timestamp de atualização
-    sanitizedFields.updatedAt = new Date().getTime();
+    sanitizedFields.updatedAt = new Date() as any;
 
     const result = await this.profileCollection.findOneAndUpdate(
       { _id: userId },

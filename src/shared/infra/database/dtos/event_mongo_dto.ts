@@ -182,7 +182,7 @@ export class EventMongoDTO {
       ticketUrl: this.ticketUrl,
       reviewsId: this.reviewsId,
       presencesId: this.presencesId,
-      createdAt: this.eventDate,
+      createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     });
   }

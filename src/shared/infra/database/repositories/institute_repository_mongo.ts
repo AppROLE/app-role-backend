@@ -107,7 +107,7 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       Object.entries(updatedFields).filter(([_, value]) => value != null) // Filtra null e undefined
     );
 
-    sanitizedFields.updatedAt = new Date().getTime();
+    sanitizedFields.updatedAt = new Date() as any;
 
     const result = await this.instituteCollection.findOneAndUpdate(
       { _id: instituteId },
