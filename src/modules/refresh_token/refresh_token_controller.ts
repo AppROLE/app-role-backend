@@ -24,11 +24,11 @@ export class RefreshTokenController {
   constructor(private readonly usecase: RefreshTokenUsecase) {}
 
   async handle(request: IRequest) {
-    const refreshToken = request.data.body.refreshToken;
-
+    
     try {
+      const refreshToken = request.data.body.refreshToken;
       if (!refreshToken) {
-        throw new MissingParameters('email');
+        throw new MissingParameters('refreshToken');
       }
 
       if (typeof refreshToken !== 'string') {
