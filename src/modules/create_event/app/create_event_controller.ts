@@ -87,6 +87,8 @@ export class CreateEventController {
       latitude = Number(latitude);
       longitude = Number(longitude);
       number = Number(number);
+      
+      if(isNaN(number)) number = undefined;
       const musicTypeList = JSON.parse(musicType) as MUSIC_TYPE[];
       const packageTypeList = JSON.parse(packageType) as PACKAGE_TYPE[];
       const featuresList = JSON.parse(features) as FEATURE[];
@@ -121,10 +123,6 @@ export class CreateEventController {
 
       if (street === undefined || street === null) {
         throw new MissingParameters('street');
-      }
-
-      if (number === undefined || number === null) {
-        throw new MissingParameters('number');
       }
 
       if (neighborhood === undefined || neighborhood === null) {

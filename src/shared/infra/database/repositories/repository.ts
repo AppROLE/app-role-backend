@@ -68,10 +68,10 @@ export class Repository {
       this.institute_repo = new InstituteRepositoryMongo(this.connection);
     }
     if (this.config.presence_repo && !this.presence_repo) {
-      this.presence_repo = new PresenceRepositoryMongo(this.connection);
+      this.presence_repo = new PresenceRepositoryMongo();
     }
     if (this.config.profile_repo && !this.profile_repo) {
-      this.profile_repo = new ProfileRepositoryMongo(this.connection);
+      this.profile_repo = new ProfileRepositoryMongo();
     }
     if (this.config.file_repo && !this.file_repo) {
       this.file_repo = new FileRepositoryS3();

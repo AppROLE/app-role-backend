@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { AddressSchema } from '../schemas/address_schema';
+import { AddressSchema } from './address.model';
 import { Address } from 'src/shared/domain/entities/address';
 import { AGE_ENUM } from 'src/shared/domain/enums/age_enum';
 import { STATUS } from 'src/shared/domain/enums/status_enum';

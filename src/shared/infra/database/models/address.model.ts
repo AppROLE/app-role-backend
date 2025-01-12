@@ -1,10 +1,10 @@
-import { Schema } from "mongoose";
+import { Schema} from "mongoose";
 
 export interface IAddress {
   latitude: number;
   longitude: number;
   street: string;
-  number: number;
+  number?: number;
   neighborhood: string;
   city: string;
   state: string;
