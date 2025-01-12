@@ -34,6 +34,7 @@ export class LambdaStack extends Construct {
   getMyFollowersFunction: lambda.Function;
   getOtherFollowingFunction: lambda.Function;
   getOtherFollowersFunction: lambda.Function;
+  validateUsernameFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -248,6 +249,13 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
+    this.validateUsernameFunction = this.createLambdaApiGatewayIntegration(
+      'validate_username',
+      'GET',
+      apiGatewayResource,
+      environmentVariables,
+    );
+
     // institute routes
     this.createInstituteFunction = this.createLambdaApiGatewayIntegration(
       'create_institute',
@@ -432,7 +440,6 @@ export class LambdaStack extends Construct {
       this.updateEventFunction,
 
       // review routes
-      this.createReviewFunction,
     ];
 
     this.functionsThatNeedS3Permissions = [
