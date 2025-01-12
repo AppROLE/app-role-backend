@@ -408,38 +408,8 @@ export class LambdaStack extends Construct {
       this.verifyEmailFunction,
 
       // profile routes
-      this.favoriteInstituteFunction,
-      this.unfavoriteInstituteFunction,
-      this.getMyProfileFunction,
       this.createProfileFunction,
       this.updateProfileFunction,
-      this.getOtherProfileFunction,
-      this.getMyFollowingFunction,
-      this.getMyFollowersFunction,
-      this.getOtherFollowingFunction,
-      this.getOtherFollowersFunction,
-
-      // institute routes
-      this.createInstituteFunction,
-      this.deleteInstituteFunction,
-      this.getInstituteFunction,
-      this.getAllInstitutesFunction,
-      this.getAllInstitutesByPartnerTypeFunction,
-      this.updateInstituteFunction,
-
-      // event routes
-      this.createPresenceFunction,
-      this.createEventFunction,
-      this.deleteEventFunction,
-      this.getEventFunction,
-      this.getAllEventsFunction,
-      this.getAllEventsByFilterFunction,
-      this.getAllPresencesByEventIdFunction,
-      this.getTopEventsFunction,
-      this.deletePresenceFunction,
-      this.updateEventFunction,
-
-      // review routes
     ];
 
     this.functionsThatNeedS3Permissions = [

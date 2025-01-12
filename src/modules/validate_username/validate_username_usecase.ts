@@ -23,6 +23,6 @@ export class ValidateUsenameUsecase {
   async execute(username: string): Promise<boolean> {
     const profile = await this.profile_repo!.getByUsername(username);
 
-    return !profile;
+    return (profile === null);
   }
 }
