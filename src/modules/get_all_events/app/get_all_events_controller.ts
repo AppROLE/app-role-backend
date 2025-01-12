@@ -25,13 +25,13 @@ export class GetAllEventsController {
   async handle(req: IRequest) {
     try {
 
-      const { fromtoday, page } = req.data.query_params;
+      const { fromToday, page } = req.data.query_params;
 
-      if (fromtoday === 'true') {
+      if (fromToday === 'true') {
         const pageNumber = Number(page);
 
         if (isNaN(pageNumber) || pageNumber <= 0) {
-          throw new InternalServerError('Invalid page number');
+          throw new MissingParameters('Invalid page number');
         }
 
         const events = await this.usecase.executeFromToday(pageNumber);
