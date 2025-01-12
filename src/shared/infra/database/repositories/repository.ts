@@ -65,7 +65,7 @@ export class Repository {
       this.event_repo = new EventRepositoryMongo();
     }
     if (this.config.institute_repo && !this.institute_repo) {
-      this.institute_repo = new InstituteRepositoryMongo(this.connection);
+      this.institute_repo = new InstituteRepositoryMongo();
     }
     if (this.config.presence_repo && !this.presence_repo) {
       this.presence_repo = new PresenceRepositoryMongo();

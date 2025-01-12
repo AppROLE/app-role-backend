@@ -43,7 +43,6 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     const profiles = await ProfileModel.find({
       $or: [
         { username: { $regex: `^${searchTerm}`, $options: 'i' } },
-        { nickname: { $regex: `^${searchTerm}`, $options: 'i' } },
       ],
     })
       .limit(10)
