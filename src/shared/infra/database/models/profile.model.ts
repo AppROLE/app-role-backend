@@ -53,12 +53,12 @@ const ProfileSchema: Schema = new Schema<IProfile>({
   backgroundPhoto: { type: String },
   profilePhoto: { type: String },
   privacy: { type: String },
-  followers: [{ type: Schema.Types.ObjectId, ref: 'profiles' }],
-  following: [{ type: Schema.Types.ObjectId, ref: 'profiles' }],
-  favorites: [{ type: Schema.Types.ObjectId, ref: 'institutes' }],
-  reviewsId: [{ type: Schema.Types.ObjectId, ref: 'reviews' }],
+  followers: [{ type: String, ref: 'profiles' }],
+  following: [{ type: String, ref: 'profiles' }],
+  favorites: [{ type: String, ref: 'institutes' }],
+  reviewsId: [{ type: String, ref: 'reviews' }],
   searchHistory: [{ type: String }],
-  presencesId: [{ type: Schema.Types.ObjectId, ref: 'presences' }],
+  presencesId: [{ type: String, ref: 'presences' }],
 });
 
 export const ProfileModel = mongoose.model<IProfile>('profiles', ProfileSchema);
