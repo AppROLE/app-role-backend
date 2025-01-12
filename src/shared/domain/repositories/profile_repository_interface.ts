@@ -15,8 +15,6 @@ export interface IProfileRepository {
     userId: string,
     updateFields: Partial<Profile>
   ): Promise<Profile>;
-  addFollower(followerUserId: string, followedUserId: string): Promise<void>;
-  removeFollower(followerUserId: string, followedUserId: string): Promise<void>;
   addFavoriteInstitute(userId: string, instituteId: string): Promise<void>;
   removeFavoriteInstitute(userId: string, instituteId: string): Promise<void>;
   removeAllFavoriteInstitute(userId: string): Promise<void>;
