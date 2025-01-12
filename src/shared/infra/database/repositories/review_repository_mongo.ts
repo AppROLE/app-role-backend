@@ -1,54 +1,34 @@
 import { Review } from 'src/shared/domain/entities/review';
 import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
 import { IReview, ReviewModel } from '../models/review.model';
-import { Collection, Connection } from 'mongoose';
 import { ReviewDTO } from '../dtos/review_dto';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 
 export class ReviewRepositoryMongo implements IReviewRepository {
-  private reviewCollection: Collection<IReview>;
-
-  constructor(connection: Connection) {
-    this.reviewCollection = connection.collection<IReview>('reviews');
-  }
 
   async createReview(review: Review): Promise<Review> {
     const reviewDoc = ReviewDTO.fromEntity(review).toMongo();
     const result = await ReviewModel.create(reviewDoc);
 
-    console.log("resultado do createReview", result)
-
-    if (!result) {
-      throw new Error('Erro ao criar a revisão no MongoDB.');
-    }
-
-    const createdReview = await this.reviewCollection.findOne({
-      _id: reviewDoc._id,
-    });
-    if (!createdReview) {
-      throw new Error('Erro ao buscar a revisão criada no MongoDB.');
-    }
-
-    return ReviewDTO.fromMongo(createdReview).toEntity();
+    return ReviewDTO.fromMongo(result).toEntity();
   }
 
   async getReviewsByEventId(eventId: string): Promise<Review[]> {
-    const reviewsCursor = this.reviewCollection.find({ eventId });
-    const reviewsArray = await reviewsCursor.toArray();
+    const reviewsArray = await ReviewModel.find({ eventId }).lean();
 
     return reviewsArray.map((review) => ReviewDTO.fromMongo(review).toEntity());
   }
 
   async getReviewsByUserId(userId: string): Promise<Review[]> {
-    const reviewsCursor = this.reviewCollection.find({ userId });
-    const reviewsArray = await reviewsCursor.toArray();
+    const reviewsArray = await ReviewModel.find({ userId }).lean();
 
     return reviewsArray.map((review) => ReviewDTO.fromMongo(review).toEntity());
   }
 
   async deleteReviewById(reviewId: string): Promise<void> {
-    const result = await this.reviewCollection.deleteOne({ _id: reviewId });
+    const result = await ReviewModel.deleteOne({ _id: reviewId });
     if (result.deletedCount === 0) {
-      throw new Error(`Revisão com ID ${reviewId} não encontrada.`);
+      throw new NoItemsFound(`Review com ID ${reviewId} não encontrada.`);
     }
   }
 }

@@ -80,7 +80,7 @@ export class Repository {
       this.auth_repo = new AuthRepositoryCognito();
     }
     if (this.config.review_repo && !this.review_repo) {
-      this.review_repo = new ReviewRepositoryMongo(this.connection);
+      this.review_repo = new ReviewRepositoryMongo();
     }
   }
 
