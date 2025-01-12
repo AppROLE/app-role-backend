@@ -62,7 +62,7 @@ export class Repository {
     console.log('✅ Conexão com MongoDB estabelecida com sucesso.');
 
     if (this.config.event_repo && !this.event_repo) {
-      this.event_repo = new EventRepositoryMongo(this.connection);
+      this.event_repo = new EventRepositoryMongo();
     }
     if (this.config.institute_repo && !this.institute_repo) {
       this.institute_repo = new InstituteRepositoryMongo(this.connection);
