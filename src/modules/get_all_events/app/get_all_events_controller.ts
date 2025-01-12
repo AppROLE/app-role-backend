@@ -25,7 +25,7 @@ export class GetAllEventsController {
   async handle(req: IRequest) {
     try {
 
-      const { fromtoday, page } = req.data.body;
+      const { fromtoday, page } = req.data.query_params;
 
       if (fromtoday === 'true') {
         const pageNumber = Number(page);
