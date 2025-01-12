@@ -21,8 +21,11 @@ import { ValidateUsenameUsecase } from './validate_username_usecase';
 export class ValidateUsenameController {
   constructor(private readonly usecase: ValidateUsenameUsecase) {}
 
-  async handle(request: IRequest) {
+  async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
+      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
+
+      if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
         const username = request.data.query_params.username;
 

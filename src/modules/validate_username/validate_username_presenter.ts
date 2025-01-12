@@ -10,8 +10,9 @@ import { ValidateUsenameUsecase } from './validate_username_usecase';
   
   export async function lambda_handler(event: any, context: any) {
     const httpRequest = new LambdaHttpRequest(event);
-    await usecase.connect();
-    const response = await controller.handle(httpRequest);
+        const requesterUser = event.requestContext.authorizer.claims;
+        await usecase.connect();
+        const response = await controller.handle(httpRequest, requesterUser);
     const httpResponse = new LambdaHttpResponse(
       response?.body,
       response?.statusCode,

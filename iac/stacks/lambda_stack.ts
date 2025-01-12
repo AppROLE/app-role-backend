@@ -255,6 +255,7 @@ export class LambdaStack extends Construct {
       'GET',
       apiGatewayResource,
       environmentVariables,
+      authorizer
     );
 
     this.searchProfilesFunction = this.createLambdaApiGatewayIntegration(
