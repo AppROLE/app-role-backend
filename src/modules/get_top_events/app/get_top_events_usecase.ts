@@ -31,17 +31,17 @@ export class GetTopEventsUseCase {
   async execute(): Promise<Event[]> {
     const now = new Date();
     const today = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    let startDate: number, endDate: number;
+    let startDate: Date, endDate: Date;
 
     // Define os intervalos de acordo com o dia atual
     if (today === 4) {
       // Quinta-feira
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime(); // Sexta
-      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2).getTime(); // Sábado
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Sexta
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2); // Sábado
     } else if (today === 5) {
       // Sexta-feira
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime(); // Sábado
-      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime(); // Sábado
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Sábado
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Sábado
     } else if (today === 6) {
       // Sábado
       const nextWeekThursday = new Date(
@@ -49,12 +49,12 @@ export class GetTopEventsUseCase {
         now.getMonth(),
         now.getDate() + (7 - today + 4)
       ); // Próxima quinta-feira
-      startDate = nextWeekThursday.getTime();
+      startDate = nextWeekThursday;
       endDate = new Date(
         nextWeekThursday.getFullYear(),
         nextWeekThursday.getMonth(),
         nextWeekThursday.getDate() + 2
-      ).getTime(); // Próximo sábado
+      ); // Próximo sábado
     } else {
       // Domingo até quarta-feira
       const thisWeekThursday = new Date(
@@ -62,12 +62,12 @@ export class GetTopEventsUseCase {
         now.getMonth(),
         now.getDate() + (4 - today)
       ); // Próxima quinta-feira
-      startDate = thisWeekThursday.getTime();
+      startDate = thisWeekThursday;
       endDate = new Date(
         thisWeekThursday.getFullYear(),
         thisWeekThursday.getMonth(),
         thisWeekThursday.getDate() + 2
-      ).getTime(); // Sábado
+      ); // Sábado
     }
 
     // Definir o filtro para eventos dentro do intervalo
