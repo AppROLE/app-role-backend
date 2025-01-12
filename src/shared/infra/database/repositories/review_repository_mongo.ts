@@ -1,6 +1,6 @@
 import { Review } from 'src/shared/domain/entities/review';
 import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
-import { IReview } from '../models/review.model';
+import { IReview, ReviewModel } from '../models/review.model';
 import { Collection, Connection } from 'mongoose';
 import { ReviewDTO } from '../dtos/review_dto';
 
@@ -13,10 +13,12 @@ export class ReviewRepositoryMongo implements IReviewRepository {
 
   async createReview(review: Review): Promise<Review> {
     const reviewDoc = ReviewDTO.fromEntity(review).toMongo();
-    const result = await this.reviewCollection.insertOne(reviewDoc);
+    const result = await ReviewModel.create(reviewDoc);
 
-    if (!result.acknowledged) {
-      throw new Error('Erro ao criar revisão no MongoDB.');
+    console.log("resultado do createReview", result)
+
+    if (!result) {
+      throw new Error('Erro ao criar a revisão no MongoDB.');
     }
 
     const createdReview = await this.reviewCollection.findOne({
