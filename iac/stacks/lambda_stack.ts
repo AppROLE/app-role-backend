@@ -345,8 +345,7 @@ export class LambdaStack extends Construct {
       'get_all_events',
       'GET',
       apiGatewayResource,
-      environmentVariables,
-      authorizer
+      environmentVariables
     );
 
     this.getAllEventsByFilterFunction = this.createLambdaApiGatewayIntegration(

@@ -22,11 +22,8 @@ import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gatew
 export class GetAllEventsController {
   constructor(private readonly usecase: GetAllEventsUseCase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>) {
+  async handle(req: IRequest) {
     try {
-      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-      if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
       const { fromtoday, page } = req.data.body;
 
