@@ -38,28 +38,24 @@ export class FileRepositoryS3 implements IFileRepository {
   }
 
   async validateImageContent(image: Buffer): Promise<void> {
-    try {
-      const params = {
-        Image: {
-          Bytes: image,
-        },
-      };
+    const params = {
+      Image: {
+        Bytes: image,
+      },
+    };
 
-      const command = new DetectModerationLabelsCommand(params);
-      const response = await this.rekognitionClient.send(command);
+    const command = new DetectModerationLabelsCommand(params);
+    const response = await this.rekognitionClient.send(command);
 
-      const labels = response.ModerationLabels || [];
-      const inappropriateLabels = labels.filter((label) =>
-        ['Explicit Nudity', 'Violence', 'Suggestive'].includes(label.Name!)
+    const labels = response.ModerationLabels || [];
+    const inappropriateLabels = labels.filter((label) =>
+      ['Explicit Nudity', 'Violence', 'Suggestive'].includes(label.Name!)
+    );
+
+    if (inappropriateLabels.length > 0) {
+      throw new RecognitionError(
+        ` ${inappropriateLabels.map((label) => label.Name).join(', ')}`
       );
-
-      if (inappropriateLabels.length > 0) {
-        throw new RecognitionError(
-          ` ${inappropriateLabels.map((label) => label.Name).join(', ')}`
-        );
-      }
-    } catch (error: any) {
-      throw new S3Exception(`validateImageContent - ${error.message}`);
     }
   }
 
