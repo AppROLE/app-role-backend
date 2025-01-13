@@ -60,6 +60,9 @@ export class CreateProfileUsecase {
     let profilePhoto = undefined;
 
     if (params.image) {
+      // Valida a imagem utilizando Rekognition antes do upload
+      await this.file_repo!.validateImageContent(params.image.image);
+
       profilePhoto = await this.file_repo!.uploadImage(
         `profiles/${params.userId}/profile-photo.${
           params.image.mimetype.split('/')[1]

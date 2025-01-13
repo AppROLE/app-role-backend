@@ -1,4 +1,5 @@
 export interface IFileRepository {
+  validateImageContent(image: Buffer): Promise<void>;
   uploadImage(
     imagePathName: string,
     image: Buffer,

@@ -2,6 +2,7 @@ import {
   ForbiddenAction,
   MissingParameters,
   NoItemsFound,
+  RecognitionError,
   UserAlreadyExists,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
@@ -90,7 +91,8 @@ export class CreateProfileController {
       if (
         error instanceof EntityError ||
         error instanceof MissingParameters ||
-        error instanceof WrongTypeParameters
+        error instanceof WrongTypeParameters ||
+        error instanceof RecognitionError
       ) {
         return new BadRequest(error.message);
       }

@@ -8,22 +8,59 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
-} from "@aws-sdk/client-s3";
-import { Environments } from "src/shared/environments";
-import { Readable } from "stream";
-import sharp from "sharp";
-import { S3Exception } from "src/shared/helpers/errors/errors";
-import { IFileRepository } from "src/shared/domain/repositories/file_repository_interface";
+} from '@aws-sdk/client-s3';
+import { Environments } from 'src/shared/environments';
+import { Readable } from 'stream';
+import sharp from 'sharp';
+import {
+  RecognitionError,
+  S3Exception,
+} from 'src/shared/helpers/errors/errors';
+import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
+import {
+  RekognitionClient,
+  DetectModerationLabelsCommand,
+} from '@aws-sdk/client-rekognition';
 
 export class FileRepositoryS3 implements IFileRepository {
   bucketName: string;
   s3Client: S3Client;
+  rekognitionClient: RekognitionClient;
 
   constructor() {
     this.bucketName = Environments.bucketName;
     this.s3Client = new S3Client({
       region: Environments.region,
     });
+    this.rekognitionClient = new RekognitionClient({
+      region: 'us-east-1',
+    });
+  }
+
+  async validateImageContent(image: Buffer): Promise<void> {
+    try {
+      const params = {
+        Image: {
+          Bytes: image,
+        },
+      };
+
+      const command = new DetectModerationLabelsCommand(params);
+      const response = await this.rekognitionClient.send(command);
+
+      const labels = response.ModerationLabels || [];
+      const inappropriateLabels = labels.filter((label) =>
+        ['Explicit Nudity', 'Violence', 'Suggestive'].includes(label.Name!)
+      );
+
+      if (inappropriateLabels.length > 0) {
+        throw new RecognitionError(
+          ` ${inappropriateLabels.map((label) => label.Name).join(', ')}`
+        );
+      }
+    } catch (error: any) {
+      throw new S3Exception(`validateImageContent - ${error.message}`);
+    }
   }
 
   async compressImage(image: Buffer, mimetype: string): Promise<Buffer> {
@@ -33,7 +70,7 @@ export class FileRepositoryS3 implements IFileRepository {
         .jpeg({ quality: 90 })
         .toBuffer();
     } catch (error: any) {
-      throw new S3Exception(`Error on compressImage: ${error.message}`);
+      throw new S3Exception(`compressImage - ${error.message}`);
     }
   }
 
@@ -115,8 +152,8 @@ export class FileRepositoryS3 implements IFileRepository {
 
   async deleteFolder(folderPath: string): Promise<void> {
     try {
-      if (!folderPath.endsWith("/")) {
-        folderPath += "/";
+      if (!folderPath.endsWith('/')) {
+        folderPath += '/';
       }
 
       const listedObjects = await this.s3Client.send(
@@ -156,9 +193,9 @@ export class FileRepositoryS3 implements IFileRepository {
   private async bodyToBuffer(body: Readable): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const chunks: Uint8Array[] = [];
-      body.on("data", (chunk: Uint8Array) => chunks.push(chunk));
-      body.on("end", () => resolve(Buffer.concat(chunks)));
-      body.on("error", reject);
+      body.on('data', (chunk: Uint8Array) => chunks.push(chunk));
+      body.on('end', () => resolve(Buffer.concat(chunks)));
+      body.on('error', reject);
     });
   }
 }
