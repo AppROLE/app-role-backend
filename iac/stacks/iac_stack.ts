@@ -87,12 +87,19 @@ export class IacStack extends Stack {
       resources: [existingBucket.bucketArn, `${existingBucket.bucketArn}/*`],
     });
 
+    const rekognitionPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['rekognition:DetectModerationLabels'],
+      resources: ['*'],
+    });
+
     for (const fn of lambdaStack.functionsThatNeedCognitoPermissions) {
       fn.addToRolePolicy(cognitoAdminPolicy);
     }
 
     for (const fn of lambdaStack.functionsThatNeedS3Permissions) {
       fn.addToRolePolicy(s3Policy);
+      fn.addToRolePolicy(rekognitionPolicy);
     }
   }
 }
