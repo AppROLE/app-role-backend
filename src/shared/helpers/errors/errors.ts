@@ -134,3 +134,9 @@ export class S3Exception extends BaseError {
     super(`S3 Error: ${message}`);
   }
 }
+
+export class RecognitionError extends BaseError {
+  constructor(message: string) {
+    super(`Imagem pode conter: ${message}`);
+  }
+}
