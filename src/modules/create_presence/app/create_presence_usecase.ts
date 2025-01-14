@@ -65,15 +65,14 @@ export class CreatePresenceUsecase {
       userId: userId,
       promoterCode: promoterCode,
       createdAt: new Date().getTime(),
+      eventDate: event.eventDate,
     });
 
     const presenceCreated = await this.presence_repo!.createPresence(presence);
 
-    await this.profile_repo!.updateProfile(userId, 
-      {
-        presencesId: [...profile.presencesId, presenceCreated.presenceId],
-      }
-    );
+    await this.profile_repo!.updateProfile(userId, {
+      presencesId: [...profile.presencesId, presenceCreated.presenceId],
+    });
 
     await this.event_repo!.updateEvent(eventId, {
       presencesId: [...event.presencesId, presenceCreated.presenceId],

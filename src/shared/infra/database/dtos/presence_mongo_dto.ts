@@ -1,5 +1,5 @@
-import { Presence } from "src/shared/domain/entities/presence";
-import { IPresence, PresenceModel } from "../models/presence.model";
+import { Presence } from 'src/shared/domain/entities/presence';
+import { IPresence, PresenceModel } from '../models/presence.model';
 
 export interface PresenceMongoDTOProps {
   presenceId: string;
@@ -7,6 +7,7 @@ export interface PresenceMongoDTOProps {
   userId: string;
   promoterCode?: string;
   createdAt: number;
+  eventDate: number;
 }
 
 export class PresenceMongoDTO {
@@ -15,6 +16,7 @@ export class PresenceMongoDTO {
   userId: string;
   promoterCode?: string;
   createdAt: number;
+  eventDate: number;
 
   constructor(props: PresenceMongoDTOProps) {
     this.presenceId = props.presenceId;
@@ -22,6 +24,7 @@ export class PresenceMongoDTO {
     this.userId = props.userId;
     this.promoterCode = props.promoterCode;
     this.createdAt = props.createdAt;
+    this.eventDate = props.eventDate;
   }
 
   static fromMongo(presence: IPresence): PresenceMongoDTO {
@@ -31,6 +34,7 @@ export class PresenceMongoDTO {
       userId: presence.userId,
       promoterCode: presence.promoterCode,
       createdAt: presence.createdAt.getTime(),
+      eventDate: presence.eventDate.getTime(),
     });
   }
 
@@ -41,6 +45,7 @@ export class PresenceMongoDTO {
       userId: this.userId,
       promoterCode: this.promoterCode,
       createdAt: this.createdAt,
+      eventDate: this.eventDate,
     });
   }
 
@@ -51,6 +56,7 @@ export class PresenceMongoDTO {
       userId: presence.userId,
       promoterCode: presence.promoterCode,
       createdAt: presence.createdAt,
+      eventDate: presence.eventDate,
     });
   }
 
@@ -61,6 +67,7 @@ export class PresenceMongoDTO {
       userId: this.userId,
       promoterCode: this.promoterCode,
       createdAt: this.createdAt,
+      eventDate: this.eventDate,
     });
   }
 }

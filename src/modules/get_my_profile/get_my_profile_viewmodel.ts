@@ -1,6 +1,4 @@
 import { Profile } from 'src/shared/domain/entities/profile';
-import { STATUS } from 'src/shared/domain/enums/status_enum';
-import { ConfirmedEventsResponse } from './get_my_profile_usecase';
 
 class ProfileViewmodel {
   userId: string;
@@ -43,53 +41,16 @@ class ProfileViewmodel {
   }
 }
 
-class ConfirmedEventsViewmodel {
-  eventId: string;
-  eventName: string;
-  instituteName: string;
-  neighborhood: string;
-  eventStatus: STATUS;
-  eventPhoto: string;
-  eventDate: number;
-
-  constructor(event: ConfirmedEventsResponse) {
-    this.eventId = event.eventId;
-    this.eventName = event.eventName;
-    this.instituteName = event.instituteName;
-    this.neighborhood = event.neighborhood;
-    this.eventStatus = event.eventStatus;
-    this.eventPhoto = event.eventPhoto;
-    this.eventDate = event.eventDate;
-  }
-
-  toJSON() {
-    return {
-      eventId: this.eventId,
-      eventName: this.eventName,
-      instituteName: this.instituteName,
-      neighborhood: this.neighborhood,
-      eventStatus: this.eventStatus,
-      eventPhoto: this.eventPhoto,
-      eventDate: this.eventDate,
-    };
-  }
-}
-
 export class GetMyProfileViewmodel {
   private profile: ProfileViewmodel;
-  private confirmedEvents: ConfirmedEventsViewmodel[];
 
-  constructor(profile: Profile, confirmedEvents: ConfirmedEventsResponse[]) {
+  constructor(profile: Profile) {
     this.profile = new ProfileViewmodel(profile);
-    this.confirmedEvents = confirmedEvents.map(
-      (event) => new ConfirmedEventsViewmodel(event)
-    );
   }
 
   toJSON() {
     return {
       profile: this.profile.toJSON(),
-      confirmedEvents: this.confirmedEvents.map((event) => event.toJSON()),
     };
   }
 }
