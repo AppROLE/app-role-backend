@@ -1,6 +1,5 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import { GetEventsByFilterUseCase } from './get_all_events_by_filter_usecase';
-import { GetAllEventsByFilterViewModel } from './get_all_events_by_filter_viewmodel';
 import {
   BadRequest,
   Conflict,
@@ -28,13 +27,19 @@ export class GetEventsByFilterController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const filters = this.validateAndSanitizeFilters(req.data.query_params);
+      const { page, ...queryFilters } = req.data.query_params; // Removendo "page" dos filtros
+      const pageNumber = Number(page);
 
-      const events = await this.usecase.execute(filters);
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
+      }
 
-      const viewModel = new GetAllEventsByFilterViewModel(events);
+      const paginatedEvents = await this.usecase.execute(
+        pageNumber,
+        queryFilters
+      );
 
-      return new OK(viewModel.toJSON());
+      return new OK(paginatedEvents);
     } catch (error: any) {
       if (
         error instanceof EntityError ||
@@ -60,42 +65,5 @@ export class GetEventsByFilterController {
     } finally {
       await this.usecase.repository.closeSession();
     }
-  }
-
-  private validateAndSanitizeFilters(filters: any): any {
-    const sanitizedFilters: any = {};
-
-    if (filters.name && typeof filters.name === 'string') {
-      sanitizedFilters.name = filters.name.replace(/\+/g, ' ');
-    }
-
-    if (filters.price) {
-      const price = Number(filters.price);
-      if (!isNaN(price)) {
-        sanitizedFilters.price = price;
-      }
-    }
-
-    if (filters.eventDate && !isNaN(new Date(filters.eventDate).getTime())) {
-      sanitizedFilters.eventDate = filters.eventDate;
-    }
-
-    if (filters.instituteId) {
-      sanitizedFilters.instituteId = filters.instituteId;
-    }
-
-    if (filters.musicType) {
-      sanitizedFilters.musicType = filters.musicType;
-    }
-
-    if (filters.features) {
-      sanitizedFilters.features = filters.features;
-    }
-
-    if (filters.category) {
-      sanitizedFilters.category = filters.category;
-    }
-
-    return sanitizedFilters;
   }
 }

@@ -1,6 +1,5 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
 import { GetAllEventsUseCase } from './get_all_events_usecase';
-import { GetAllEventsViewModel } from './get_all_events_viewmodel';
 import {
   BadRequest,
   Conflict,
@@ -17,32 +16,28 @@ import {
   NoItemsFound,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
-import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 
 export class GetAllEventsController {
   constructor(private readonly usecase: GetAllEventsUseCase) {}
 
   async handle(req: IRequest) {
     try {
-
       const { fromToday, page } = req.data.query_params;
 
-      if (fromToday === 'true') {
-        const pageNumber = Number(page);
+      const pageNumber = Number(page);
 
-        if (isNaN(pageNumber) || pageNumber <= 0) {
-          throw new MissingParameters('Invalid page number');
-        }
-
-        const events = await this.usecase.executeFromToday(pageNumber);
-        const viewModel = new GetAllEventsViewModel(events);
-
-        return new OK(viewModel.toJSON());
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
       }
 
-      const events = await this.usecase.execute();
-      const viewModel = new GetAllEventsViewModel(events);
-      return new OK(viewModel.toJSON());
+      if (fromToday === 'true') {
+        const paginatedEvents = await this.usecase.executeFromToday(pageNumber);
+
+        return new OK(paginatedEvents);
+      }
+
+      const paginatedEvents = await this.usecase.execute(pageNumber);
+      return new OK(paginatedEvents);
     } catch (error: any) {
       if (
         error instanceof EntityError ||

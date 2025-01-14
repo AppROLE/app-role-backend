@@ -1,19 +1,13 @@
-import { Address } from '../entities/address';
+import { EventPagination } from 'src/shared/helpers/types/event_pagination';
 import { Event } from '../entities/event';
-import { AGE_ENUM } from '../enums/age_enum';
-import { CATEGORY } from '../enums/category_enum';
-import { FEATURE } from '../enums/feature_enum';
-import { MUSIC_TYPE } from '../enums/music_type_enum';
-import { PACKAGE_TYPE } from '../enums/package_type_enum';
-import { STATUS } from '../enums/status_enum';
 
 export interface IEventRepository {
   createEvent(event: Event): Promise<Event>;
   deleteEvent(eventId: string): Promise<void>;
-  getAllEvents(): Promise<Event[]>;
+  getAllEventsPaginated(page: number): Promise<EventPagination>;
+  getAllEventsFromToday(page: number): Promise<EventPagination>;
+  getEventsByFilter(page: number, filter: any): Promise<EventPagination>;
   getEventsByIds(eventIds: string[]): Promise<Event[]>;
-  getAllEventsFromToday(): Promise<Event[]>;
-  getEventsByFilter(filter: any): Promise<Event[]>;
   getEventById(eventId: string): Promise<Event | null>;
   updateEvent(eventId: string, updatedFields: Partial<Event>): Promise<Event>;
 }
