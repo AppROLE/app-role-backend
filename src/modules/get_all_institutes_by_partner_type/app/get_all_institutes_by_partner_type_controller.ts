@@ -38,7 +38,8 @@ export class GetAllInstitutesByPartnerTypeController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { partnerType } = req.data.query_params;
+      const { page, partnerType } = req.data.query_params;
+
       if (typeof partnerType !== 'string') {
         throw new WrongTypeParameters(
           'partnerType',
@@ -47,15 +48,20 @@ export class GetAllInstitutesByPartnerTypeController {
         );
       }
 
+      const pageNumber = Number(page);
+
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
+      }
+
       const partnerTypeEnum = toEnumPartnerType(partnerType);
 
-      const institutes = await this.usecase.execute(partnerTypeEnum);
+      const institutesPaginated = await this.usecase.execute(
+        page,
+        partnerTypeEnum
+      );
 
-
-      return new OK({
-        institutes: institutes,
-        message: "Institutos retornados com sucesso",
-      });
+      return new OK(institutesPaginated);
     } catch (error: any) {
       if (
         error instanceof EntityError ||

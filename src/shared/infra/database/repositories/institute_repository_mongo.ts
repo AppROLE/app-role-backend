@@ -4,6 +4,7 @@ import { InstituteModel } from '../models/institute.model';
 import { InstituteMongoDTO } from '../dtos/institute_mongo_dto';
 import { NoItemsFound } from '../../../../../src/shared/helpers/errors/errors';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
   async createInstitute(institute: Institute): Promise<Institute> {
@@ -14,7 +15,9 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
 
   async getInstituteById(instituteId: string): Promise<Institute | null> {
     const instituteDoc = await InstituteModel.findById(instituteId).lean();
-    return instituteDoc ? InstituteMongoDTO.fromMongo(instituteDoc).toEntity() : null;
+    return instituteDoc
+      ? InstituteMongoDTO.fromMongo(instituteDoc).toEntity()
+      : null;
   }
 
   async getAllInstitutes(): Promise<Institute[]> {
@@ -22,12 +25,18 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     if (!instituteDocs.length) {
       throw new NoItemsFound('institutes');
     }
-    return instituteDocs.map((doc) => InstituteMongoDTO.fromMongo(doc).toEntity());
+    return instituteDocs.map((doc) =>
+      InstituteMongoDTO.fromMongo(doc).toEntity()
+    );
   }
 
   async getInstitutesByIds(institutesId: string[]): Promise<Institute[]> {
-    const instituteDocs = await InstituteModel.find({ _id: { $in: institutesId } }).lean();
-    return instituteDocs.map((doc) => InstituteMongoDTO.fromMongo(doc).toEntity());
+    const instituteDocs = await InstituteModel.find({
+      _id: { $in: institutesId },
+    }).lean();
+    return instituteDocs.map((doc) =>
+      InstituteMongoDTO.fromMongo(doc).toEntity()
+    );
   }
 
   async deleteInstituteById(instituteId: string): Promise<void> {
@@ -37,9 +46,33 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     }
   }
 
-  async getAllInstitutesByPartnerType(partnerType: PARTNER_TYPE): Promise<Institute[]> {
-    const instituteDocs = await InstituteModel.find({ partnerType }).lean();
-    return instituteDocs.map((doc) => InstituteMongoDTO.fromMongo(doc).toEntity());
+  async getInstitutesByFilter(
+    page: number,
+    filter: any
+  ): Promise<PaginationReturn<Institute>> {
+    const limit = 30;
+    const skip = (page - 1) * limit;
+
+    const [institutes, totalCount] = await Promise.all([
+      InstituteModel.find(filter || {})
+        .sort({ name: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      InstituteModel.countDocuments(filter || {}),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      items: institutes.map((doc) =>
+        InstituteMongoDTO.fromMongo(doc).toEntity()
+      ),
+      totalPages,
+      totalCount,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
   }
 
   async updateInstitute(
@@ -65,7 +98,10 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     return InstituteMongoDTO.fromMongo(result).toEntity();
   }
 
-  async addEventToInstitute(instituteId: string, eventId: string): Promise<void> {
+  async addEventToInstitute(
+    instituteId: string,
+    eventId: string
+  ): Promise<void> {
     const result = await InstituteModel.updateOne(
       { _id: instituteId },
       { $addToSet: { eventsId: eventId } }

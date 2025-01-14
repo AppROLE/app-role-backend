@@ -2,6 +2,7 @@ import { Institute } from 'src/shared/domain/entities/institute';
 import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllInstitutesByPartnerTypeUseCase {
@@ -24,7 +25,11 @@ export class GetAllInstitutesByPartnerTypeUseCase {
       );
   }
 
-  async execute(partnerType: PARTNER_TYPE) : Promise<Institute[]> {
-    return this.institute_repo!.getAllInstitutesByPartnerType(partnerType);
+  async execute(
+    page: number,
+    partnerType: PARTNER_TYPE
+  ): Promise<PaginationReturn<Institute>> {
+    const filter = { partnerType, instituteType: 'ESTABELECIMENTO_FIXO' };
+    return this.institute_repo!.getInstitutesByFilter(page, filter);
   }
 }

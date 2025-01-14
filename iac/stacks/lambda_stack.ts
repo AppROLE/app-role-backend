@@ -287,8 +287,7 @@ export class LambdaStack extends Construct {
       'get_all_institutes',
       'GET',
       apiGatewayResource,
-      environmentVariables,
-      authorizer
+      environmentVariables
     );
 
     this.getAllInstitutesByPartnerTypeFunction =
@@ -296,16 +295,14 @@ export class LambdaStack extends Construct {
         'get_all_institutes_by_partner_type',
         'GET',
         apiGatewayResource,
-        environmentVariables,
-        authorizer
+        environmentVariables
       );
 
     this.getInstituteFunction = this.createLambdaApiGatewayIntegration(
       'get_institute',
       'GET',
       apiGatewayResource,
-      environmentVariables,
-      authorizer
+      environmentVariables
     );
 
     this.updateInstituteFunction = this.createLambdaApiGatewayIntegration(
@@ -352,8 +349,7 @@ export class LambdaStack extends Construct {
       'get_all_events_by_filter',
       'GET',
       apiGatewayResource,
-      environmentVariables,
-      authorizer
+      environmentVariables
     );
 
     this.getAllPresencesByEventIdFunction =
@@ -377,8 +373,7 @@ export class LambdaStack extends Construct {
       'get_top_events',
       'GET',
       apiGatewayResource,
-      environmentVariables,
-      authorizer
+      environmentVariables
     );
 
     this.deletePresenceFunction = this.createLambdaApiGatewayIntegration(
