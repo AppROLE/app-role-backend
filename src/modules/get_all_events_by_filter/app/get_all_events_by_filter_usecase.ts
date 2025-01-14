@@ -1,6 +1,7 @@
 import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
-import { EventPagination } from 'src/shared/helpers/types/event_pagination';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
+import { Event } from 'src/shared/domain/entities/event';
 
 export class GetEventsByFilterUseCase {
   repository: Repository;
@@ -20,13 +21,14 @@ export class GetEventsByFilterUseCase {
       throw new Error('Expected to have an instance of the event repository');
   }
 
-  async execute(page: number, filters: any): Promise<EventPagination> {
+  async execute(page: number, filters: any): Promise<PaginationReturn<Event>> {
     const sanitizedFilters = this.sanitizeFilters(filters);
 
     const result = await this.event_repo!.getEventsByFilter(
       page,
       sanitizedFilters
     );
+
     return result;
   }
 

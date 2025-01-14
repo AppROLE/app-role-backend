@@ -3,7 +3,8 @@ import { ProfileMongoDTO } from '../dtos/profile_mongo_dto';
 import { ProfileModel } from '../models/profile.model';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { Profile } from 'src/shared/domain/entities/profile';
-import { FindPersonReturnType } from 'src/shared/helpers/types/find_person_return_type';
+import { FindPersonReturn } from 'src/shared/helpers/types/find_person_return_type';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
@@ -21,9 +22,30 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
-  async getProfilesByIds(profilesId: string[]): Promise<Profile[]> {
-    const profiles = await ProfileModel.find({ _id: { $in: profilesId } }).lean();
-    return profiles.map((profileDoc) => ProfileMongoDTO.fromMongo(profileDoc).toEntity());
+  async getAllProfilesPagination(
+    page: number,
+    profilesId: string[]
+  ): Promise<PaginationReturn<Profile>> {
+    const limit = 30;
+    const skip = (page - 1) * limit;
+
+    const paginatedIds = profilesId.slice(skip, skip + limit);
+
+    const profiles = await ProfileModel.find({
+      _id: { $in: paginatedIds },
+    }).lean();
+
+    const totalPages = Math.ceil(profilesId.length / limit);
+
+    return {
+      items: profiles.map((profileDoc) =>
+        ProfileMongoDTO.fromMongo(profileDoc).toEntity()
+      ),
+      totalPages,
+      totalCount: profilesId.length,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
   }
 
   async createProfile(profile: Profile): Promise<Profile> {
@@ -39,17 +61,16 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     }
   }
 
-  async findProfile(searchTerm: string): Promise<FindPersonReturnType[]> {
+  async findProfile(searchTerm: string): Promise<FindPersonReturn[]> {
     const profiles = await ProfileModel.find({
-      $or: [
-        { username: { $regex: `^${searchTerm}`, $options: 'i' } },
-      ],
+      $or: [{ username: { $regex: `^${searchTerm}`, $options: 'i' } }],
     })
       .limit(10)
       .lean();
 
     const uniqueProfiles = profiles.filter(
-      (person, index, self) => self.findIndex((p) => p.username === person.username) === index
+      (person, index, self) =>
+        self.findIndex((p) => p.username === person.username) === index
     );
 
     return uniqueProfiles.map((personDoc) => {
@@ -63,14 +84,21 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     });
   }
 
-  async updateProfile(userId: string, updateFields: Partial<Profile>): Promise<Profile> {
+  async updateProfile(
+    userId: string,
+    updateFields: Partial<Profile>
+  ): Promise<Profile> {
     const sanitizedFields = Object.fromEntries(
       Object.entries(updateFields).filter(([_, value]) => value != null)
     );
 
     sanitizedFields.updatedAt = new Date() as any;
 
-    const result = await ProfileModel.findByIdAndUpdate(userId, { $set: sanitizedFields }, { new: true }).lean();
+    const result = await ProfileModel.findByIdAndUpdate(
+      userId,
+      { $set: sanitizedFields },
+      { new: true }
+    ).lean();
     if (!result) {
       throw new NoItemsFound('Perfil não atualizado.');
     }
@@ -78,7 +106,10 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return ProfileMongoDTO.fromMongo(result).toEntity();
   }
 
-  async addFavoriteInstitute(userId: string, instituteId: string): Promise<void> {
+  async addFavoriteInstitute(
+    userId: string,
+    instituteId: string
+  ): Promise<void> {
     const result = await ProfileModel.updateOne(
       { _id: userId },
       { $addToSet: { favorites: instituteId } }
@@ -89,7 +120,10 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     }
   }
 
-  async removeFavoriteInstitute(userId: string, instituteId: string): Promise<void> {
+  async removeFavoriteInstitute(
+    userId: string,
+    instituteId: string
+  ): Promise<void> {
     const result = await ProfileModel.updateOne(
       { _id: userId },
       { $pull: { favorites: instituteId } }

@@ -6,7 +6,7 @@ import {
   NoItemsFound,
   EntityError,
 } from '../../../../../src/shared/helpers/errors/errors';
-import { EventPagination } from 'src/shared/helpers/types/event_pagination';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 
 export class EventRepositoryMongo implements IEventRepository {
   async createEvent(event: Event): Promise<Event> {
@@ -23,7 +23,7 @@ export class EventRepositoryMongo implements IEventRepository {
     }
   }
 
-  async getAllEventsPaginated(page: number): Promise<EventPagination> {
+  async getAllEventsPaginated(page: number): Promise<PaginationReturn<Event>> {
     const limit = 30;
     const skip = (page - 1) * limit;
 
@@ -39,7 +39,7 @@ export class EventRepositoryMongo implements IEventRepository {
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      events: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
+      items: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
       totalPages,
       totalCount,
       prevPage: page > 1 ? page - 1 : null,
@@ -47,7 +47,7 @@ export class EventRepositoryMongo implements IEventRepository {
     };
   }
 
-  async getAllEventsFromToday(page: number): Promise<EventPagination> {
+  async getAllEventsFromToday(page: number): Promise<PaginationReturn<Event>> {
     const limit = 30;
     const skip = (page - 1) * limit;
     const today = new Date();
@@ -64,7 +64,7 @@ export class EventRepositoryMongo implements IEventRepository {
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      events: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
+      items: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
       totalPages,
       totalCount,
       prevPage: page > 1 ? page - 1 : null,
@@ -72,7 +72,10 @@ export class EventRepositoryMongo implements IEventRepository {
     };
   }
 
-  async getEventsByFilter(page: number, filter: any): Promise<EventPagination> {
+  async getEventsByFilter(
+    page: number,
+    filter: any
+  ): Promise<PaginationReturn<Event>> {
     const limit = 30;
     const skip = (page - 1) * limit;
 
@@ -88,7 +91,7 @@ export class EventRepositoryMongo implements IEventRepository {
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      events: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
+      items: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
       totalPages,
       totalCount,
       prevPage: page > 1 ? page - 1 : null,

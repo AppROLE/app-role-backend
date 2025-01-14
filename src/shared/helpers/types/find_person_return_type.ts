@@ -1,4 +1,4 @@
-export type FindPersonReturnType = {
+export type FindPersonReturn = {
   userId: string;
   nickname: string;
   username: string;

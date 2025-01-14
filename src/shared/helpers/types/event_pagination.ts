@@ -1,7 +1,5 @@
-import { Event } from '../../domain/entities/event';
-
-export type EventPagination = {
-  events: Event[];
+export type PaginationReturn<T> = {
+  items: T[];
   totalPages: number;
   totalCount: number;
   prevPage: number | null;

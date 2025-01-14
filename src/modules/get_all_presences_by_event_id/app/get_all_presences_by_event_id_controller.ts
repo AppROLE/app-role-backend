@@ -14,7 +14,6 @@ import {
   OK,
   Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
-import { GetAllPresencesByEventIdViewmodel } from './get_all_presences_by_event_id_viewmodel';
 import { EntityError } from 'src/shared/helpers/errors/errors';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
@@ -28,24 +27,25 @@ export class GetAllPresencesByEventIdController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { eventId } = request.data.query_params;
+      const { eventId, page } = request.data.query_params;
 
       if (!eventId) throw new MissingParameters('eventId');
 
       if (typeof eventId !== 'string')
         throw new WrongTypeParameters('eventId', 'string', typeof eventId);
 
-      const presences = await this.usecase.execute(eventId);
+      const pageNumber = Number(page);
 
-      if (!presences || presences.length === 0) {
-        return new OK(
-          { profile: [],
-            message: 'Nenhuma presença encontrada' });
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
       }
 
-      const viewmodel = new GetAllPresencesByEventIdViewmodel(presences);
+      const presencesPaginated = await this.usecase.execute(
+        eventId,
+        pageNumber
+      );
 
-      return new OK(viewmodel.toJSON());
+      return new OK(presencesPaginated);
     } catch (error: any) {
       if (
         error instanceof EntityError ||

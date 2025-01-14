@@ -17,7 +17,6 @@ import {
 } from 'src/shared/helpers/errors/errors';
 import { WrongTypeParameters } from 'src/shared/helpers/errors/errors';
 import { GetOtherFollowersUsecase } from './get_other_followers_usecase';
-import { GetOtherFollowersViewmodel } from './get_other_followers_viewmodel';
 
 export class GetOtherFollowersController {
   constructor(private readonly usecase: GetOtherFollowersUsecase) {}
@@ -28,18 +27,22 @@ export class GetOtherFollowersController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { otherUserId } = request.data.query_params;
+      const { otherUserId, page } = request.data.query_params;
 
       if (!otherUserId) throw new MissingParameters('otherUserId');
 
-      const profiles = await this.usecase.execute(
+      const pageNumber = Number(page);
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
+      }
+
+      const profilesPagination = await this.usecase.execute(
         userApiGateway.userId,
-        otherUserId
+        otherUserId,
+        pageNumber
       );
 
-      const viewmodel = new GetOtherFollowersViewmodel(profiles);
-
-      return new OK(viewmodel.toJSON());
+      return new OK(profilesPagination);
     } catch (error: any) {
       if (
         error instanceof EntityError ||

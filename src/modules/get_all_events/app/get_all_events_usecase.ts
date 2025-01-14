@@ -1,6 +1,6 @@
 import { Event } from 'src/shared/domain/entities/event';
 import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
-import { EventPagination } from 'src/shared/helpers/types/event_pagination';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllEventsUseCase {
@@ -21,12 +21,12 @@ export class GetAllEventsUseCase {
       throw new Error('Expected to have an instance of the event repository');
   }
 
-  execute(page: number): Promise<EventPagination> {
+  execute(page: number): Promise<PaginationReturn<Event>> {
     const result = this.event_repo!.getAllEventsPaginated(page);
     return result;
   }
 
-  executeFromToday(page: number): Promise<EventPagination> {
+  executeFromToday(page: number): Promise<PaginationReturn<Event>> {
     const result = this.event_repo!.getAllEventsFromToday(page);
     return result;
   }
