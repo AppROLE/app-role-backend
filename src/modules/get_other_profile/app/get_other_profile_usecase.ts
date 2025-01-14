@@ -5,6 +5,8 @@ import { IInstituteRepository } from 'src/shared/domain/repositories/institute_r
 import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export interface ConfirmedEventsResponse {
@@ -58,59 +60,29 @@ export class GetOtherProfileUseCase {
   }
 
   async execute(
+    page: number,
     myUserId: string,
     userId: string
-  ): Promise<[Profile, ConfirmedEventsResponse[]]> {
-    // Buscar o perfil do usuário atual
+  ): Promise<[Profile, PaginationReturn<EventCardReturn> | null]> {
     const myProfile = await this.profile_repo!.getByUserId(myUserId);
-    if (!myProfile)
-      throw new NoItemsFound('Perfil do usuário atual não encontrado');
+    if (!myProfile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
-    // Buscar o perfil do outro usuário
     const otherProfile = await this.profile_repo!.getByUserId(userId);
     if (!otherProfile)
       throw new NoItemsFound('Perfil do outro usuário não encontrado');
 
-    // Validar se são amigos
     const areWeFriends =
       myProfile.following.includes(otherProfile.userId) &&
       otherProfile.followers.includes(myProfile.userId);
 
-    if (!areWeFriends) return [otherProfile, []];
+    if (!areWeFriends) return [otherProfile, null];
 
-    // Obter presenças do outro usuário
-    const presencesIds = otherProfile.presencesId;
-    const presences = await this.presence_repo!.getPresencesByIds(presencesIds);
-
-    // Obter IDs dos eventos confirmados
-    const eventsIds = presences.map((presence) => presence.eventId);
-    const events = await this.event_repo!.getEventsByIds(eventsIds);
-
-    // Obter IDs dos institutos associados aos eventos
-    const institutesIds = events.map((event) => event.instituteId);
-
-    // Buscar os institutos associados
-    const institutes = await this.institute_repo!.getInstitutesByIds(
-      institutesIds
-    );
-
-    // Mapear eventos para incluir informações do instituto
-    const eventResponse: ConfirmedEventsResponse[] = events.map((event) => {
-      const institute = institutes.find(
-        (institute) => institute.instituteId === event.instituteId
+    const confirmedEvents =
+      await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
+        userId,
+        page
       );
 
-      return {
-        eventId: event.eventId,
-        eventName: event.name,
-        instituteName: institute ? institute.name : 'Instituto não encontrado',
-        neighborhood: event.address.neighborhood,
-        eventStatus: event.eventStatus,
-        eventPhoto: event.eventPhoto,
-        eventDate: event.eventDate,
-      };
-    });
-
-    return [otherProfile, eventResponse];
+    return [otherProfile, confirmedEvents];
   }
 }

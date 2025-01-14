@@ -17,7 +17,6 @@ import {
   NoItemsFound,
 } from 'src/shared/helpers/errors/errors';
 import { WrongTypeParameters } from 'src/shared/helpers/errors/errors';
-import { GetOtherProfileViewmodel } from './get_other_profile_viewmodel';
 
 export class GetOtherProfileController {
   constructor(private readonly usecase: GetOtherProfileUseCase) {}
@@ -28,18 +27,37 @@ export class GetOtherProfileController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { otherUserId } = request.data.query_params;
+      const { otherUserId, page } = request.data.query_params;
 
       if (!otherUserId) throw new MissingParameters('otherUserId');
 
+      const pageNumber = Number(page);
+
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
+      }
+
       const [profile, confirmedEvents] = await this.usecase.execute(
+        pageNumber,
         userApiGateway.userId,
         otherUserId
       );
 
-      const viewmodel = new GetOtherProfileViewmodel(profile, confirmedEvents);
-
-      return new OK(viewmodel.toJSON());
+      return new OK({
+        profile: {
+          userId: profile.userId,
+          nickname: profile.nickname,
+          username: profile.username,
+          biography: profile.biography,
+          linkInstagram: profile.linkInstagram,
+          linkTiktok: profile.linkTiktok,
+          backgroundPhoto: profile.backgroundPhoto,
+          profilePhoto: profile.profilePhoto,
+          followers: profile.followers.length,
+          following: profile.following.length,
+        },
+        confirmedEvents: confirmedEvents,
+      });
     } catch (error: any) {
       if (
         error instanceof EntityError ||
