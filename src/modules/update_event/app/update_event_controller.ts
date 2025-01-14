@@ -35,15 +35,15 @@ export class UpdateEventController {
       if (userApiGateway.role === ROLE_TYPE.COMMON)
         throw new ForbiddenAction('Usuário não tem permissão');
 
-      // Extrair dados do formulário
       const {
         eventId,
         name,
         description,
         latitude,
         longitude,
-        address,
+        street,
         number,
+        district,
         neighborhood,
         city,
         state,
@@ -82,8 +82,8 @@ export class UpdateEventController {
       if (longitude !== undefined && typeof longitude !== 'number') {
         throw new WrongTypeParameters('longitude', 'number', typeof longitude);
       }
-      if (address !== undefined && typeof address !== 'string') {
-        throw new WrongTypeParameters('address', 'string', typeof address);
+      if (street !== undefined && typeof street !== 'string') {
+        throw new WrongTypeParameters('address', 'string', typeof street);
       }
       if (neighborhood !== undefined && typeof neighborhood !== 'string') {
         throw new WrongTypeParameters(
@@ -98,6 +98,14 @@ export class UpdateEventController {
       if (state !== undefined && typeof state !== 'string') {
         throw new WrongTypeParameters('state', 'string', typeof state);
       }
+
+      if (number !== undefined && typeof number !== 'number') {
+        throw new WrongTypeParameters('number', 'number', typeof number);
+      }
+      if (district !== undefined && typeof district !== 'string') {
+        throw new WrongTypeParameters('district', 'string', typeof district);
+      }
+
       if (cep !== undefined && typeof cep !== 'string') {
         throw new WrongTypeParameters('cep', 'string', typeof cep);
       }
@@ -132,8 +140,9 @@ export class UpdateEventController {
         address: {
           latitude,
           longitude,
-          street: address,
+          street,
           number,
+          district,
           neighborhood,
           city,
           state,

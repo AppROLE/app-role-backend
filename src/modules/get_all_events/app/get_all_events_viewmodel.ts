@@ -60,6 +60,7 @@ export class EventViewModel {
       name: this.name,
       description: this.description,
       address: {
+        district: this.address.district,
         street: this.address.street,
         number: this.address.number,
         cep: this.address.cep,

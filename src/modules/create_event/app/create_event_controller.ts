@@ -66,6 +66,7 @@ export class CreateEventController {
         longitude,
         street,
         number,
+        district,
         neighborhood,
         city,
         state,
@@ -87,8 +88,8 @@ export class CreateEventController {
       latitude = Number(latitude);
       longitude = Number(longitude);
       number = Number(number);
-      
-      if(isNaN(number)) number = undefined;
+
+      if (isNaN(number)) number = undefined;
       const musicTypeList = JSON.parse(musicType) as MUSIC_TYPE[];
       const packageTypeList = JSON.parse(packageType) as PACKAGE_TYPE[];
       const featuresList = JSON.parse(features) as FEATURE[];
@@ -103,7 +104,11 @@ export class CreateEventController {
 
       !Array.isArray(photo) ? (photoImage = photo) : (photoImage = photo[0]);
 
-      const galleryImages = Array.isArray(gallery) ? gallery : gallery ? [gallery] : [];
+      const galleryImages = Array.isArray(gallery)
+        ? gallery
+        : gallery
+        ? [gallery]
+        : [];
 
       if (name === undefined || name === null) {
         throw new MissingParameters('name');
@@ -123,6 +128,10 @@ export class CreateEventController {
 
       if (street === undefined || street === null) {
         throw new MissingParameters('street');
+      }
+
+      if (district === undefined || district === null) {
+        throw new MissingParameters('district');
       }
 
       if (neighborhood === undefined || neighborhood === null) {
@@ -177,6 +186,7 @@ export class CreateEventController {
           longitude,
           street,
           number,
+          district,
           neighborhood,
           city,
           state,

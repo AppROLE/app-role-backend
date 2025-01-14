@@ -59,6 +59,7 @@ export class CreateInstituteController {
         longitude,
         street,
         number,
+        district,
         neighborhood,
         city,
         state,
@@ -127,6 +128,10 @@ export class CreateInstituteController {
         throw new MissingParameters('number');
       }
 
+      if (district === undefined || district === null) {
+        throw new MissingParameters('district');
+      }
+
       if (neighborhood === undefined || neighborhood === null) {
         throw new MissingParameters('neighborhood');
       }
@@ -153,6 +158,7 @@ export class CreateInstituteController {
           longitude,
           street,
           number,
+          district,
           neighborhood,
           city,
           state,

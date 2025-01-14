@@ -3,6 +3,7 @@ export interface AddressProps {
   longitude: number;
   street: string;
   number?: number;
+  district: string;
   neighborhood: string;
   city: string;
   state: string;
@@ -14,6 +15,7 @@ export class Address {
   longitude: number;
   street: string;
   number?: number;
+  district: string;
   neighborhood: string;
   city: string;
   state: string;
@@ -24,6 +26,7 @@ export class Address {
     this.longitude = props.longitude;
     this.street = props.street;
     this.number = props.number;
+    this.district = props.district;
     this.neighborhood = props.neighborhood;
     this.city = props.city;
     this.state = props.state;
