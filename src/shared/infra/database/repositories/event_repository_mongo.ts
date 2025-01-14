@@ -28,7 +28,11 @@ export class EventRepositoryMongo implements IEventRepository {
     const skip = (page - 1) * limit;
 
     const [events, totalCount] = await Promise.all([
-      EventModel.find().skip(skip).limit(limit).lean(),
+      EventModel.find()
+        .sort({ eventDate: -1 }) // Ordena pelo campo eventDate em ordem decrescente
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       EventModel.countDocuments(),
     ]);
 
@@ -50,6 +54,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
     const [events, totalCount] = await Promise.all([
       EventModel.find({ eventDate: { $gte: today } })
+        .sort({ eventDate: -1 }) // Ordena pelo campo eventDate em ordem decrescente
         .skip(skip)
         .limit(limit)
         .lean(),
@@ -73,6 +78,7 @@ export class EventRepositoryMongo implements IEventRepository {
 
     const [events, totalCount] = await Promise.all([
       EventModel.find(filter || {})
+        .sort({ eventDate: -1 }) // Ordena pelo campo eventDate em ordem decrescente
         .skip(skip)
         .limit(limit)
         .lean(),
