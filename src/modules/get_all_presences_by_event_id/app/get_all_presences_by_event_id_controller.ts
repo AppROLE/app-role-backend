@@ -41,6 +41,7 @@ export class GetAllPresencesByEventIdController {
       }
 
       const presencesPaginated = await this.usecase.execute(
+        userApiGateway.userId,
         eventId,
         pageNumber
       );
