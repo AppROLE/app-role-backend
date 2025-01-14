@@ -4,6 +4,7 @@ import { IPresenceRepository } from 'src/shared/domain/repositories/presence_rep
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
+import { ProfileCardReturn } from 'src/shared/helpers/types/profile_card_return';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllPresencesByEventIdUseCase {
@@ -40,7 +41,7 @@ export class GetAllPresencesByEventIdUseCase {
     userId: string,
     eventId: string,
     page: number
-  ): Promise<Promise<PaginationReturn<Profile>>> {
+  ): Promise<PaginationReturn<ProfileCardReturn>> {
     const myProfile = await this.profile_repo!.getByUserId(userId);
     if (!myProfile)
       throw new NoItemsFound('Perfil do usuário atual não encontrado');
@@ -63,6 +64,10 @@ export class GetAllPresencesByEventIdUseCase {
 
     const profilesId = presences.map((presence) => presence.userId);
 
-    return await this.profile_repo!.getAllProfilesPagination(page, profilesId);
+    return await this.profile_repo!.getProfilesWithFriendshipPriority(
+      profilesId,
+      userId,
+      page
+    );
   }
 }
