@@ -36,11 +36,19 @@ export class GetTopEventsUseCase {
     // Define os intervalos de acordo com o dia atual
     if (today === 4) {
       // Quinta-feira
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Sexta
+      startDate = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1
+      ); // Sexta
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2); // Sábado
     } else if (today === 5) {
       // Sexta-feira
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Sábado
+      startDate = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1
+      ); // Sábado
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // Sábado
     } else if (today === 6) {
       // Sábado
@@ -70,7 +78,6 @@ export class GetTopEventsUseCase {
       ); // Sábado
     }
 
-    // Definir o filtro para eventos dentro do intervalo
     const filter = {
       eventDate: {
         $gte: startDate,
@@ -78,18 +85,15 @@ export class GetTopEventsUseCase {
       },
     };
 
-    console.log('Filter:', filter);
+    const result = await this.event_repo!.getEventsByFilter(1, filter);
 
-    // Buscar os eventos filtrados
-    const events = await this.event_repo!.getEventsByFilter(filter);
+    const events = result.items;
 
-    // Se nenhum evento for encontrado, retornar uma lista vazia
     if (!events || events.length === 0) {
       console.log('No events found for the given filter.');
       return [];
     }
 
-    // Ordenar eventos por quantidade de presenças e pegar os 3 principais
     const topEvents = events
       .sort((a, b) => b.presencesId.length - a.presencesId.length)
       .slice(0, 3);

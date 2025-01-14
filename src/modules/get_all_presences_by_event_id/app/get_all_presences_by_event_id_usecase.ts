@@ -37,9 +37,14 @@ export class GetAllPresencesByEventIdUseCase {
   }
 
   async execute(
+    userId: string,
     eventId: string,
     page: number
   ): Promise<Promise<PaginationReturn<Profile>>> {
+    const myProfile = await this.profile_repo!.getByUserId(userId);
+    if (!myProfile)
+      throw new NoItemsFound('Perfil do usuário atual não encontrado');
+
     const event = await this.event_repo!.getEventById(eventId);
 
     if (!event) throw new NoItemsFound('eventId');

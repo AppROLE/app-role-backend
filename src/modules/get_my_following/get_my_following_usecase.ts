@@ -30,21 +30,10 @@ export class GetMyFollowingUseCase {
     const profile = await this.profile_repo!.getByUserId(userId);
     if (!profile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
-    const paginatedProfiles = await this.profile_repo!.getAllProfilesPagination(
-      page,
-      profile.following
+    return await this.profile_repo!.getProfilesWithFriendshipPriority(
+      profile.following,
+      userId,
+      page
     );
-
-    const transformedItems = paginatedProfiles.items.map((profile) => ({
-      userId: profile.userId,
-      nickname: profile.nickname,
-      username: profile.username,
-      profilePhoto: profile.profilePhoto,
-    }));
-
-    return {
-      ...paginatedProfiles,
-      items: transformedItems,
-    };
   }
 }
