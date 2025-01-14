@@ -44,7 +44,10 @@ export class Institute {
     this.partnerType = toEnumPartnerType(props.partnerType);
     this.phone = props.phone;
     this.address = props.address;
-    this.price = props.price || 0;
+    if (props.price && !(props.price >= 1 && props.price <= 5)) {
+      throw new EntityError('O preço do evento deve ser entre 1 e 5');
+    }
+    this.price = props.price;
     this.photosUrl = props.photosUrl;
     this.eventsId = props.eventsId;
     this.createdAt = props.createdAt;

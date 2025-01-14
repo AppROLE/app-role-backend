@@ -59,6 +59,10 @@ export class Event {
     this.name = props.name;
     this.description = props.description;
     this.address = props.address;
+
+    if (!(props.price >= 1 && props.price <= 5)) {
+      throw new EntityError('O preço do evento deve ser entre 1 e 5');
+    }
     this.price = props.price;
     this.ageRange = props.ageRange;
     this.eventDate = props.eventDate;
