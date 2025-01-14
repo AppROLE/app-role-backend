@@ -1,6 +1,7 @@
 import { FindPersonReturn } from 'src/shared/helpers/types/find_person_return_type';
 import { Profile } from '../entities/profile';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
+import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
 
 export interface IProfileRepository {
   getByEmail(email: string): Promise<Profile | null>;
@@ -20,4 +21,8 @@ export interface IProfileRepository {
   addFavoriteInstitute(userId: string, instituteId: string): Promise<void>;
   removeFavoriteInstitute(userId: string, instituteId: string): Promise<void>;
   removeAllFavoriteInstitute(userId: string): Promise<void>;
+  getConfirmedPresencesEventCardsForProfile(
+    userId: string,
+    page: number
+  ): Promise<PaginationReturn<EventCardReturn>>;
 }

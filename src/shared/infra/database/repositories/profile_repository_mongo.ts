@@ -5,6 +5,8 @@ import { IProfileRepository } from 'src/shared/domain/repositories/profile_repos
 import { Profile } from 'src/shared/domain/entities/profile';
 import { FindPersonReturn } from 'src/shared/helpers/types/find_person_return_type';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
+import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
+import { PresenceModel } from '../models/presence.model';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
@@ -143,5 +145,76 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     if (!result.modifiedCount) {
       throw new Error('Erro ao remover todos os institutos favoritos.');
     }
+  }
+
+  async getConfirmedPresencesEventCardsForProfile(
+    userId: string,
+    page: number
+  ): Promise<PaginationReturn<EventCardReturn>> {
+    const limit = 30;
+    const skip = (page - 1) * limit;
+    const today = new Date();
+
+    const aggregateResult = await PresenceModel.aggregate([
+      { $match: { userId } },
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event',
+        },
+      },
+      { $unwind: { path: '$event', preserveNullAndEmptyArrays: false } },
+      { $match: { 'event.eventDate': { $gt: today } } },
+      {
+        $lookup: {
+          from: 'institutes',
+          localField: 'event.instituteId',
+          foreignField: '_id',
+          as: 'institute',
+        },
+      },
+      { $unwind: { path: '$institute', preserveNullAndEmptyArrays: false } },
+      {
+        $project: {
+          eventId: '$event._id',
+          presenceId: '$_id',
+          eventName: '$event.name',
+          eventDate: '$event.eventDate',
+          instituteName: '$institute.name',
+          instituteRating: '$institute.rating',
+          address: '$event.address',
+          photo: '$event.eventPhoto',
+        },
+      },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    const totalCount = await PresenceModel.aggregate([
+      { $match: { userId } },
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event',
+        },
+      },
+      { $unwind: { path: '$event', preserveNullAndEmptyArrays: false } },
+      { $match: { 'event.eventDate': { $gt: today } } },
+      { $count: 'total' },
+    ]).then((res) => (res.length > 0 ? res[0].total : 0));
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      items: aggregateResult,
+      totalPages,
+      totalCount,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
   }
 }

@@ -32,6 +32,7 @@ export class LambdaStack extends Construct {
   getOtherProfileFunction: lambda.Function;
   getMyFollowingFunction: lambda.Function;
   getMyFollowersFunction: lambda.Function;
+  getMyConfirmedEventsFunction: lambda.Function;
   getOtherFollowingFunction: lambda.Function;
   getOtherFollowersFunction: lambda.Function;
   validateUsernameFunction: lambda.Function;
@@ -228,6 +229,14 @@ export class LambdaStack extends Construct {
 
     this.getMyFollowersFunction = this.createLambdaApiGatewayIntegration(
       'get_my_followers',
+      'GET',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.getMyConfirmedEventsFunction = this.createLambdaApiGatewayIntegration(
+      'get_my_confirmed_events',
       'GET',
       apiGatewayResource,
       environmentVariables,
