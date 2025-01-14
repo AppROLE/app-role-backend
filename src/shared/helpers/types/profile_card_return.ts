@@ -3,4 +3,5 @@ export type ProfileCardReturn = {
   nickname: string;
   username: string;
   profilePhoto?: string;
+  isFriend: boolean;
 };

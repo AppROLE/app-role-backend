@@ -1,4 +1,6 @@
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
+import { NoItemsFound } from 'src/shared/helpers/errors/errors';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { ProfileCardReturn } from 'src/shared/helpers/types/profile_card_return';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
@@ -20,8 +22,15 @@ export class SearchProfilesUsecase {
       throw new Error('Expected to have an instance of the profile repository');
   }
 
-  execute(searchTerm: string): Promise<ProfileCardReturn[]> {
-    const profiles = this.profile_repo!.findProfile(searchTerm);
-    return profiles;
+  async execute(
+    searchTerm: string,
+    myUserId: string,
+    page: number
+  ): Promise<Promise<PaginationReturn<ProfileCardReturn>>> {
+    const myProfile = await this.profile_repo!.getByUserId(myUserId);
+    if (!myProfile)
+      throw new NoItemsFound('Perfil do usuário atual não encontrado');
+
+    return this.profile_repo!.findProfile(searchTerm, myUserId, page);
   }
 }

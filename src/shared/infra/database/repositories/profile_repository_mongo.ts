@@ -63,27 +63,59 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     }
   }
 
-  async findProfile(searchTerm: string): Promise<ProfileCardReturn[]> {
-    const profiles = await ProfileModel.find({
-      $or: [{ username: { $regex: `^${searchTerm}`, $options: 'i' } }],
-    })
-      .limit(10)
-      .lean();
+  async findProfile(
+    searchTerm: string,
+    myUserId: string,
+    page: number
+  ): Promise<PaginationReturn<ProfileCardReturn>> {
+    const limit = 10; // Limite fixo de 10 por página
+    const skip = (page - 1) * limit;
 
-    const uniqueProfiles = profiles.filter(
-      (person, index, self) =>
-        self.findIndex((p) => p.username === person.username) === index
-    );
+    // Buscar perfis com base no termo de pesquisa
+    const profiles = await ProfileModel.aggregate([
+      {
+        $match: {
+          $or: [{ username: { $regex: `^${searchTerm}`, $options: 'i' } }],
+        },
+      },
+      {
+        $addFields: {
+          isFriend: {
+            $and: [
+              { $in: [myUserId, '$followers'] },
+              { $in: [myUserId, '$following'] },
+            ],
+          },
+        },
+      },
+      { $sort: { isFriend: -1, username: 1 } }, // Ordenar amigos primeiro e, depois, por username
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          userId: '$_id',
+          nickname: 1,
+          username: 1,
+          profilePhoto: 1,
+          isFriend: 1,
+        },
+      },
+    ]);
 
-    return uniqueProfiles.map((personDoc) => {
-      const profile = ProfileMongoDTO.fromMongo(personDoc).toEntity();
-      return {
-        userId: profile.userId,
-        profilePhoto: profile.profilePhoto,
-        username: profile.username,
-        nickname: profile.nickname,
-      };
+    // Contar o total de perfis que atendem ao termo de pesquisa
+    const totalCount = await ProfileModel.countDocuments({
+      username: { $regex: `^${searchTerm}`, $options: 'i' },
     });
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      items: profiles,
+      totalPages,
+      totalCount,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
   }
 
   async updateProfile(
@@ -281,6 +313,54 @@ export class ProfileRepositoryMongo implements IProfileRepository {
       { $count: 'total' },
     ]).then((res) => (res.length > 0 ? res[0].total : 0));
 
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      items: aggregateResult,
+      totalPages,
+      totalCount,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
+  }
+
+  async getProfilesWithFriendshipPriority(
+    profileIds: string[],
+    myUserId: string,
+    page: number
+  ): Promise<PaginationReturn<ProfileCardReturn>> {
+    const limit = 30;
+    const skip = (page - 1) * limit;
+
+    // Agregação para buscar perfis e avaliar amizade
+    const aggregateResult = await ProfileModel.aggregate([
+      { $match: { _id: { $in: profileIds } } },
+      {
+        $addFields: {
+          isFriend: {
+            $and: [
+              { $in: [myUserId, '$followers'] },
+              { $in: [myUserId, '$following'] },
+            ],
+          },
+        },
+      },
+      { $sort: { isFriend: -1, name: 1 } }, // Ordenar amigos primeiro, depois pelo nome
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          userId: '$_id',
+          nickname: 1,
+          username: 1,
+          profilePhoto: 1,
+          isFriend: 1, // Retornar o status de amizade no resultado
+        },
+      },
+    ]);
+
+    // Calcular total de perfis
+    const totalCount = profileIds.length;
     const totalPages = Math.ceil(totalCount / limit);
 
     return {

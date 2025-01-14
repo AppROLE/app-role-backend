@@ -1,4 +1,5 @@
 import { Profile } from 'src/shared/domain/entities/profile';
+import { FOLLOW_STATUS } from 'src/shared/domain/enums/follow_status';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
@@ -36,11 +37,10 @@ export class GetOtherFollowingUsecase {
     if (!otherProfile)
       throw new NoItemsFound('Perfil do outro usuário não encontrado');
 
-    const areWeFriends =
-      myProfile.following.includes(otherProfile.userId) &&
-      otherProfile.followers.includes(myProfile.userId);
+    const followStatus = this.getFollowStatus(myProfile, otherProfile);
 
-    if (!areWeFriends)
+    // Se o perfil for privado e não somos amigos, acesso é negado
+    if (otherProfile.isPrivate && followStatus !== FOLLOW_STATUS.FRIENDS) {
       return {
         items: [],
         totalPages: 0,
@@ -48,22 +48,32 @@ export class GetOtherFollowingUsecase {
         prevPage: null,
         nextPage: null,
       };
+    }
 
-    const paginatedProfiles = await this.profile_repo!.getAllProfilesPagination(
-      page,
-      otherProfile.following
-    );
+    // Obter a lista paginada com prioridade para amigos
+    const paginatedProfiles =
+      await this.profile_repo!.getProfilesWithFriendshipPriority(
+        otherProfile.following,
+        myUserId,
+        page
+      );
 
-    const transformedItems = paginatedProfiles.items.map((profile) => ({
-      userId: profile.userId,
-      nickname: profile.nickname,
-      username: profile.username,
-      profilePhoto: profile.profilePhoto,
-    }));
+    return paginatedProfiles;
+  }
 
-    return {
-      ...paginatedProfiles,
-      items: transformedItems,
-    };
+  private getFollowStatus(
+    myProfile: Profile,
+    otherProfile: Profile
+  ): FOLLOW_STATUS {
+    if (
+      myProfile.following.includes(otherProfile.userId) &&
+      otherProfile.followers.includes(myProfile.userId)
+    ) {
+      return FOLLOW_STATUS.FRIENDS;
+    }
+    if (myProfile.following.includes(otherProfile.userId)) {
+      return FOLLOW_STATUS.FOLLOWING;
+    }
+    return FOLLOW_STATUS.UNFOLLOWED;
   }
 }

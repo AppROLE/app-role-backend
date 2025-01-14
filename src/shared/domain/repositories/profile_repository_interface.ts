@@ -13,7 +13,16 @@ export interface IProfileRepository {
   ): Promise<PaginationReturn<Profile>>;
   createProfile(profile: Profile): Promise<Profile>;
   deleteProfile(userId: string): Promise<void>;
-  findProfile(searchTerm: string): Promise<ProfileCardReturn[]>;
+  findProfile(
+    searchTerm: string,
+    myUserId: string,
+    page: number
+  ): Promise<PaginationReturn<ProfileCardReturn>>;
+  getProfilesWithFriendshipPriority(
+    profileIds: string[],
+    myUserId: string,
+    page: number
+  ): Promise<PaginationReturn<ProfileCardReturn>>;
   updateProfile(
     userId: string,
     updateFields: Partial<Profile>

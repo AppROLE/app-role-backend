@@ -26,13 +26,22 @@ export class SearchProfilesController {
       const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
-    
-      const { searchTerm } = req.data.query_params;
 
-      const profiles = await this.usecase.execute(searchTerm);
+      const { searchTerm, page } = req.data.query_params;
+
+      const pageNumber = Number(page);
+
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
+      }
+
+      const profiles = await this.usecase.execute(
+        searchTerm as string,
+        userApiGateway.userId,
+        pageNumber
+      );
 
       return new OK(profiles);
-
     } catch (error: any) {
       if (
         error instanceof EntityError ||
