@@ -188,6 +188,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
           photo: '$event.eventPhoto',
         },
       },
+      { $sort: { eventDate: -1 } },
       { $skip: skip },
       { $limit: limit },
     ]);
@@ -204,6 +205,79 @@ export class ProfileRepositoryMongo implements IProfileRepository {
       },
       { $unwind: { path: '$event', preserveNullAndEmptyArrays: false } },
       { $match: { 'event.eventDate': { $gt: today } } },
+      { $count: 'total' },
+    ]).then((res) => (res.length > 0 ? res[0].total : 0));
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      items: aggregateResult,
+      totalPages,
+      totalCount,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
+  }
+
+  async getHistoricPresencesEventCardsForProfile(
+    userId: string,
+    page: number
+  ): Promise<PaginationReturn<EventCardReturn>> {
+    const limit = 30;
+    const skip = (page - 1) * limit;
+    const today = new Date();
+
+    const aggregateResult = await PresenceModel.aggregate([
+      { $match: { userId } },
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event',
+        },
+      },
+      { $unwind: { path: '$event', preserveNullAndEmptyArrays: false } },
+      { $match: { 'event.eventDate': { $lt: today } } },
+      {
+        $lookup: {
+          from: 'institutes',
+          localField: 'event.instituteId',
+          foreignField: '_id',
+          as: 'institute',
+        },
+      },
+      { $unwind: { path: '$institute', preserveNullAndEmptyArrays: false } },
+      {
+        $project: {
+          eventId: '$event._id',
+          presenceId: '$_id',
+          eventName: '$event.name',
+          eventDate: '$event.eventDate',
+          instituteName: '$institute.name',
+          instituteRating: '$institute.rating',
+          address: '$event.address',
+          photo: '$event.eventPhoto',
+        },
+      },
+      { $sort: { eventDate: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    // Contar o total de presenças históricas
+    const totalCount = await PresenceModel.aggregate([
+      { $match: { userId } },
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'eventId',
+          foreignField: '_id',
+          as: 'event',
+        },
+      },
+      { $unwind: { path: '$event', preserveNullAndEmptyArrays: false } },
+      { $match: { 'event.eventDate': { $lt: today } } },
       { $count: 'total' },
     ]).then((res) => (res.length > 0 ? res[0].total : 0));
 

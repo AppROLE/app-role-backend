@@ -25,4 +25,8 @@ export interface IProfileRepository {
     userId: string,
     page: number
   ): Promise<PaginationReturn<EventCardReturn>>;
+  getHistoricPresencesEventCardsForProfile(
+    userId: string,
+    page: number
+  ): Promise<PaginationReturn<EventCardReturn>>;
 }

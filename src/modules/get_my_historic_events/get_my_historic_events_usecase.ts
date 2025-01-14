@@ -4,7 +4,7 @@ import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class GetMyConfirmedEventsUsecase {
+export class GetMyHistoricEventsUsecase {
   repository: Repository;
   private profile_repo?: IProfileRepository;
 
@@ -29,7 +29,7 @@ export class GetMyConfirmedEventsUsecase {
     const myProfile = await this.profile_repo!.getByUserId(userId);
     if (!myProfile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
-    return await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
+    return await this.profile_repo!.getHistoricPresencesEventCardsForProfile(
       userId,
       page
     );

@@ -1,5 +1,4 @@
 import { IRequest } from 'src/shared/helpers/external_interfaces/external_interface';
-import { GetEventsByFilterUseCase } from './get_all_events_by_filter_usecase';
 import {
   BadRequest,
   Conflict,
@@ -17,9 +16,10 @@ import {
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
+import { GetMyHistoricEventsUsecase } from './get_my_historic_events_usecase';
 
-export class GetEventsByFilterController {
-  constructor(private readonly usecase: GetEventsByFilterUseCase) {}
+export class GetMyHistoricEventsController {
+  constructor(private readonly usecase: GetMyHistoricEventsUsecase) {}
 
   async handle(req: IRequest, requesterUser: Record<string, any>) {
     try {
@@ -27,19 +27,19 @@ export class GetEventsByFilterController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { page, ...queryFilters } = req.data.query_params;
+      const { page } = req.data.query_params;
       const pageNumber = Number(page);
 
       if (isNaN(pageNumber) || pageNumber <= 0) {
         throw new MissingParameters('Número de página inválido');
       }
 
-      const paginatedEvents = await this.usecase.execute(
+      const paginatedCardEvents = await this.usecase.execute(
         pageNumber,
-        queryFilters
+        userApiGateway.userId
       );
 
-      return new OK(paginatedEvents);
+      return new OK(paginatedCardEvents);
     } catch (error: any) {
       if (
         error instanceof EntityError ||

@@ -27,7 +27,7 @@ export class GetMyConfirmedEventsController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { page } = req.data.query_params; // Removendo "page" dos filtros
+      const { page } = req.data.query_params;
       const pageNumber = Number(page);
 
       if (isNaN(pageNumber) || pageNumber <= 0) {
