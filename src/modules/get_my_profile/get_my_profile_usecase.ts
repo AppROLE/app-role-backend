@@ -1,21 +1,7 @@
 import { Profile } from 'src/shared/domain/entities/profile';
-import { STATUS } from 'src/shared/domain/enums/status_enum';
-import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
-import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
-import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
-
-export interface ConfirmedEventsResponse {
-  eventId: string;
-  eventName: string;
-  instituteName: string;
-  neighborhood: string;
-  eventStatus: STATUS;
-  eventPhoto: string;
-  eventDate: number;
-}
 
 export class GetMyProfileUseCase {
   repository: Repository;

@@ -1,69 +1,35 @@
 import { Profile } from 'src/shared/domain/entities/profile';
-import { STATUS } from 'src/shared/domain/enums/status_enum';
-import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
-import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
-import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
+import { FOLLOW_STATUS } from 'src/shared/domain/enums/follow_status';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
+import { OtherProfileInfo } from 'src/shared/helpers/types/other_profile_info';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
-
-export interface ConfirmedEventsResponse {
-  eventId: string;
-  eventName: string;
-  instituteName: string;
-  neighborhood: string;
-  eventStatus: STATUS;
-  eventPhoto: string;
-  eventDate: number;
-}
 
 export class GetOtherProfileUseCase {
   repository: Repository;
   private profile_repo?: IProfileRepository;
-  private event_repo?: IEventRepository;
-  private institute_repo?: IInstituteRepository;
-  private presence_repo?: IPresenceRepository;
 
   constructor() {
     this.repository = new Repository({
       profile_repo: true,
-      event_repo: true,
-      institute_repo: true,
-      presence_repo: true,
     });
   }
 
   async connect() {
     await this.repository.connectRepository();
     this.profile_repo = this.repository.profile_repo;
-    this.event_repo = this.repository.event_repo;
-    this.institute_repo = this.repository.institute_repo;
-    this.presence_repo = this.repository.presence_repo;
 
     if (!this.profile_repo)
       throw new Error('Expected to have an instance of the profile repository');
-
-    if (!this.event_repo)
-      throw new Error('Expected to have an instance of the event repository');
-
-    if (!this.institute_repo)
-      throw new Error(
-        'Expected to have an instance of the institute repository'
-      );
-
-    if (!this.presence_repo)
-      throw new Error(
-        'Expected to have an instance of the presence repository'
-      );
   }
 
   async execute(
     page: number,
     myUserId: string,
     userId: string
-  ): Promise<[Profile, PaginationReturn<EventCardReturn> | null]> {
+  ): Promise<[OtherProfileInfo, PaginationReturn<EventCardReturn> | null]> {
     const myProfile = await this.profile_repo!.getByUserId(myUserId);
     if (!myProfile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
@@ -71,18 +37,60 @@ export class GetOtherProfileUseCase {
     if (!otherProfile)
       throw new NoItemsFound('Perfil do outro usuário não encontrado');
 
-    const areWeFriends =
+    const followStatus = this.getFollowStatus(myProfile, otherProfile);
+
+    const otherProfileInfo: OtherProfileInfo = {
+      userId: otherProfile.userId,
+      name: otherProfile.name,
+      nickname: otherProfile.nickname,
+      username: otherProfile.username,
+      biography: otherProfile.biography,
+      linkInstagram: otherProfile.linkInstagram,
+      linkTiktok: otherProfile.linkTiktok,
+      backgroundPhoto: otherProfile.backgroundPhoto,
+      profilePhoto: otherProfile.profilePhoto,
+      followersLength: otherProfile.followers.length,
+      followingLength: otherProfile.following.length,
+      followStatus,
+    };
+
+    // Perfis públicos retornam eventos diretamente
+    if (!otherProfile.isPrivate) {
+      const confirmedEvents =
+        await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
+          userId,
+          page
+        );
+      return [otherProfileInfo, confirmedEvents];
+    }
+
+    // Perfis privados exigem amizade para acessar os eventos
+    if (followStatus === FOLLOW_STATUS.FRIENDS) {
+      const confirmedEvents =
+        await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
+          userId,
+          page
+        );
+      return [otherProfileInfo, confirmedEvents];
+    }
+
+    // Caso contrário, eventos não são acessíveis
+    return [otherProfileInfo, null];
+  }
+
+  private getFollowStatus(
+    myProfile: Profile,
+    otherProfile: Profile
+  ): FOLLOW_STATUS {
+    if (
       myProfile.following.includes(otherProfile.userId) &&
-      otherProfile.followers.includes(myProfile.userId);
-
-    if (!areWeFriends) return [otherProfile, null];
-
-    const confirmedEvents =
-      await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
-        userId,
-        page
-      );
-
-    return [otherProfile, confirmedEvents];
+      otherProfile.followers.includes(myProfile.userId)
+    ) {
+      return FOLLOW_STATUS.FRIENDS;
+    }
+    if (myProfile.following.includes(otherProfile.userId)) {
+      return FOLLOW_STATUS.FOLLOWING;
+    }
+    return FOLLOW_STATUS.UNFOLLOWED;
   }
 }

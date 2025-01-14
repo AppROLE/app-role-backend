@@ -3,7 +3,7 @@ import { ProfileMongoDTO } from '../dtos/profile_mongo_dto';
 import { ProfileModel } from '../models/profile.model';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { Profile } from 'src/shared/domain/entities/profile';
-import { FindPersonReturn } from 'src/shared/helpers/types/find_person_return_type';
+import { ProfileCardReturn } from 'src/shared/helpers/types/profile_card_return';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
 import { PresenceModel } from '../models/presence.model';
@@ -63,7 +63,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     }
   }
 
-  async findProfile(searchTerm: string): Promise<FindPersonReturn[]> {
+  async findProfile(searchTerm: string): Promise<ProfileCardReturn[]> {
     const profiles = await ProfileModel.find({
       $or: [{ username: { $regex: `^${searchTerm}`, $options: 'i' } }],
     })

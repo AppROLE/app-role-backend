@@ -1,8 +1,7 @@
-import { PRIVACY_TYPE } from "src/shared/domain/enums/privacy_enum";
-import { Profile } from "src/shared/domain/entities/profile";
-import { GENDER_TYPE } from "src/shared/domain/enums/gender_enum";
-import { IProfile, ProfileModel } from "../models/profile.model";
-import { ROLE_TYPE } from "src/shared/domain/enums/role_type_enum";
+import { Profile } from 'src/shared/domain/entities/profile';
+import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
+import { IProfile, ProfileModel } from '../models/profile.model';
+import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export interface ProfileMongoDTOProps {
   userId: string;
@@ -24,7 +23,7 @@ export interface ProfileMongoDTOProps {
   linkTiktok?: string;
   backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   followers: string[];
   following: string[];
   favorites: string[];
@@ -53,7 +52,7 @@ export class ProfileMongoDTO {
   linkTiktok?: string;
   backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   following: string[];
   favorites: string[];
   reviewsId: string[];
@@ -77,7 +76,7 @@ export class ProfileMongoDTO {
     this.linkTiktok = props.linkTiktok;
     this.backgroundPhoto = props.backgroundPhoto;
     this.profilePhoto = props.profilePhoto;
-    this.privacy = props.privacy;
+    this.isPrivate = props.isPrivate;
     this.followers = props.followers;
     this.following = props.following;
     this.favorites = props.favorites;
@@ -96,10 +95,16 @@ export class ProfileMongoDTO {
       name: profile.name,
       email: profile.email,
       nickname: profile.nickname,
-      dateBirth: profile.dateBirth === undefined ? undefined : profile.dateBirth.getTime(),
+      dateBirth:
+        profile.dateBirth === undefined
+          ? undefined
+          : profile.dateBirth.getTime(),
       username: profile.username,
       acceptedTerms: profile.acceptedTerms,
-      acceptedTermsAt: profile.acceptedTermsAt === undefined ? undefined : profile.acceptedTermsAt.getTime(),
+      acceptedTermsAt:
+        profile.acceptedTermsAt === undefined
+          ? undefined
+          : profile.acceptedTermsAt.getTime(),
       role: profile.role,
       cpf: profile.cpf,
       gender: profile.gender,
@@ -109,7 +114,7 @@ export class ProfileMongoDTO {
       backgroundPhoto: profile.backgroundPhoto,
       biography: profile.biography,
       profilePhoto: profile.profilePhoto,
-      privacy: profile.privacy,
+      isPrivate: profile.isPrivate,
       followers: profile.followers,
       following: profile.following,
       favorites: profile.favorites,
@@ -143,7 +148,7 @@ export class ProfileMongoDTO {
       backgroundPhoto: this.backgroundPhoto,
       biography: this.biography,
       profilePhoto: this.profilePhoto,
-      privacy: this.privacy,
+      isPrivate: this.isPrivate,
       followers: this.followers,
       following: this.following,
       favorites: this.favorites,
@@ -174,7 +179,7 @@ export class ProfileMongoDTO {
       backgroundPhoto: profile.backgroundPhoto,
       biography: profile.biography,
       profilePhoto: profile.profilePhoto,
-      privacy: profile.privacy,
+      isPrivate: profile.isPrivate,
       followers: profile.followers,
       following: profile.following,
       favorites: profile.favorites,
@@ -204,7 +209,7 @@ export class ProfileMongoDTO {
       linkTiktok: this.linkTiktok,
       backgroundPhoto: this.backgroundPhoto,
       profilePhoto: this.profilePhoto,
-      privacy: this.privacy,
+      isPrivate: this.isPrivate,
       following: this.following,
       favorites: this.favorites,
       createdAt: this.createdAt,

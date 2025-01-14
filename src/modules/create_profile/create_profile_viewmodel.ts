@@ -1,5 +1,4 @@
 import { Profile } from 'src/shared/domain/entities/profile';
-import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export class CreateProfileViewmodel {
@@ -13,7 +12,7 @@ export class CreateProfileViewmodel {
   acceptedTermsAt?: number;
   createdAt: number;
   updatedAt: number;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   profilePhoto?: string;
 
   constructor(profile: Profile) {
@@ -27,7 +26,7 @@ export class CreateProfileViewmodel {
     this.acceptedTermsAt = profile.acceptedTermsAt;
     this.createdAt = profile.createdAt;
     this.updatedAt = profile.updatedAt;
-    this.privacy = profile.privacy;
+    this.isPrivate = profile.isPrivate;
     this.profilePhoto = profile.profilePhoto;
   }
 
@@ -43,7 +42,7 @@ export class CreateProfileViewmodel {
       acceptedTermsAt: this.acceptedTermsAt,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      privacy: this.privacy,
+      isPrivate: this.isPrivate,
       profilePhoto: this.profilePhoto,
     };
   }

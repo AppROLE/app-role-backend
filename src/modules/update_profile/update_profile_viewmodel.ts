@@ -19,7 +19,7 @@ export class UpdateProfileViewmodel {
         acceptedTermsAt: this.profile.acceptedTermsAt,
         createdAt: this.profile.createdAt,
         updatedAt: this.profile.updatedAt,
-        privacy: this.profile.privacy,
+        isPrivate: this.profile.isPrivate,
         profilePhoto: this.profile.profilePhoto,
         followers: this.profile.followers,
         following: this.profile.following,

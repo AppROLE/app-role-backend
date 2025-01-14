@@ -345,7 +345,7 @@ export class AuthRepositoryCognito implements IAuthRepository {
       return {
         accessToken: AccessToken || '',
         idToken: IdToken || '',
-        refreshToken: RefreshToken || '',
+        refreshToken,
       };
     } catch (error) {
       this.handleError(error, 'refreshToken');

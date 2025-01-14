@@ -1,6 +1,5 @@
 import { Profile } from 'src/shared/domain/entities/profile';
 import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
-import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
@@ -14,7 +13,7 @@ interface UpdateProfileParams {
   dateBirth?: number;
   gender?: GENDER_TYPE;
   phoneNumber?: string;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   profileImage?: {
     image: Buffer;
     mimetype: string;

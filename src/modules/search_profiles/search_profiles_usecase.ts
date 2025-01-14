@@ -1,5 +1,5 @@
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
-import { FindPersonReturn } from 'src/shared/helpers/types/find_person_return_type';
+import { ProfileCardReturn } from 'src/shared/helpers/types/profile_card_return';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class SearchProfilesUsecase {
@@ -20,7 +20,7 @@ export class SearchProfilesUsecase {
       throw new Error('Expected to have an instance of the profile repository');
   }
 
-  execute(searchTerm: string): Promise<FindPersonReturn[]> {
+  execute(searchTerm: string): Promise<ProfileCardReturn[]> {
     const profiles = this.profile_repo!.findProfile(searchTerm);
     return profiles;
   }

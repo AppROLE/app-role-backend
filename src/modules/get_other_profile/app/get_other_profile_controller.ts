@@ -44,18 +44,7 @@ export class GetOtherProfileController {
       );
 
       return new OK({
-        profile: {
-          userId: profile.userId,
-          nickname: profile.nickname,
-          username: profile.username,
-          biography: profile.biography,
-          linkInstagram: profile.linkInstagram,
-          linkTiktok: profile.linkTiktok,
-          backgroundPhoto: profile.backgroundPhoto,
-          profilePhoto: profile.profilePhoto,
-          followers: profile.followers.length,
-          following: profile.following.length,
-        },
+        profile: profile,
         confirmedEvents: confirmedEvents,
       });
     } catch (error: any) {

@@ -19,7 +19,6 @@ import {
   ParsedFile,
 } from 'src/shared/helpers/functions/export_busboy';
 import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
-import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
 import { UpdateProfileUsecase } from './update_profile_usecase';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 import { UpdateProfileViewmodel } from './update_profile_viewmodel';
@@ -30,7 +29,7 @@ export interface ProfileFormDataFields {
   dateBirth?: number;
   gender?: GENDER_TYPE;
   phoneNumber?: string;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   biography?: string;
   linkInstagram?: string;
   linkTiktok?: string;
@@ -55,7 +54,7 @@ export class UpdateProfileController {
         dateBirth,
         gender,
         phoneNumber,
-        privacy,
+        isPrivate,
         biography,
         linkInstagram,
         linkTiktok,
@@ -67,7 +66,6 @@ export class UpdateProfileController {
       if (isNaN(dateBirth)) {
         dateBirth = undefined;
       }
-
 
       const { backgroundImage, profileImage } = formData.files;
 
@@ -92,7 +90,7 @@ export class UpdateProfileController {
         dateBirth,
         gender,
         phoneNumber,
-        privacy,
+        isPrivate,
         biography,
         linkInstagram,
         linkTiktok,

@@ -1,4 +1,4 @@
-export type FindPersonReturn = {
+export type ProfileCardReturn = {
   userId: string;
   nickname: string;
   username: string;

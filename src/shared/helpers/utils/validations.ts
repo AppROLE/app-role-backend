@@ -1,5 +1,4 @@
 import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
-import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 
 export class Validations {
@@ -117,8 +116,8 @@ export class Validations {
     return true;
   }
 
-  static validatePrivacy(privacy?: PRIVACY_TYPE): boolean {
-    if (!privacy || !Object.values(PRIVACY_TYPE).includes(privacy)) {
+  static validateIsPrivate(isPrivate?: boolean): boolean {
+    if (isPrivate === undefined || isPrivate === null) {
       return false;
     }
 

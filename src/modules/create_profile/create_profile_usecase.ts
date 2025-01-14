@@ -1,5 +1,4 @@
 import { Profile } from 'src/shared/domain/entities/profile';
-import { PRIVACY_TYPE } from 'src/shared/domain/enums/privacy_enum';
 import { ROLE_TYPE } from 'src/shared/domain/enums/role_type_enum';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
@@ -83,7 +82,7 @@ export class CreateProfileUsecase {
       acceptedTermsAt: new Date().getTime(),
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
-      privacy: PRIVACY_TYPE.PUBLIC,
+      isPrivate: true,
       profilePhoto: profilePhoto,
       followers: [],
       following: [],

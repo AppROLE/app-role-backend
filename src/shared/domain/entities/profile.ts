@@ -1,7 +1,6 @@
 import { Validations } from 'src/shared/helpers/utils/validations';
 import { EntityError } from '../../helpers/errors/errors';
 import { GENDER_TYPE } from '../enums/gender_enum';
-import { PRIVACY_TYPE } from '../enums/privacy_enum';
 import { ROLE_TYPE } from '../enums/role_type_enum';
 
 interface ProfileProps {
@@ -24,7 +23,7 @@ interface ProfileProps {
   linkTiktok?: string;
   backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   followers: string[];
   following: string[];
   favorites: string[];
@@ -53,7 +52,7 @@ export class Profile {
   linkTiktok?: string;
   backgroundPhoto?: string;
   profilePhoto?: string;
-  privacy: PRIVACY_TYPE;
+  isPrivate: boolean;
   followers: string[];
   following: string[];
   favorites: string[];
@@ -125,14 +124,10 @@ export class Profile {
     }
     this.profilePhoto = props.profilePhoto;
 
-    if (!props.privacy) {
-      this.privacy = PRIVACY_TYPE.PUBLIC;
-    } else {
-      if (!Validations.validatePrivacy(props.privacy)) {
-        throw new EntityError('privacy');
-      }
-      this.privacy = props.privacy;
+    if (!Validations.validateIsPrivate(props.isPrivate)) {
+      throw new EntityError('isPrivate');
     }
+    this.isPrivate = props.isPrivate;
 
     this.acceptedTerms = props.acceptedTerms;
     this.acceptedTermsAt = props.acceptedTermsAt;
