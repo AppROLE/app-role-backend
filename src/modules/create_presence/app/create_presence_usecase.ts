@@ -1,4 +1,5 @@
 import { Presence } from 'src/shared/domain/entities/presence';
+import { IEmailRepository } from 'src/shared/domain/repositories/email_interface';
 import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
 import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
@@ -14,12 +15,14 @@ export class CreatePresenceUsecase {
   private event_repo?: IEventRepository;
   private presence_repo?: IPresenceRepository;
   private profile_repo?: IProfileRepository;
+  private email_repo?: IEmailRepository;
 
   constructor() {
     this.repository = new Repository({
       event_repo: true,
       presence_repo: true,
       profile_repo: true,
+      email_repo: true,
     });
   }
 
@@ -28,6 +31,7 @@ export class CreatePresenceUsecase {
     this.event_repo = this.repository.event_repo;
     this.presence_repo = this.repository.presence_repo;
     this.profile_repo = this.repository.profile_repo;
+    this.email_repo = this.repository.email_repo;
 
     if (!this.event_repo)
       throw new Error('Expected to have an instance of the event repository');
@@ -39,6 +43,9 @@ export class CreatePresenceUsecase {
 
     if (!this.profile_repo)
       throw new Error('Expected to have an instance of the profile repository');
+
+    if (!this.email_repo)
+      throw new Error('Expected to have an instance of the email repository');
   }
 
   async execute(
@@ -76,6 +83,12 @@ export class CreatePresenceUsecase {
 
     await this.event_repo!.updateEvent(eventId, {
       presencesId: [...event.presencesId, presenceCreated.presenceId],
+    });
+
+    await this.email_repo!.sendEmail({
+      to: profile.email,
+      subject: 'Presença confirmada',
+      body: presenceEmailBody(profile.name, event.name),
     });
 
     return presenceCreated;

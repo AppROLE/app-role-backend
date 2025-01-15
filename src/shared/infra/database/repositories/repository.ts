@@ -15,6 +15,8 @@ import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_
 import { AuthRepositoryCognito } from './auth_repository_cognito';
 import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
 import { ReviewRepositoryMongo } from './review_repository_mongo';
+import { IEmailRepository } from 'src/shared/domain/repositories/email_interface';
+import { EmailSESRepository } from './email_repository_ses';
 
 interface RepositoryConfig {
   event_repo?: boolean;
@@ -24,6 +26,7 @@ interface RepositoryConfig {
   file_repo?: boolean;
   auth_repo?: boolean;
   review_repo?: boolean;
+  email_repo?: boolean;
 }
 
 export class Repository {
@@ -34,6 +37,7 @@ export class Repository {
   file_repo?: IFileRepository;
   auth_repo?: IAuthRepository;
   review_repo?: IReviewRepository;
+  email_repo?: IEmailRepository;
   private connection: Connection | null = null;
 
   constructor(private config: RepositoryConfig) {
@@ -44,6 +48,7 @@ export class Repository {
     this.config.file_repo ??= false;
     this.config.auth_repo ??= false;
     this.config.review_repo ??= false;
+    this.config.email_repo ??= false;
   }
 
   async connectRepository() {
@@ -81,6 +86,10 @@ export class Repository {
     }
     if (this.config.review_repo && !this.review_repo) {
       this.review_repo = new ReviewRepositoryMongo();
+    }
+
+    if (this.config.email_repo && !this.email_repo) {
+      this.email_repo = new EmailSESRepository();
     }
   }
 
