@@ -7,6 +7,7 @@ import {
   NoItemsFound,
   UserAlreadyConfirmedEvent,
 } from 'src/shared/helpers/errors/errors';
+import { presenceEmailBody } from 'src/shared/helpers/utils/presence_email_body';
 import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 

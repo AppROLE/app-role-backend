@@ -1,4 +1,4 @@
-const presenceEmailBody = (username: string, eventName: string) => `
+export const presenceEmailBody = (username: string, eventName: string) => `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

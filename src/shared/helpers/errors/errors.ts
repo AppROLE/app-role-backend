@@ -29,7 +29,7 @@ export class MissingParameters extends BaseError {
 
 export class EntityError extends BaseError {
   constructor(message: string) {
-    super(`O campo ${message} não é válido.`);
+    super(`Erro de entidade: ${message} não é válido.`);
   }
 }
 
