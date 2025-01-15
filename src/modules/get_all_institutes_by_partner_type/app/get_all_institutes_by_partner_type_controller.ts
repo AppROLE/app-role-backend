@@ -30,14 +30,9 @@ export class GetAllInstitutesByPartnerTypeController {
   constructor(private readonly usecase: GetAllInstitutesByPartnerTypeUseCase) {}
 
   async handle(
-    req: IRequest<GetAllInstitutesByPartnerTypeRequestBody>,
-    requesterUser: Record<string, any>
+    req: IRequest<GetAllInstitutesByPartnerTypeRequestBody>
   ): Promise<any> {
     try {
-      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-      if (!userApiGateway) throw new ForbiddenAction('Usuário');
-
       const { page, partnerType } = req.data.query_params;
 
       if (typeof partnerType !== 'string') {

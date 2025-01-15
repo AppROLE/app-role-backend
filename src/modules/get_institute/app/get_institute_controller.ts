@@ -26,12 +26,8 @@ export interface GetInstituteByIdRequestBody {
 export class GetInstituteController {
   constructor(private readonly usecase: GetInstituteUsecase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>) {
+  async handle(req: IRequest) {
     try {
-      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-      if (!userApiGateway) throw new ForbiddenAction('Usuário');
-
       const { instituteId } = req.data.query_params;
 
       if (!instituteId) {

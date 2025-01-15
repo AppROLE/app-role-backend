@@ -1,6 +1,9 @@
 import mongoose, { Connection, Schema } from 'mongoose';
 import { constants } from 'node:fs';
 import { v4 as uuidv4 } from 'uuid';
+import { config } from 'dotenv';
+import path from 'path';
+config({ path: path.resolve(__dirname, '../.env') });
 
 export interface IPresence extends Document {
   _id: string;
@@ -26,9 +29,7 @@ export const PresenceModel = mongoose.model<IPresence>(
 );
 
 async function requestMongo() {
-  await mongoose.connect(
-    'mongodb+srv://main_user:sAqVQ6heAUGKcKSO@approlemobilecluster.d35ii.mongodb.net/approle-dev'
-  );
+  await mongoose.connect(process.env.MONGO_URI!);
 
   const page = 1;
   const userId = 'e3ecfa0a-5061-70c0-f914-53c700ac50f6';
