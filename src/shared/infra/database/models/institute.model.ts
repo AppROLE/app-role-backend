@@ -11,11 +11,11 @@ export interface IInstitute extends Document {
   instituteType: INSTITUTE_TYPE;
   partnerType: PARTNER_TYPE;
   phone?: string;
-  logoPhoto: string;
+  logo: string;
   address: IAddress;
   price?: number;
-  photosUrl: string[];
   eventsId: string[];
+  reviewsId: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,11 +27,11 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   instituteType: { type: String, required: true },
   partnerType: { type: String, required: true },
   phone: { type: String },
-  logoPhoto: { type: String, required: true },
+  logo: { type: String, required: true },
   address: { type: AddressSchema, required: true },
   price: { type: Number },
-  photosUrl: [{ type: String, required: true }],
   eventsId: [{ type: String, ref: 'events' }],
+  reviewsId: [{ type: String, ref: 'reviews' }],
   createdAt: { type: Date },
   updatedAt: { type: Date },
 });

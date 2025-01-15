@@ -72,29 +72,17 @@ export class CreateInstituteController {
       latitude = Number(latitude);
       longitude = Number(longitude);
 
-      const { logoPhoto, photos } = formData.files;
+      const { logo } = formData.files;
 
-      if (logoPhoto === undefined || logoPhoto === null) {
-        throw new MissingParameters('logoPhoto');
+      if (logo === undefined || logo === null) {
+        throw new MissingParameters('logo');
       }
 
-      let logoImage: ParsedFile;
+      let logoPhoto: ParsedFile;
 
-      !Array.isArray(logoPhoto)
-        ? (logoImage = logoPhoto)
-        : (logoImage = logoPhoto[0]);
+      !Array.isArray(logo) ? (logoPhoto = logo) : (logoPhoto = logo[0]);
 
       let photosImages: ParsedFile[];
-
-      if (photos === undefined || photos === null) {
-        photosImages = [];
-      } else if (Array.isArray(photos)) {
-        photosImages = photos;
-      } else if (!Array.isArray(photos)) {
-        photosImages = [photos];
-      } else {
-        throw new MissingParameters('photos');
-      }
 
       if (description === undefined || description === null) {
         throw new MissingParameters('description');
@@ -162,11 +150,10 @@ export class CreateInstituteController {
           neighborhood,
           city,
           state,
-          cep: cep,
+          cep,
         },
         price,
-        logoPhoto: logoImage,
-        photos: photosImages,
+        logoPhoto,
       });
 
       return new Created({

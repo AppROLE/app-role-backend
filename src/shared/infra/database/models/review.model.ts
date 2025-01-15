@@ -5,6 +5,7 @@ export interface IReview extends Document {
   _id: string;
   userId: string;
   eventId: string;
+  instituteId: string;
   review: string;
   rating: number;
   createdAt: Date;
@@ -14,6 +15,7 @@ const ReviewSchema = new Schema<IReview>({
   _id: { type: String, default: uuidv4 },
   userId: { type: String, ref: 'profiles', required: true },
   eventId: { type: String, ref: 'events', required: true },
+  instituteId: { type: String, ref: 'institutes', required: true },
   review: { type: String, required: true },
   rating: { type: Number, required: true },
   createdAt: { type: Date },

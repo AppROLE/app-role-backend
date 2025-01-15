@@ -17,7 +17,6 @@ import {
 } from 'src/shared/helpers/errors/errors';
 import { MissingParameters } from 'src/shared/helpers/errors/errors';
 import { GetInstituteViewmodel } from './get_institute_viewmodel';
-import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 
 export interface GetInstituteByIdRequestBody {
   instituteId: string;

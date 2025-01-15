@@ -10,15 +10,15 @@ import { Address } from 'src/shared/domain/entities/address';
 export interface InstituteMongoDTOProps {
   instituteId: string;
   name: string;
-  logoPhoto: string;
+  logo: string;
   description: string;
   instituteType: INSTITUTE_TYPE;
   partnerType: PARTNER_TYPE;
   phone?: string;
   address: Address;
   price?: number;
-  photosUrl: string[];
   eventsId: string[];
+  reviewsId: string[];
   createdAt: number;
   updatedAt: number;
 }
@@ -26,30 +26,30 @@ export interface InstituteMongoDTOProps {
 export class InstituteMongoDTO {
   instituteId: string;
   name: string;
-  logoPhoto: string;
+  logo: string;
   description: string;
   instituteType: INSTITUTE_TYPE;
   partnerType: PARTNER_TYPE;
   phone?: string;
   address: Address;
   price?: number;
-  photosUrl: string[];
   eventsId: string[];
+  reviewsId: string[];
   createdAt: number;
   updatedAt: number;
 
   constructor(props: InstituteMongoDTOProps) {
     this.instituteId = props.instituteId;
     this.name = props.name;
-    this.logoPhoto = props.logoPhoto;
+    this.logo = props.logo;
     this.description = props.description;
     this.instituteType = props.instituteType;
     this.partnerType = props.partnerType;
     this.phone = props.phone;
     this.address = props.address;
     this.price = props.price;
-    this.photosUrl = props.photosUrl;
     this.eventsId = props.eventsId;
+    this.reviewsId = props.reviewsId || [];
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }
@@ -59,14 +59,14 @@ export class InstituteMongoDTO {
       instituteId: this.instituteId,
       partnerType: this.partnerType,
       name: this.name,
-      logoPhoto: this.logoPhoto,
+      logo: this.logo,
       description: this.description,
       instituteType: this.instituteType,
       phone: this.phone,
       address: this.address,
       price: this.price,
-      photosUrl: this.photosUrl,
       eventsId: this.eventsId,
+      reviewsId: this.reviewsId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     });
@@ -76,15 +76,15 @@ export class InstituteMongoDTO {
     return new InstituteMongoDTO({
       instituteId: institute.instituteId,
       name: institute.name,
-      logoPhoto: institute.logoPhoto,
+      logo: institute.logo,
       description: institute.description,
       instituteType: institute.instituteType,
       partnerType: institute.partnerType,
       phone: institute.phone,
       address: institute.address,
       price: institute.price,
-      photosUrl: institute.photosUrl,
       eventsId: institute.eventsId,
+      reviewsId: institute.reviewsId,
       createdAt: institute.createdAt,
       updatedAt: institute.updatedAt,
     });
@@ -94,15 +94,15 @@ export class InstituteMongoDTO {
     return new InstituteModel({
       _id: this.instituteId,
       name: this.name,
-      logoPhoto: this.logoPhoto,
+      logo: this.logo,
       description: this.description,
       instituteType: this.instituteType,
       partnerType: this.partnerType,
       phone: this.phone,
       address: this.address,
       price: this.price,
-      photosUrl: this.photosUrl,
       eventsId: this.eventsId,
+      reviewsId: this.reviewsId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     });
@@ -112,15 +112,15 @@ export class InstituteMongoDTO {
     return new InstituteMongoDTO({
       instituteId: institute._id,
       name: institute.name,
-      logoPhoto: institute.logoPhoto,
+      logo: institute.logo,
       description: institute.description,
       instituteType: institute.instituteType,
       partnerType: institute.partnerType,
       phone: institute.phone,
       address: institute.address,
       price: institute.price,
-      photosUrl: institute.photosUrl,
       eventsId: institute.eventsId,
+      reviewsId: institute.reviewsId,
       createdAt: institute.createdAt.getTime(),
       updatedAt: institute.updatedAt.getTime(),
     });

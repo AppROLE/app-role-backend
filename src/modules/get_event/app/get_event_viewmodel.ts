@@ -25,7 +25,6 @@ export class GetEventViewmodel {
   category?: CATEGORY;
   ticketUrl?: string;
   features: FEATURE[];
-  reviewsId: string[];
   presencesId: string[];
   createdAt: number;
   updatedAt: number;
@@ -48,7 +47,6 @@ export class GetEventViewmodel {
     this.category = event.category;
     this.ticketUrl = event.ticketUrl;
     this.features = event.features;
-    this.reviewsId = event.reviewsId;
     this.presencesId = event.presencesId;
     this.createdAt = event.createdAt;
     this.updatedAt = event.updatedAt;
@@ -83,7 +81,6 @@ export class GetEventViewmodel {
       category: this.category,
       ticketUrl: this.ticketUrl,
       features: this.features,
-      reviewsId: this.reviewsId,
       presencesId: this.presencesId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

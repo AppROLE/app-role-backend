@@ -27,7 +27,6 @@ export interface IEvent extends Document {
   category?: CATEGORY;
   ticketUrl?: string;
   features: FEATURE[];
-  reviewsId: string[];
   presencesId: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -49,7 +48,6 @@ const EventSchema: Schema = new Schema<IEvent>({
   packageType: [{ type: String }],
   category: { type: String },
   ticketUrl: { type: String },
-  reviewsId: [{ type: String, ref: 'reviews' }],
   eventStatus: { type: String, required: true },
   presencesId: [{ type: String, ref: 'presences' }],
   eventPhoto: { type: String, required: true },

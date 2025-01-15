@@ -23,7 +23,6 @@ export interface CreateInstituteParams {
   phone?: string;
   address: Address;
   price?: number;
-  photos: ParsedFile[];
 }
 
 export class CreateInstituteUseCase {
@@ -67,37 +66,20 @@ export class CreateInstituteUseCase {
       );
     }
 
-    let photosUrls: string[] = [];
-
-    if (params.photos && params.photos.length > 0) {
-      for (let i = 0; i < params.photos.length; i++) {
-        const photo = params.photos[i];
-        const photoUrl = await this.file_repo!.uploadImage(
-          `institutes/${instituteId}/photos/${i}.${
-            params.logoPhoto.mimetype.split('/')[1]
-          }`,
-          photo.image,
-          photo.mimetype,
-          true
-        );
-        photosUrls.push(photoUrl);
-      }
-    }
-
     const institute = new Institute({
       instituteId,
       address: params.address,
       description: params.description,
-      eventsId: [],
-      logoPhoto: logoUrl,
+      logo: logoUrl,
       name: params.name,
       partnerType:
         PARTNER_TYPE[params.partnerType as keyof typeof PARTNER_TYPE],
       instituteType:
         INSTITUTE_TYPE[params.instituteType as keyof typeof INSTITUTE_TYPE],
       phone: params.phone,
-      photosUrl: photosUrls,
       price: params.price,
+      eventsId: [],
+      reviewsId: [],
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
     });

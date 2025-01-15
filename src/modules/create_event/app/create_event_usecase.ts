@@ -123,7 +123,6 @@ export class CreateEventUseCase {
       features: params.features,
       packageType: params.packageType,
       ticketUrl: params.ticketUrl,
-      reviewsId: [],
       presencesId: [],
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
@@ -131,10 +130,7 @@ export class CreateEventUseCase {
 
     const createEvent = await this.event_repo!.createEvent(event);
 
-    await this.institute_repo!.addEventToInstitute(
-      params.instituteId,
-      eventId
-    );
+    await this.institute_repo!.addEventToInstitute(params.instituteId, eventId);
 
     return createEvent;
   }

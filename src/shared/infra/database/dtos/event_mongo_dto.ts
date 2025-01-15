@@ -26,7 +26,6 @@ export interface EventMongoDTOProps {
   category?: CATEGORY;
   ticketUrl?: string;
   features: FEATURE[];
-  reviewsId: string[];
   presencesId: string[];
   createdAt: number;
   updatedAt: number;
@@ -50,7 +49,6 @@ export class EventMongoDTO {
   category?: CATEGORY;
   ticketUrl?: string;
   features: FEATURE[];
-  reviewsId: string[];
   presencesId: string[];
   createdAt: number;
   updatedAt: number;
@@ -73,7 +71,6 @@ export class EventMongoDTO {
     this.category = props.category;
     this.ticketUrl = props.ticketUrl;
     this.features = props.features || [];
-    this.reviewsId = props.reviewsId || [];
     this.presencesId = props.presencesId || [];
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
@@ -98,7 +95,6 @@ export class EventMongoDTO {
       packageType: eventDoc.packageType,
       category: eventDoc.category,
       ticketUrl: eventDoc.ticketUrl,
-      reviewsId: eventDoc.reviewsId,
       presencesId: eventDoc.presencesId,
       createdAt: eventDoc.createdAt.getTime(),
       updatedAt: eventDoc.updatedAt.getTime(),
@@ -123,12 +119,9 @@ export class EventMongoDTO {
       eventPhoto: this.eventPhoto,
       galleryLink: this.galleryLink || [],
       instituteId: this.instituteId,
-      packageType: (this.packageType || []).map(
-        (type) => type as PACKAGE_TYPE
-      ),
+      packageType: (this.packageType || []).map((type) => type as PACKAGE_TYPE),
       category: this.category as CATEGORY,
       ticketUrl: this.ticketUrl,
-      reviewsId: this.reviewsId,
       presencesId: this.presencesId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
@@ -154,7 +147,6 @@ export class EventMongoDTO {
       packageType: event.packageType || [],
       category: event.category,
       ticketUrl: event.ticketUrl || '',
-      reviewsId: event.reviewsId,
       presencesId: event.presencesId,
       createdAt: event.createdAt,
       updatedAt: event.updatedAt,
@@ -180,7 +172,6 @@ export class EventMongoDTO {
       packageType: this.packageType,
       category: this.category,
       ticketUrl: this.ticketUrl,
-      reviewsId: this.reviewsId,
       presencesId: this.presencesId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

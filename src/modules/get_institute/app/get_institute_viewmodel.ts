@@ -6,7 +6,7 @@ import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 export class GetInstituteViewmodel {
   private instituteId?: string;
   private name: string;
-  private logoPhoto?: string;
+  private logo?: string;
   private description: string;
   private instituteType: INSTITUTE_TYPE;
   private partnerType: PARTNER_TYPE;
@@ -15,26 +15,27 @@ export class GetInstituteViewmodel {
   private price?: number;
   private photosUrl?: string[];
   private eventsId?: string[];
+  private reviewsId?: string[];
 
   constructor(institute: Institute) {
     this.instituteId = institute.instituteId;
     this.name = institute.name;
-    this.logoPhoto = institute.logoPhoto;
+    this.logo = institute.logo;
     this.description = institute.description;
     this.instituteType = institute.instituteType;
     this.partnerType = institute.partnerType;
     this.phone = institute.phone;
     this.address = institute.address;
     this.price = institute.price;
-    this.photosUrl = institute.photosUrl;
     this.eventsId = institute.eventsId;
+    this.reviewsId = institute.reviewsId;
   }
 
   toJSON() {
     return {
       instituteId: this.instituteId,
       name: this.name,
-      logoPhoto: this.logoPhoto,
+      logo: this.logo,
       description: this.description,
       instituteType: this.instituteType,
       partnerType: this.partnerType,
@@ -43,6 +44,7 @@ export class GetInstituteViewmodel {
       price: this.price,
       photosUrl: this.photosUrl,
       eventsId: this.eventsId,
+      reviewsId: this.reviewsId,
     };
   }
 }

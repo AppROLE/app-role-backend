@@ -3,10 +3,10 @@ import { EntityError } from '../../helpers/errors/errors';
 import { GENDER_TYPE } from '../enums/gender_enum';
 import { ROLE_TYPE } from '../enums/role_type_enum';
 
-interface ProfileProps {
+export interface ProfileProps {
   userId: string;
   name: string;
-  nickname: string;
+  nickname?: string;
   username: string;
   email: string;
   role: ROLE_TYPE;
@@ -24,12 +24,12 @@ interface ProfileProps {
   backgroundPhoto?: string;
   profilePhoto?: string;
   isPrivate: boolean;
-  followers: string[];
-  following: string[];
-  favorites: string[];
-  reviewsId: string[];
-  searchHistory: string[];
-  presencesId: string[];
+  followers?: string[];
+  following?: string[];
+  favorites?: string[];
+  reviewsId?: string[];
+  searchHistory?: string[];
+  presencesId?: string[];
 }
 
 export class Profile {
@@ -61,101 +61,80 @@ export class Profile {
   presencesId: string[];
 
   constructor(props: ProfileProps) {
-    if (!Validations.validateUserId(props.userId)) {
-      throw new EntityError('userId');
-    }
-    this.userId = props.userId;
-
-    if (!Validations.validateName(props.name)) {
-      throw new EntityError('name');
-    }
-    this.name = props.name;
-
-    if (!props.nickname) {
-      this.nickname = props.name.split(' ')[0];
-    } else {
-      this.nickname = props.nickname;
+    // Validações
+    if (!props.userId || typeof props.userId !== 'string') {
+      throw new EntityError('ID do usuário inválido.');
     }
 
-    this.username = props.username;
-    this.dateBirth = props.dateBirth;
-
-    if (!Validations.validateEmail(props.email)) {
-      throw new EntityError('email');
+    if (!props.name || props.name.trim().length < 3) {
+      throw new EntityError(
+        'Nome inválido. Deve conter pelo menos 3 caracteres.'
+      );
     }
-    this.email = props.email;
 
-    if (!Validations.validateRole(props.role)) {
-      throw new EntityError('role');
+    if (!props.username || props.username.trim().length < 3) {
+      throw new EntityError(
+        'Username inválido. Deve conter pelo menos 3 caracteres.'
+      );
     }
-    this.role = props.role;
 
-    if (
-      props.linkInstagram &&
-      !Validations.validateInstagram(props.linkInstagram)
-    ) {
-      throw new EntityError('linkInstagram');
+    if (!props.email || !Validations.validateEmail(props.email)) {
+      throw new EntityError('Email inválido.');
     }
-    this.linkInstagram = props.linkInstagram;
 
-    if (props.linkTiktok && !Validations.validateTiktok(props.linkTiktok)) {
-      throw new EntityError('linkTiktok');
+    if (!props.role || !Object.values(ROLE_TYPE).includes(props.role)) {
+      throw new EntityError('Tipo de role inválido.');
     }
-    this.linkTiktok = props.linkTiktok;
 
-    if (props.biography && !Validations.validateBiography(props.biography)) {
-      throw new EntityError('biography');
+    if (typeof props.isPrivate !== 'boolean') {
+      throw new EntityError('O campo isPrivate deve ser um booleano.');
     }
-    this.biography = props.biography;
 
-    if (
-      props.backgroundPhoto &&
-      !Validations.validateBackgroundPhoto(props.backgroundPhoto)
-    ) {
-      throw new EntityError('backgroundPhoto');
+    if (!props.acceptedTerms) {
+      throw new EntityError('O usuário deve aceitar os termos.');
     }
-    this.backgroundPhoto = props.backgroundPhoto;
 
-    if (
-      props.profilePhoto &&
-      !Validations.validateProfilePhoto(props.profilePhoto)
-    ) {
-      throw new EntityError('profilePhoto');
+    if (props.gender && !Object.values(GENDER_TYPE).includes(props.gender)) {
+      throw new EntityError('Gênero inválido.');
     }
-    this.profilePhoto = props.profilePhoto;
 
-    if (!Validations.validateIsPrivate(props.isPrivate)) {
-      throw new EntityError('isPrivate');
+    if (props.cpf && !Validations.validateCpf(props.cpf)) {
+      throw new EntityError('CPF inválido.');
     }
-    this.isPrivate = props.isPrivate;
-
-    this.acceptedTerms = props.acceptedTerms;
-    this.acceptedTermsAt = props.acceptedTermsAt;
-
-    if (!Validations.validateCpf(props.cpf)) {
-      throw new EntityError('cpf');
-    }
-    this.cpf = props.cpf;
-
-    if (props.gender && !Validations.validateGender(props.gender)) {
-      throw new EntityError('gênero');
-    }
-    this.gender = props.gender;
 
     if (
       props.phoneNumber &&
       !Validations.validatePhoneNumber(props.phoneNumber)
     ) {
-      throw new EntityError('phoneNumber');
+      throw new EntityError('Telefone inválido.');
     }
+
+    // Atribuições
+    this.userId = props.userId;
+    this.name = props.name;
+    this.nickname = props.nickname || props.name.split(' ')[0];
+    this.username = props.username;
+    this.email = props.email;
+    this.role = props.role;
+    this.acceptedTerms = props.acceptedTerms;
+    this.acceptedTermsAt = props.acceptedTermsAt;
+    this.dateBirth = props.dateBirth;
+    this.gender = props.gender;
+    this.cpf = props.cpf;
+    this.biography = props.biography;
     this.phoneNumber = props.phoneNumber;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
+    this.linkInstagram = props.linkInstagram;
+    this.linkTiktok = props.linkTiktok;
+    this.backgroundPhoto = props.backgroundPhoto;
+    this.profilePhoto = props.profilePhoto;
+    this.isPrivate = props.isPrivate;
+    this.followers = props.followers || [];
     this.following = props.following || [];
     this.favorites = props.favorites || [];
     this.reviewsId = props.reviewsId || [];
     this.searchHistory = props.searchHistory || [];
     this.presencesId = props.presencesId || [];
-    this.followers = props.followers || [];
   }
 }
