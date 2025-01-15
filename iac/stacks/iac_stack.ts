@@ -93,6 +93,12 @@ export class IacStack extends Stack {
       resources: ['*'],
     });
 
+    const sesPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['ses:SendEmail', 'ses:SendRawEmail'],
+      resources: ['arn:aws:ses:*:*:identity/*'], // Allow for all verified identities
+    });
+
     for (const fn of lambdaStack.functionsThatNeedCognitoPermissions) {
       fn.addToRolePolicy(cognitoAdminPolicy);
     }
@@ -100,6 +106,10 @@ export class IacStack extends Stack {
     for (const fn of lambdaStack.functionsThatNeedS3Permissions) {
       fn.addToRolePolicy(s3Policy);
       fn.addToRolePolicy(rekognitionPolicy);
+    }
+
+    for (const fn of lambdaStack.functionsThatNeedSESPermissions) {
+      fn.addToRolePolicy(sesPolicy);
     }
   }
 }

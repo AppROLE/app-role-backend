@@ -11,6 +11,7 @@ import * as path from 'path';
 export class LambdaStack extends Construct {
   functionsThatNeedCognitoPermissions: lambda.Function[] = [];
   functionsThatNeedS3Permissions: lambda.Function[] = [];
+  functionsThatNeedSESPermissions: lambda.Function[] = [];
   lambdaLayer: lambda.LayerVersion;
   libLayer: lambda.LayerVersion;
 
@@ -443,5 +444,7 @@ export class LambdaStack extends Construct {
       this.updateInstituteFunction,
       this.updateProfileFunction,
     ];
+
+    this.functionsThatNeedSESPermissions = [this.createPresenceFunction];
   }
 }
