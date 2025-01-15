@@ -20,23 +20,33 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
       : null;
   }
 
-  async getAllInstitutes(): Promise<Institute[]> {
-    const instituteDocs = await InstituteModel.find().lean();
-    if (!instituteDocs.length) {
-      throw new NoItemsFound('institutes');
-    }
-    return instituteDocs.map((doc) =>
-      InstituteMongoDTO.fromMongo(doc).toEntity()
-    );
-  }
+  async getAllInstitutesPaginated(
+    page: number
+  ): Promise<PaginationReturn<Institute>> {
+    const limit = 30; // Limite fixo por página
+    const skip = (page - 1) * limit;
 
-  async getInstitutesByIds(institutesId: string[]): Promise<Institute[]> {
-    const instituteDocs = await InstituteModel.find({
-      _id: { $in: institutesId },
-    }).lean();
-    return instituteDocs.map((doc) =>
-      InstituteMongoDTO.fromMongo(doc).toEntity()
-    );
+    // Buscar institutos paginados e contar o total
+    const [institutes, totalCount] = await Promise.all([
+      InstituteModel.find()
+        .sort({ name: 1 }) // Ordenar alfabeticamente pelo campo "name"
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      InstituteModel.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      items: institutes.map((doc) =>
+        InstituteMongoDTO.fromMongo(doc).toEntity()
+      ),
+      totalPages,
+      totalCount,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+    };
   }
 
   async deleteInstituteById(instituteId: string): Promise<void> {

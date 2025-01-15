@@ -1,5 +1,6 @@
 import { Institute } from 'src/shared/domain/entities/institute';
 import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
+import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 export class GetAllInstitutesUseCase {
@@ -22,8 +23,7 @@ export class GetAllInstitutesUseCase {
       );
   }
 
-  execute(): Promise<Institute[]> {
-    const institutes = this.institute_repo!.getAllInstitutes();
-    return institutes;
+  execute(page: number): Promise<PaginationReturn<Institute>> {
+    return this.institute_repo!.getAllInstitutesPaginated(page);
   }
 }

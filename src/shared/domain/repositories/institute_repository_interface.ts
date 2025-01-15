@@ -4,13 +4,12 @@ import { PARTNER_TYPE } from '../enums/partner_type_enum';
 
 export interface IInstituteRepository {
   createInstitute(institute: Institute): Promise<Institute>;
-  getAllInstitutes(): Promise<Institute[]>;
+  getAllInstitutesPaginated(page: number): Promise<PaginationReturn<Institute>>;
   getInstitutesByFilter(
     page: number,
     filter: any
   ): Promise<PaginationReturn<Institute>>;
   getInstituteById(instituteId: string): Promise<Institute | null>;
-  getInstitutesByIds(institutesId: string[]): Promise<Institute[]>;
   deleteInstituteById(instituteId: string): Promise<void>;
   updateInstitute(
     instituteId: string,

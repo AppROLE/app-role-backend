@@ -16,7 +16,6 @@ import {
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
 import { GetAllInstitutesUseCase } from './get_all_institutes_usecase';
-import { GetAllInstitutesViewModel } from './get_all_institutes_viewmodel';
 import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 
 export class GetAllInstitutesController {
@@ -24,9 +23,15 @@ export class GetAllInstitutesController {
 
   async handle(req: IRequest) {
     try {
-      const institutes = await this.usecase.execute();
-      const viewModel = new GetAllInstitutesViewModel(institutes);
-      return new OK(viewModel.toJSON());
+      const { page } = req.data.query_params;
+      const pageNumber = Number(page);
+
+      if (isNaN(pageNumber) || pageNumber <= 0) {
+        throw new MissingParameters('Número de página inválido');
+      }
+
+      const institutes = await this.usecase.execute(page);
+      return new OK(institutes);
     } catch (error: any) {
       if (
         error instanceof EntityError ||
