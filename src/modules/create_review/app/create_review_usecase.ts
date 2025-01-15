@@ -3,7 +3,11 @@ import { IEventRepository } from 'src/shared/domain/repositories/event_repositor
 import { IInstituteRepository } from 'src/shared/domain/repositories/institute_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
 import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
-import { EntityError, NoItemsFound } from 'src/shared/helpers/errors/errors';
+import {
+  DuplicatedItem,
+  EntityError,
+  NoItemsFound,
+} from 'src/shared/helpers/errors/errors';
 import { uuidv4 } from 'src/shared/helpers/utils/uuid_util';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
@@ -51,15 +55,18 @@ export class CreateReviewUseCase {
     eventId: string,
     userId: string
   ): Promise<Review> {
-    if (rating < 0 || rating > 5) {
-      throw new EntityError('rating');
-    }
-    if (review.length < 5 || review.length > 250) {
-      throw new EntityError('review');
-    }
-
     const event = await this.event_repo!.getEventById(eventId);
     if (!event) throw new NoItemsFound('event');
+
+    // Verifica se o usuário já fez uma review para o evento
+    const existingReviews = await this.review_repo!.getReviewsByEventId(
+      eventId
+    );
+    const userReview = existingReviews.find((r) => r.userId === userId);
+
+    if (userReview) {
+      throw new DuplicatedItem('Você já realizou uma review para este evento.');
+    }
 
     const reviewToCreate = new Review({
       reviewId: uuidv4(),

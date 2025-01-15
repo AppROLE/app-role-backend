@@ -10,6 +10,7 @@ import {
 } from 'src/shared/helpers/external_interfaces/http_codes';
 import {
   ConflictItems,
+  DuplicatedItem,
   ForbiddenAction,
   NoItemsFound,
 } from 'src/shared/helpers/errors/errors';
@@ -57,7 +58,8 @@ export class CreateReviewController {
       if (
         error instanceof EntityError ||
         error instanceof MissingParameters ||
-        error instanceof WrongTypeParameters
+        error instanceof WrongTypeParameters ||
+        error instanceof DuplicatedItem
       ) {
         return new BadRequest(error.message);
       }
