@@ -21,12 +21,8 @@ import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gatew
 export class GetTopEventsController {
   constructor(private readonly usecase: GetTopEventsUseCase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>) {
+  async handle(req: IRequest) {
     try {
-      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-      if (!userApiGateway) throw new ForbiddenAction('Usuário');
-
       const topEventsByDate = await this.usecase.execute();
 
       return new OK({

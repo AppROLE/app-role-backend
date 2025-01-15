@@ -21,12 +21,8 @@ import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gatew
 export class GetEventsByFilterController {
   constructor(private readonly usecase: GetEventsByFilterUseCase) {}
 
-  async handle(req: IRequest, requesterUser: Record<string, any>) {
+  async handle(req: IRequest) {
     try {
-      const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
-
-      if (!userApiGateway) throw new ForbiddenAction('Usuário');
-
       const { page, ...queryFilters } = req.data.query_params;
       const pageNumber = Number(page);
 

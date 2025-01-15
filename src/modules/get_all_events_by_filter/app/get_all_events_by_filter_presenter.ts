@@ -10,9 +10,8 @@ const controller = new GetEventsByFilterController(usecase);
 
 export async function lambda_handler(event: any, context: any) {
   const httpRequest = new LambdaHttpRequest(event);
-  const requesterUser = event.requestContext.authorizer.claims;
   await usecase.connect();
-  const response = await controller.handle(httpRequest, requesterUser);
+  const response = await controller.handle(httpRequest);
   const httpResponse = new LambdaHttpResponse(
     response?.body,
     response?.statusCode,
