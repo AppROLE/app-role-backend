@@ -30,6 +30,7 @@ export class LambdaStack extends Construct {
   getMyProfileFunction: lambda.Function;
   createProfileFunction: lambda.Function;
   updateProfileFunction: lambda.Function;
+  deleteProfileFunction: lambda.Function;
   getOtherProfileFunction: lambda.Function;
   getMyFollowingFunction: lambda.Function;
   getMyFollowersFunction: lambda.Function;
@@ -208,6 +209,14 @@ export class LambdaStack extends Construct {
     this.createProfileFunction = this.createLambdaApiGatewayIntegration(
       'create_profile',
       'POST',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.deleteProfileFunction = this.createLambdaApiGatewayIntegration(
+      'delete_profile',
+      'DELETE',
       apiGatewayResource,
       environmentVariables,
       authorizer

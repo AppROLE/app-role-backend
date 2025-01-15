@@ -6,6 +6,8 @@ import {
   AdminInitiateAuthCommandInput,
   AdminGetUserCommand,
   AdminGetUserCommandInput,
+  AdminDisableUserCommandInput,
+  AdminDisableUserCommand,
   ResendConfirmationCodeCommand,
   ResendConfirmationCodeCommandInput,
   ForgotPasswordCommand,
@@ -22,6 +24,8 @@ import {
   AdminUpdateUserAttributesCommandInput,
   CognitoIdentityProviderServiceException,
   UpdateUserAttributesCommandInput,
+  AdminEnableUserCommandInput,
+  AdminEnableUserCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 
 import {
@@ -364,6 +368,34 @@ export class AuthRepositoryCognito implements IAuthRepository {
       await this.client.send(command);
     } catch (error) {
       this.handleError(error, 'refreshToken');
+    }
+  }
+
+  async disableUser(email: string): Promise<void> {
+    try {
+      const params: AdminDisableUserCommandInput = {
+        UserPoolId: this.userPoolId,
+        Username: email,
+      };
+
+      const command = new AdminDisableUserCommand(params);
+      await this.client.send(command);
+    } catch (error) {
+      this.handleError(error, 'disableUser');
+    }
+  }
+
+  async enableUser(email: string): Promise<void> {
+    try {
+      const params: AdminEnableUserCommandInput = {
+        UserPoolId: this.userPoolId,
+        Username: email,
+      };
+
+      const command = new AdminEnableUserCommand(params);
+      await this.client.send(command);
+    } catch (error) {
+      this.handleError(error, 'enableUser');
     }
   }
 }
