@@ -23,14 +23,19 @@ export class EmailSESRepository implements IEmailRepository {
           Data: options.subject,
         },
         Body: {
-          Text: {
-            Data: options.body,
+          Html: {
+            Data: options.body, // Enviando o corpo como HTML
           },
         },
       },
     };
 
     const command = new SendEmailCommand(params);
-    await this.sesClient.send(command);
+
+    try {
+      await this.sesClient.send(command);
+    } catch (error) {
+      console.log('Erro ao enviar o email:', (error as Error).message || error);
+    }
   }
 }
