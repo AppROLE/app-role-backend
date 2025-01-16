@@ -10,6 +10,7 @@ import { PresenceModel } from '../models/presence.model';
 import { EventModel } from '../models/event.model';
 import { ReviewModel } from '../models/review.model';
 import { InstituteModel } from '../models/institute.model';
+import { AuditModel } from '../models/audit_log.model';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
@@ -83,6 +84,24 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     );
 
     await ProfileModel.deleteOne({ _id: userId });
+
+    await AuditModel.create({
+      action: 'deleteProfile',
+      entity: 'Profile',
+      entityId: userId,
+      performedBy: userId, // ID do usuário que solicitou a ação
+      details: {
+        message: 'Perfil do usuário e dados relacionados foram excluídos.',
+        affectedEntities: {
+          presencesDeleted: presenceIds.length,
+          reviewsDeleted: reviewIds.length,
+          eventsUpdated: eventIds.length,
+          institutesUpdated: instituteIds.length,
+        },
+      },
+      timestamp: new Date(),
+      status: 'SUCCESS',
+    });
   }
 
   async findProfile(

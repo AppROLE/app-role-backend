@@ -1,27 +1,25 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IAuditLog extends Document {
-  _id: string;
-  userId: string; // ID do usuário cujos dados foram excluídos
-  action: string; // Ação realizada (e.g., 'DELETE_USER')
-  timestamp: Date; // Timestamp da ação
-  details: Record<string, any>; // Dados excluídos ou detalhes adicionais
-  performedBy: string; // Quem realizou a ação (e.g., 'SYSTEM' ou um adminId)
+export interface AuditProps {
+  action: string; // Ação realizada, como "DELETE_USER", "UPDATE_PROFILE"
+  entity: string; // Entidade afetada, como "User", "Event", "Profile"
+  entityId?: string; // ID único da entidade afetada, se aplicável
+  performedBy: string; // Apenas o userId de quem realizou a ação
+  details?: Record<string, any>; // Detalhes específicos do log, como os dados alterados
+  timestamp: Date; // Data e hora da ação
+  status: 'SUCCESS' | 'FAILURE'; // Status da ação
 }
 
-const AuditLogSchema = new Schema<IAuditLog>({
-  _id: {
-    type: String,
-    default: () => new mongoose.Types.ObjectId().toString(),
-  },
-  userId: { type: String, required: true },
+export interface IAudit extends Document, AuditProps {}
+
+const AuditSchema: Schema = new Schema<IAudit>({
   action: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now },
-  details: { type: Object, required: true },
+  entity: { type: String, required: true },
+  entityId: { type: String },
   performedBy: { type: String, required: true },
+  details: { type: Schema.Types.Mixed },
+  timestamp: { type: Date, required: true, default: Date.now },
+  status: { type: String, required: true, enum: ['SUCCESS', 'FAILURE'] },
 });
 
-export const AuditLogModel = mongoose.model<IAuditLog>(
-  'AuditLog',
-  AuditLogSchema
-);
+export const AuditModel = mongoose.model<IAudit>('audit', AuditSchema);
