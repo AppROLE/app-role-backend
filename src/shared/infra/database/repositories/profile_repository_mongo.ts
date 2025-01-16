@@ -7,6 +7,9 @@ import { ProfileCardReturn } from 'src/shared/helpers/types/profile_card_return'
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
 import { PresenceModel } from '../models/presence.model';
+import { EventModel } from '../models/event.model';
+import { ReviewModel } from '../models/review.model';
+import { InstituteModel } from '../models/institute.model';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
@@ -57,10 +60,29 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async deleteProfile(userId: string): Promise<void> {
-    const result = await ProfileModel.deleteOne({ _id: userId });
-    if (result.deletedCount === 0) {
-      throw new Error(`Usuário com ID ${userId} não encontrado.`);
-    }
+    const presences = await PresenceModel.find({ userId });
+    const presenceIds = presences.map((presence) => presence._id);
+
+    await PresenceModel.deleteMany({ userId });
+
+    const eventIds = presences.map((presence) => presence.eventId);
+    await EventModel.updateMany(
+      { _id: { $in: eventIds } },
+      { $pull: { presencesId: { $in: presenceIds } } }
+    );
+
+    const reviews = await ReviewModel.find({ userId });
+    const reviewIds = reviews.map((review) => review._id);
+
+    await ReviewModel.deleteMany({ userId });
+
+    const instituteIds = reviews.map((review) => review.instituteId);
+    await InstituteModel.updateMany(
+      { _id: { $in: instituteIds } },
+      { $pull: { reviewsId: { $in: reviewIds } } }
+    );
+
+    await ProfileModel.deleteOne({ _id: userId });
   }
 
   async findProfile(
@@ -68,10 +90,9 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     myUserId: string,
     page: number
   ): Promise<PaginationReturn<ProfileCardReturn>> {
-    const limit = 10; // Limite fixo de 10 por página
+    const limit = 10;
     const skip = (page - 1) * limit;
 
-    // Buscar perfis com base no termo de pesquisa
     const profiles = await ProfileModel.aggregate([
       {
         $match: {
@@ -102,7 +123,6 @@ export class ProfileRepositoryMongo implements IProfileRepository {
       },
     ]);
 
-    // Contar o total de perfis que atendem ao termo de pesquisa
     const totalCount = await ProfileModel.countDocuments({
       username: { $regex: `^${searchTerm}`, $options: 'i' },
     });

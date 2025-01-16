@@ -3,7 +3,7 @@ import { IProfileRepository } from 'src/shared/domain/repositories/profile_repos
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
-export class DeleteProfileUsecase {
+export class DeleteUserUsecase {
   repository: Repository;
   private auth_repo?: IAuthRepository;
   private profile_repo?: IProfileRepository;
@@ -33,10 +33,6 @@ export class DeleteProfileUsecase {
 
     await this.profile_repo!.deleteProfile(userId);
 
-    await this.auth_repo!.deleteCustomAttribute(profile.email, [
-      'custom:usename',
-    ]);
-
-    await this.auth_repo!.disableUser(profile.email);
+    await this.auth_repo!.deleteUser(profile.email);
   }
 }

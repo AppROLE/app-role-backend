@@ -287,21 +287,11 @@ export class AuthRepositoryCognito implements IAuthRepository {
     }
   }
 
-  async deleteAccount(username: string, password: string) {
+  async deleteUser(email: string) {
     try {
-      const authParams: AdminInitiateAuthCommandInput = {
-        UserPoolId: this.userPoolId,
-        ClientId: this.appClientId,
-        AuthFlow: 'ADMIN_NO_SRP_AUTH',
-        AuthParameters: { USERNAME: username, PASSWORD: password },
-      };
-
-      const authCommand = new AdminInitiateAuthCommand(authParams);
-      await this.client.send(authCommand);
-
       const deleteCommand = new AdminDeleteUserCommand({
         UserPoolId: this.userPoolId,
-        Username: username,
+        Username: email,
       });
 
       await this.client.send(deleteCommand);
@@ -398,24 +388,6 @@ export class AuthRepositoryCognito implements IAuthRepository {
       await this.client.send(command);
     } catch (error) {
       this.handleError(error, 'enableUser');
-    }
-  }
-
-  async deleteCustomAttribute(
-    email: string,
-    attributeNames: string[]
-  ): Promise<void> {
-    try {
-      const params: AdminDeleteUserAttributesCommandInput = {
-        UserPoolId: this.userPoolId,
-        Username: email,
-        UserAttributeNames: attributeNames,
-      };
-
-      const command = new AdminDeleteUserAttributesCommand(params);
-      await this.client.send(command);
-    } catch (error) {
-      this.handleError(error, 'deleteCustomAttribute');
     }
   }
 }

@@ -18,10 +18,10 @@ import {
   OK,
   Unauthorized,
 } from 'src/shared/helpers/external_interfaces/http_codes';
-import { DeleteProfileUsecase } from './delete_profile_usecase';
+import { DeleteUserUsecase } from './delete_user_usecase';
 
-export class DeleteProfileController {
-  constructor(private readonly usecase: DeleteProfileUsecase) {}
+export class DeleteUserController {
+  constructor(private readonly usecase: DeleteUserUsecase) {}
 
   async handle(request: IRequest, requesterUser: Record<string, any>) {
     try {
@@ -32,7 +32,7 @@ export class DeleteProfileController {
       await this.usecase.execute(userApiGateway.userId);
 
       return new OK({
-        message: 'Perfil excluído com sucesso',
+        message: 'Usuário excluído com sucesso',
       });
     } catch (error: any) {
       if (

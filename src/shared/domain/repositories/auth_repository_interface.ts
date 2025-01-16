@@ -26,7 +26,7 @@ export interface IAuthRepository {
     newPassword: string,
     code: string
   ): Promise<void>;
-  deleteAccount(username: string, password: string): Promise<void>;
+  deleteUser(email: string): Promise<void>;
   adminUpdateUser(email: string, newRole: string): Promise<void>;
   refreshToken(refreshToken: string): Promise<{
     accessToken: string;
@@ -36,5 +36,4 @@ export interface IAuthRepository {
   updateUser(email: string, newUsername?: string): Promise<void>;
   disableUser(email: string): Promise<void>;
   enableUser(email: string): Promise<void>;
-  deleteCustomAttribute(email: string, attributeNames: string[]): Promise<void>;
 }

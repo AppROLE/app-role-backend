@@ -23,7 +23,6 @@ export class LambdaStack extends Construct {
   signInFunction: lambda.Function;
   signUpFunction: lambda.Function;
   verifyEmailFunction: lambda.Function;
-  reactivateUserFunction: lambda.Function;
 
   // profile routes
   favoriteInstituteFunction: lambda.Function;
@@ -31,7 +30,7 @@ export class LambdaStack extends Construct {
   getMyProfileFunction: lambda.Function;
   createProfileFunction: lambda.Function;
   updateProfileFunction: lambda.Function;
-  deleteProfileFunction: lambda.Function;
+  deleteUserFunction: lambda.Function;
   getOtherProfileFunction: lambda.Function;
   getMyFollowingFunction: lambda.Function;
   getMyFollowersFunction: lambda.Function;
@@ -174,13 +173,6 @@ export class LambdaStack extends Construct {
       environmentVariables
     );
 
-    this.reactivateUserFunction = this.createLambdaApiGatewayIntegration(
-      'reactivate_user',
-      'POST',
-      apiGatewayResource,
-      environmentVariables
-    );
-
     // profile routes
     this.favoriteInstituteFunction = this.createLambdaApiGatewayIntegration(
       'favorite_institute',
@@ -222,8 +214,8 @@ export class LambdaStack extends Construct {
       authorizer
     );
 
-    this.deleteProfileFunction = this.createLambdaApiGatewayIntegration(
-      'delete_profile',
+    this.deleteUserFunction = this.createLambdaApiGatewayIntegration(
+      'delete_user',
       'DELETE',
       apiGatewayResource,
       environmentVariables,
