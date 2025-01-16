@@ -23,6 +23,7 @@ export class LambdaStack extends Construct {
   signInFunction: lambda.Function;
   signUpFunction: lambda.Function;
   verifyEmailFunction: lambda.Function;
+  reactivateUserFunction: lambda.Function;
 
   // profile routes
   favoriteInstituteFunction: lambda.Function;
@@ -168,6 +169,13 @@ export class LambdaStack extends Construct {
 
     this.verifyEmailFunction = this.createLambdaApiGatewayIntegration(
       'verify_email',
+      'POST',
+      apiGatewayResource,
+      environmentVariables
+    );
+
+    this.reactivateUserFunction = this.createLambdaApiGatewayIntegration(
+      'reactivate_user',
       'POST',
       apiGatewayResource,
       environmentVariables

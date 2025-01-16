@@ -33,6 +33,10 @@ export class DeleteProfileUsecase {
 
     await this.profile_repo!.deleteProfile(userId);
 
+    await this.auth_repo!.deleteCustomAttribute(profile.email, [
+      'custom:usename',
+    ]);
+
     await this.auth_repo!.disableUser(profile.email);
   }
 }

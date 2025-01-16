@@ -26,6 +26,8 @@ import {
   UpdateUserAttributesCommandInput,
   AdminEnableUserCommandInput,
   AdminEnableUserCommand,
+  AdminDeleteUserAttributesCommand,
+  AdminDeleteUserAttributesCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
 
 import {
@@ -396,6 +398,24 @@ export class AuthRepositoryCognito implements IAuthRepository {
       await this.client.send(command);
     } catch (error) {
       this.handleError(error, 'enableUser');
+    }
+  }
+
+  async deleteCustomAttribute(
+    email: string,
+    attributeNames: string[]
+  ): Promise<void> {
+    try {
+      const params: AdminDeleteUserAttributesCommandInput = {
+        UserPoolId: this.userPoolId,
+        Username: email,
+        UserAttributeNames: attributeNames,
+      };
+
+      const command = new AdminDeleteUserAttributesCommand(params);
+      await this.client.send(command);
+    } catch (error) {
+      this.handleError(error, 'deleteCustomAttribute');
     }
   }
 }

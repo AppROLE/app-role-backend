@@ -36,4 +36,5 @@ export interface IAuthRepository {
   updateUser(email: string, newUsername?: string): Promise<void>;
   disableUser(email: string): Promise<void>;
   enableUser(email: string): Promise<void>;
+  deleteCustomAttribute(email: string, attributeNames: string[]): Promise<void>;
 }
