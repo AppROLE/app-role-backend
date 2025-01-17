@@ -441,6 +441,7 @@ export class LambdaStack extends Construct {
       // profile routes
       this.createProfileFunction,
       this.updateProfileFunction,
+      this.deleteUserFunction,
     ];
 
     this.functionsThatNeedS3Permissions = [
