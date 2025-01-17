@@ -11,6 +11,7 @@ class ProfileViewmodel {
   profilePhoto?: string;
   followers: number;
   following: number;
+  isPrivate: boolean;
 
   constructor(profile: Profile) {
     this.userId = profile.userId;
@@ -23,6 +24,7 @@ class ProfileViewmodel {
     this.profilePhoto = profile.profilePhoto;
     this.followers = profile.followers.length;
     this.following = profile.following.length;
+    this.isPrivate = profile.isPrivate;
   }
 
   toJSON() {
@@ -37,6 +39,7 @@ class ProfileViewmodel {
       profilePhoto: this.profilePhoto,
       followers: this.followers,
       following: this.following,
+      isPrivate: this.isPrivate,
     };
   }
 }
