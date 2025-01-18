@@ -3,6 +3,7 @@ import { GENDER_TYPE } from 'src/shared/domain/enums/gender_enum';
 import { IAuthRepository } from 'src/shared/domain/repositories/auth_repository_interface';
 import { IFileRepository } from 'src/shared/domain/repositories/file_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
+import { EntityError } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
 interface UpdateProfileParams {
@@ -60,6 +61,12 @@ export class UpdateProfileUsecase {
 
   async execute(params: UpdateProfileParams): Promise<Profile> {
     const { userId, profileImage, backgroundImage, ...updateFields } = params;
+
+    if (params.username) {
+      const profile = await this.profile_repo!.getByUsername(params.username);
+
+      if (profile) throw new EntityError('Nome de usuário em uso');
+    }
 
     if (profileImage) {
       const profilePhotoUrl = await this.file_repo!.uploadImage(

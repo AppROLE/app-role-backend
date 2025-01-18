@@ -72,9 +72,9 @@ export class Profile {
       );
     }
 
-    if (!props.username || props.username.trim().length < 3) {
+    if (!Validations.validateUsername(props.username)) {
       throw new EntityError(
-        'Username inválido. Deve conter pelo menos 3 caracteres.'
+        'Nome de usuário deve conter pelo menos 3 caracteres, no máximo 20, sem espaços.'
       );
     }
 

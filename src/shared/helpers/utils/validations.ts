@@ -93,6 +93,20 @@ export class Validations {
     return true;
   }
 
+  static validateUsername(username?: string): boolean {
+    const usernameRegex = /^[a-z0-9._]+$/;
+    if (
+      !username ||
+      username.trim().length < 3 ||
+      username.trim().length > 20 ||
+      !usernameRegex.test(username)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   static validateTiktok(linkTiktok?: string): boolean {
     if (linkTiktok && linkTiktok.trim().length > 255) {
       return false;
