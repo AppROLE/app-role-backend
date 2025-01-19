@@ -42,9 +42,14 @@ export class Validations {
   }
 
   static validatePassword(password: string): boolean {
-    // minimum 1 upper, 1 lower, 1 number, 1 special character, min 6 characters
+    // Regex que valida a senha com os requisitos:
+    // Pelo menos 1 número
+    // Pelo menos 1 caractere especial (incluso os mencionados na descrição)
+    // Pelo menos 1 letra maiúscula
+    // Pelo menos 1 letra minúscula
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&ç~{}#%&()\\`])[A-Za-z\d@$!%*?&]{6,}$/;
+      /^(?=.*[0-9])(?=.*[!@#$%^&*()[\]{}:;'",.<>?|_~`+\-=\\/ ])(?=.*[A-Z])(?=.*[a-z]).{1,}$/;
+
     if (!password || !passwordRegex.test(password)) {
       return false;
     }
