@@ -69,6 +69,7 @@ export class UpdateProfileUsecase {
     }
 
     if (profileImage) {
+      await this.file_repo!.validateImageContent(profileImage.image);
       const profilePhotoUrl = await this.file_repo!.uploadImage(
         `profiles/${userId}/profile-photo.${
           profileImage.mimetype.split('/')[1]
@@ -81,6 +82,7 @@ export class UpdateProfileUsecase {
     }
 
     if (backgroundImage) {
+      await this.file_repo!.validateImageContent(backgroundImage.image);
       const backgroundPhotoUrl = await this.file_repo!.uploadImage(
         `profiles/${userId}/background-photo.${
           backgroundImage.mimetype.split('/')[1]
