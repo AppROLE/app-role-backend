@@ -410,4 +410,18 @@ export class ProfileRepositoryMongo implements IProfileRepository {
       nextPage: page < totalPages ? page + 1 : null,
     };
   }
+
+  async followProfile(myUserId: string, userId: string): Promise<void> {
+    await ProfileModel.updateOne(
+      { _id: myUserId },
+      { $addToSet: { following: userId } }
+    );
+  }
+
+  async unfollowProfile(myUserId: string, userId: string): Promise<void> {
+    await ProfileModel.updateOne(
+      { _id: myUserId },
+      { $pull: { following: userId } }
+    );
+  }
 }

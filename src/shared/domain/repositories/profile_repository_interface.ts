@@ -38,4 +38,6 @@ export interface IProfileRepository {
     userId: string,
     page: number
   ): Promise<PaginationReturn<EventCardReturn>>;
+  followProfile(myUserId: string, userId: string): Promise<void>;
+  unfollowProfile(myUserId: string, userId: string): Promise<void>;
 }

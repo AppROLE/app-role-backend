@@ -40,6 +40,8 @@ export class LambdaStack extends Construct {
   getOtherFollowersFunction: lambda.Function;
   validateUsernameFunction: lambda.Function;
   searchProfilesFunction: lambda.Function;
+  followFunction: lambda.Function;
+  unfollowFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -289,6 +291,22 @@ export class LambdaStack extends Construct {
     this.searchProfilesFunction = this.createLambdaApiGatewayIntegration(
       'search_profiles',
       'GET',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.followFunction = this.createLambdaApiGatewayIntegration(
+      'follow',
+      'POST',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.unfollowFunction = this.createLambdaApiGatewayIntegration(
+      'unfollow',
+      'POST',
       apiGatewayResource,
       environmentVariables,
       authorizer
