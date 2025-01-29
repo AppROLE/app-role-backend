@@ -88,6 +88,8 @@ export class EventRepositoryMongo implements IEventRepository {
       EventModel.countDocuments(filter || {}),
     ]);
 
+    console.log(events);
+
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
