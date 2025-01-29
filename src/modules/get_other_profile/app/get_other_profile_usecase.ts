@@ -29,7 +29,7 @@ export class GetOtherProfileUseCase {
     page: number,
     myUserId: string,
     userId: string
-  ): Promise<[OtherProfileInfo, PaginationReturn<EventCardReturn> | null]> {
+  ): Promise<[OtherProfileInfo, PaginationReturn<EventCardReturn>]> {
     const myProfile = await this.profile_repo!.getByUserId(myUserId);
     if (!myProfile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
@@ -54,7 +54,6 @@ export class GetOtherProfileUseCase {
       followStatus,
     };
 
-    // Perfis públicos retornam eventos diretamente
     if (!otherProfile.isPrivate) {
       const confirmedEvents =
         await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
@@ -64,7 +63,6 @@ export class GetOtherProfileUseCase {
       return [otherProfileInfo, confirmedEvents];
     }
 
-    // Perfis privados exigem amizade para acessar os eventos
     if (followStatus === FOLLOW_STATUS.FRIENDS) {
       const confirmedEvents =
         await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
@@ -74,8 +72,16 @@ export class GetOtherProfileUseCase {
       return [otherProfileInfo, confirmedEvents];
     }
 
-    // Caso contrário, eventos não são acessíveis
-    return [otherProfileInfo, null];
+    return [
+      otherProfileInfo,
+      {
+        items: [],
+        totalPages: 0,
+        totalCount: 0,
+        prevPage: null,
+        nextPage: null,
+      },
+    ];
   }
 
   private getFollowStatus(
