@@ -11,6 +11,7 @@ import { EventModel } from '../models/event.model';
 import { ReviewModel } from '../models/review.model';
 import { InstituteModel } from '../models/institute.model';
 import { AuditModel } from '../models/audit_log.model';
+import { Types } from 'mongoose';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
@@ -23,8 +24,19 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
+  // async getByUserId(userId: string): Promise<Profile | null> {
+  //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
+  //   console.log('userDoc AQUI NO REPO', userDoc);
+  //   return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
+  // }
+
   async getByUserId(userId: string): Promise<Profile | null> {
-    const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
+    if (!Types.ObjectId.isValid(userId)) {
+      console.log('ID inválido:', userId);
+      return null;
+    }
+    
+    const userDoc = await ProfileModel.findOne({ _id: new Types.ObjectId(userId) }).lean();
     console.log('userDoc AQUI NO REPO', userDoc);
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
