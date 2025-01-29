@@ -420,12 +420,22 @@ export class ProfileRepositoryMongo implements IProfileRepository {
       { _id: myUserId },
       { $addToSet: { following: userId } }
     );
+
+    await ProfileModel.updateOne(
+      { _id: userId },
+      { $addToSet: { followers: myUserId } }
+    );
   }
 
   async unfollowProfile(myUserId: string, userId: string): Promise<void> {
     await ProfileModel.updateOne(
       { _id: myUserId },
       { $pull: { following: userId } }
+    );
+
+    await ProfileModel.updateOne(
+      { _id: userId },
+      { $pull: { followers: myUserId } }
     );
   }
 }

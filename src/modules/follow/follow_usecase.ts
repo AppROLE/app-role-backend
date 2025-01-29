@@ -37,7 +37,7 @@ export class FollowUsecase {
       await this.profile_repo!.followProfile(myUserId, userId);
     }
 
-    throw new DuplicatedItem('seguidor já existente');
+    throw new DuplicatedItem('Você já segue esse perfil');
   }
 
   private getFollowStatus(

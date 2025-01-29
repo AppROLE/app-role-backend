@@ -53,7 +53,7 @@ export class NoItemsFound extends BaseError {
 
 export class DuplicatedItem extends BaseError {
   constructor(message: string) {
-    super(`Item já existente para ${message}`);
+    super(`${message}`);
   }
 }
 
