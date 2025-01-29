@@ -27,7 +27,7 @@ export class UnfollowController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const { otherUserId } = request.data.query_params;
+      const { otherUserId } = request.data.body;
 
       if (!otherUserId) throw new MissingParameters('otherUserId');
 
