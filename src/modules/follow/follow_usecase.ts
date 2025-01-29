@@ -16,6 +16,7 @@ export class FollowUsecase {
 
   async connect() {
     await this.repository.connectRepository();
+    console.log('Connected to the database!');
     this.profile_repo = this.repository.profile_repo;
 
     if (!this.profile_repo)
