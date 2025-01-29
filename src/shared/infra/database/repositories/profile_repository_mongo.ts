@@ -24,7 +24,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   }
 
   async getByUserId(userId: string): Promise<Profile | null> {
-    const userDoc = await ProfileModel.findById(userId).lean();
+    const userDoc = await ProfileModel.findOne({ userId: userId }).lean();
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
