@@ -115,7 +115,10 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     const profiles = await ProfileModel.aggregate([
       {
         $match: {
-          $or: [{ username: { $regex: `^${searchTerm}`, $options: 'i' } }],
+          $and: [
+            { username: { $regex: `^${searchTerm}`, $options: 'i' } },
+            { _id: { $ne: myUserId } }, // Exclui o próprio usuário
+          ],
         },
       },
       {
@@ -144,6 +147,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
 
     const totalCount = await ProfileModel.countDocuments({
       username: { $regex: `^${searchTerm}`, $options: 'i' },
+      _id: { $ne: myUserId },
     });
 
     const totalPages = Math.ceil(totalCount / limit);
