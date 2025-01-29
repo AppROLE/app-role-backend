@@ -37,8 +37,8 @@ class ProfileViewmodel {
       linkTiktok: this.linkTiktok,
       backgroundPhoto: this.backgroundPhoto,
       profilePhoto: this.profilePhoto,
-      followers: this.followers,
-      following: this.following,
+      followersLength: this.followers,
+      followingLength: this.following,
       isPrivate: this.isPrivate,
     };
   }
