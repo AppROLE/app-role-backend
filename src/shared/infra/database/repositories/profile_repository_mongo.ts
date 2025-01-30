@@ -11,7 +11,7 @@ import { EventModel } from '../models/event.model';
 import { ReviewModel } from '../models/review.model';
 import { InstituteModel } from '../models/institute.model';
 import { AuditModel } from '../models/audit_log.model';
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
@@ -24,12 +24,27 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
+  // async getByUserId(userId: string): Promise<Profile | null> {
+  //   console.log(`🔍 Buscando userId: ${userId}`);
+  
+  //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
+    
+  //   console.log('🔍 userDoc AQUI NO REPO:', userDoc);
+  
+  //   if (!userDoc) {
+  //     console.error(`❌ Perfil não encontrado para _id: ${userId}`);
+  //     return null;
+  //   }
+  
+  //   return ProfileMongoDTO.fromMongo(userDoc).toEntity();
+  // }
+
   async getByUserId(userId: string): Promise<Profile | null> {
-    // const userDoc = await ProfileModel.findOne({ userId: userId }).lean();
-    const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
+    const userDoc = await ProfileModel.findOne({ _id: new mongoose.Types.ObjectId(userId) }).lean();
     console.log('userDoc AQUI NO REPO', userDoc);
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
+  
 
   async getAllProfilesPagination(
     page: number,
