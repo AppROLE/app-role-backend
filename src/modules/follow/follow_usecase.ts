@@ -25,10 +25,12 @@ export class FollowUsecase {
 
   async execute(myUserId: string, userId: string): Promise<void> {
     const myProfile = await this.profile_repo!.getByUserId(myUserId);
+    console.log('myProfilEEEEE - USECASE', myProfile);
     if (!myProfile)
       throw new NoItemsFound('Perfil do usuário atual não encontrado');
-
+    
     const otherProfile = await this.profile_repo!.getByUserId(userId);
+    console.log('OTHER PROFILE - USECASE', myProfile);
     if (!otherProfile)
       throw new NoItemsFound('Perfil do outro usuário não encontrado');
 
