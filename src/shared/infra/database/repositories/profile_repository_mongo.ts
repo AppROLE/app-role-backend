@@ -11,7 +11,6 @@ import { EventModel } from '../models/event.model';
 import { ReviewModel } from '../models/review.model';
 import { InstituteModel } from '../models/institute.model';
 import { AuditModel } from '../models/audit_log.model';
-import mongoose, { Types } from 'mongoose';
 
 export class ProfileRepositoryMongo implements IProfileRepository {
   async getByEmail(email: string): Promise<Profile | null> {
