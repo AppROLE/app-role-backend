@@ -24,26 +24,25 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
-  // async getByUserId(userId: string): Promise<Profile | null> {
-  //   console.log(`🔍 Buscando userId: ${userId}`);
-
-  //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
-
-  //   console.log('🔍 userDoc AQUI NO REPO:', userDoc);
-
-  //   if (!userDoc) {
-  //     console.error(`❌ Perfil não encontrado para _id: ${userId}`);
-  //     return null;
-  //   }
-
-  //   return ProfileMongoDTO.fromMongo(userDoc).toEntity();
-  // }
-
   async getByUserId(userId: string): Promise<Profile | null> {
-    const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
-    console.log('userDoc AQUI NO REPO', userDoc);
+    console.log('🔍 Buscando usuário com ID:', userId);
+
+    const query = Types.ObjectId.isValid(userId)
+      ? { _id: new Types.ObjectId(userId) }
+      : { _id: userId };
+
+    const userDoc = await ProfileModel.findOne(query).lean();
+
+    console.log('🔎 Resultado da busca:', userDoc);
+
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
+
+  // async getByUserId(userId: string): Promise<Profile | null> {
+  //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
+  //   console.log('userDoc AQUI NO REPO', userDoc);
+  //   return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
+  // }
 
   async getAllProfilesPagination(
     page: number,
