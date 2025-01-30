@@ -26,25 +26,24 @@ export class ProfileRepositoryMongo implements IProfileRepository {
 
   // async getByUserId(userId: string): Promise<Profile | null> {
   //   console.log(`🔍 Buscando userId: ${userId}`);
-  
+
   //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
-    
+
   //   console.log('🔍 userDoc AQUI NO REPO:', userDoc);
-  
+
   //   if (!userDoc) {
   //     console.error(`❌ Perfil não encontrado para _id: ${userId}`);
   //     return null;
   //   }
-  
+
   //   return ProfileMongoDTO.fromMongo(userDoc).toEntity();
   // }
 
   async getByUserId(userId: string): Promise<Profile | null> {
-    const userDoc = await ProfileModel.findOne({ _id: new mongoose.Types.ObjectId(userId) }).lean();
+    const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
     console.log('userDoc AQUI NO REPO', userDoc);
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
-  
 
   async getAllProfilesPagination(
     page: number,
