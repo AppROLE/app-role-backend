@@ -24,19 +24,9 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
-  // async getByUserId(userId: string): Promise<Profile | null> {
-  //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
-  //   console.log('userDoc AQUI NO REPO', userDoc);
-  //   return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
-  // }
-
   async getByUserId(userId: string): Promise<Profile | null> {
-    if (!Types.ObjectId.isValid(userId)) {
-      console.log('ID inválido:', userId);
-      return null;
-    }
-    
-    const userDoc = await ProfileModel.findOne({ _id: new Types.ObjectId(userId) }).lean();
+    // const userDoc = await ProfileModel.findOne({ userId: userId }).lean();
+    const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
     console.log('userDoc AQUI NO REPO', userDoc);
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
