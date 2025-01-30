@@ -37,7 +37,6 @@ export class CreateProfileController {
     requesterUser: Record<string, any>
   ) {
     try {
-      console.log('formData:', formData);
       const userApiGateway = UserAPIGatewayDTO.fromAPIGateway(requesterUser);
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');

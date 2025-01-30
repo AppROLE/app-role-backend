@@ -30,12 +30,6 @@ export class ProfileRepositoryMongo implements IProfileRepository {
     return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
   }
 
-  // async getByUserId(userId: string): Promise<Profile | null> {
-  //   const userDoc = await ProfileModel.findOne({ _id: userId }).lean();
-  //   console.log('userDoc AQUI NO REPO', userDoc);
-  //   return userDoc ? ProfileMongoDTO.fromMongo(userDoc).toEntity() : null;
-  // }
-
   async getAllProfilesPagination(
     page: number,
     profilesId: string[]

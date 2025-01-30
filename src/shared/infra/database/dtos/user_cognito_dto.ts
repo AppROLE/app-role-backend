@@ -79,15 +79,12 @@ export class UserCognitoDTO {
   }
 
   static fromCognito(data: Record<string, any>): UserCognitoDTO {
-    console.log('Dados cognito:', data);
     const userAttributes: CognitoAttribute[] = data.UserAttributes || [];
 
     const userData: Record<string, any> = {};
     for (const att of userAttributes) {
       userData[att.Name] = att.Value;
     }
-
-    console.log('userData:', userData);
 
     userData['enabled'] = data['Enabled'];
     userData['status'] = data['UserStatus'] ?? 'CONFIRMED';

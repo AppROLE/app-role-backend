@@ -90,7 +90,6 @@ export class GetTopEventsUseCase {
     const events = result.items;
 
     if (!events || events.length === 0) {
-      console.log('No events found for the given filter.');
       return [];
     }
 
