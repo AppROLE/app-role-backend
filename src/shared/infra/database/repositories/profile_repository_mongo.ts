@@ -27,9 +27,7 @@ export class ProfileRepositoryMongo implements IProfileRepository {
   async getByUserId(userId: string): Promise<Profile | null> {
     console.log('🔍 Buscando usuário com ID:', userId);
 
-    const query = Types.ObjectId.isValid(userId)
-      ? { _id: new Types.ObjectId(userId) }
-      : { _id: userId };
+    const query = { _id: userId };
 
     const userDoc = await ProfileModel.findOne(query).lean();
 
