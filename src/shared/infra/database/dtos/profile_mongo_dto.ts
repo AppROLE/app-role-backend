@@ -91,7 +91,7 @@ export class ProfileMongoDTO {
 
   static fromMongo(profile: IProfile): ProfileMongoDTO {
     return new ProfileMongoDTO({
-      userId: profile._id?.toString() || '',
+      userId: profile._id,
       name: profile.name,
       email: profile.email,
       nickname: profile.nickname,
