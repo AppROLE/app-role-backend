@@ -23,16 +23,11 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
   async getAllInstitutesPaginated(
     page: number
   ): Promise<PaginationReturn<Institute>> {
-    const limit = 30; // Limite fixo por página
+    const limit = 30;
     const skip = (page - 1) * limit;
 
-    // Buscar institutos paginados e contar o total
     const [institutes, totalCount] = await Promise.all([
-      InstituteModel.find()
-        .sort({ name: 1 }) // Ordenar alfabeticamente pelo campo "name"
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+      InstituteModel.find().sort({ name: 1 }).skip(skip).limit(limit).lean(),
       InstituteModel.countDocuments(),
     ]);
 
