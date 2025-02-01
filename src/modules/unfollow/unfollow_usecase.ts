@@ -23,6 +23,10 @@ export class UnfollowUsecase {
   }
 
   async execute(myUserId: string, userId: string): Promise<void> {
+    if (myUserId === userId) {
+      throw new DuplicatedItem('Não pode seguir a si mesmo');
+    }
+
     const myProfile = await this.profile_repo!.getByUserId(myUserId);
     if (!myProfile)
       throw new NoItemsFound('Perfil do usuário atual não encontrado');

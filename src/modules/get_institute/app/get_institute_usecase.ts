@@ -26,7 +26,7 @@ export class GetInstituteUsecase {
   async execute(idInstitute: string): Promise<Institute> {
     const institute = await this.institute_repo!.getInstituteById(idInstitute);
     if (!institute) {
-      throw new NoItemsFound('event');
+      throw new NoItemsFound('instituto');
     }
     return institute;
   }
