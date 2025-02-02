@@ -3,7 +3,6 @@ import { IInstituteRepository } from '../../../domain/repositories/institute_rep
 import { InstituteModel } from '../models/institute.model';
 import { InstituteMongoDTO } from '../dtos/institute_mongo_dto';
 import { NoItemsFound } from '../../../../../src/shared/helpers/errors/errors';
-import { PARTNER_TYPE } from 'src/shared/domain/enums/partner_type_enum';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
 
 export class InstituteRepositoryMongo implements IInstituteRepository {
@@ -18,6 +17,18 @@ export class InstituteRepositoryMongo implements IInstituteRepository {
     return instituteDoc
       ? InstituteMongoDTO.fromMongo(instituteDoc).toEntity()
       : null;
+  }
+
+  async getInstitutesByIds(ids: string[]): Promise<Institute[]> {
+    const instituteDocs = await InstituteModel.find({
+      _id: { $in: ids },
+    }).lean();
+    if (!instituteDocs || instituteDocs.length === 0) {
+      return [];
+    }
+    return instituteDocs.map((doc) =>
+      InstituteMongoDTO.fromMongo(doc).toEntity()
+    );
   }
 
   async getAllInstitutesPaginated(

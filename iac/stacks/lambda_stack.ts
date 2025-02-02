@@ -42,6 +42,7 @@ export class LambdaStack extends Construct {
   searchProfilesFunction: lambda.Function;
   followFunction: lambda.Function;
   unfollowFunction: lambda.Function;
+  getMyFavoritesFunction: lambda.Function;
 
   // institute routes
   createInstituteFunction: lambda.Function;
@@ -307,6 +308,14 @@ export class LambdaStack extends Construct {
     this.unfollowFunction = this.createLambdaApiGatewayIntegration(
       'unfollow',
       'POST',
+      apiGatewayResource,
+      environmentVariables,
+      authorizer
+    );
+
+    this.getMyFavoritesFunction = this.createLambdaApiGatewayIntegration(
+      'get_my_favorites',
+      'GET',
       apiGatewayResource,
       environmentVariables,
       authorizer

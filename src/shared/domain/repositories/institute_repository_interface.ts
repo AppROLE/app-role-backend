@@ -10,6 +10,7 @@ export interface IInstituteRepository {
     filter: any
   ): Promise<PaginationReturn<Institute>>;
   getInstituteById(instituteId: string): Promise<Institute | null>;
+  getInstitutesByIds(ids: string[]): Promise<Institute[]>;
   deleteInstituteById(instituteId: string): Promise<void>;
   updateInstitute(
     instituteId: string,
