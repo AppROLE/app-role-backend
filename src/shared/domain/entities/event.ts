@@ -74,8 +74,8 @@ export class Event {
       throw new EntityError('O preço do evento deve ser entre 1 e 5');
     }
 
-    if (!props.eventDate || props.eventDate <= Date.now()) {
-      throw new EntityError('A data do evento deve ser no futuro');
+    if (!props.eventDate) {
+      throw new EntityError('Data do evento é obrigatório');
     }
 
     if (!props.instituteId || typeof props.instituteId !== 'string') {
