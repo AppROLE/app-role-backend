@@ -27,21 +27,29 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
   }
 
   async getPresencesByIds(presencesIds: string[]): Promise<Presence[]> {
-    const presenceDocs = await PresenceModel.find({ _id: { $in: presencesIds } }).lean();
+    const presenceDocs = await PresenceModel.find({
+      _id: { $in: presencesIds },
+    }).lean();
 
-    return presenceDocs.map((doc) => PresenceMongoDTO.fromMongo(doc).toEntity());
+    return presenceDocs.map((doc) =>
+      PresenceMongoDTO.fromMongo(doc).toEntity()
+    );
   }
 
   async getPresencesByEvent(eventId: string): Promise<Presence[]> {
     const presenceDocs = await PresenceModel.find({ eventId }).lean();
 
-    return presenceDocs.map((doc) => PresenceMongoDTO.fromMongo(doc).toEntity());
+    return presenceDocs.map((doc) =>
+      PresenceMongoDTO.fromMongo(doc).toEntity()
+    );
   }
 
   async getPresencesByUser(userId: string): Promise<Presence[]> {
     const presenceDocs = await PresenceModel.find({ username: userId }).lean();
 
-    return presenceDocs.map((doc) => PresenceMongoDTO.fromMongo(doc).toEntity());
+    return presenceDocs.map((doc) =>
+      PresenceMongoDTO.fromMongo(doc).toEntity()
+    );
   }
 
   async getPresencesByEventAndUser(
@@ -50,7 +58,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
   ): Promise<Presence | null> {
     const result = await PresenceModel.findOne({
       eventId,
-      username: userId,
+      userId,
     }).lean();
 
     return result ? PresenceMongoDTO.fromMongo(result).toEntity() : null;
