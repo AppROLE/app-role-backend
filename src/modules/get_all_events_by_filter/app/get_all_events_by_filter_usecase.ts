@@ -50,6 +50,12 @@ export class GetEventsByFilterUseCase {
       sanitizedFilters.eventDate = filters.eventDate;
     }
 
+    if (filters.startDate && !isNaN(new Date(filters.startDate).getTime())) {
+      sanitizedFilters.eventDate = {
+        $gte: new Date(filters.startDate),
+      };
+    }
+
     if (filters.instituteId) {
       sanitizedFilters.instituteId = filters.instituteId;
     }
