@@ -4,6 +4,11 @@ import { IProfileRepository } from 'src/shared/domain/repositories/profile_repos
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
+export type PresencesReturn = {
+  eventId: string;
+  presenceId: string;
+};
+
 export class GetMyProfileUseCase {
   repository: Repository;
   private profile_repo?: IProfileRepository;
@@ -30,13 +35,15 @@ export class GetMyProfileUseCase {
       );
   }
 
-  async execute(userId: string): Promise<[Profile, string[]]> {
+  async execute(userId: string): Promise<[Profile, PresencesReturn[]]> {
     const profile = await this.profile_repo!.getByUserId(userId);
     if (!profile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
     const presences = await this.presence_repo!.getPresencesByUser(userId);
 
-    const eventPresencesIds = presences.map((presence) => presence.eventId);
+    const eventPresencesIds = presences.map((presence) => {
+      return { eventId: presence.eventId, presenceId: presence.presenceId };
+    });
 
     return [profile, eventPresencesIds];
   }
