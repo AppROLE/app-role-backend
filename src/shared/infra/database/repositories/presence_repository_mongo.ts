@@ -45,7 +45,7 @@ export class PresenceRepositoryMongo implements IPresenceRepository {
   }
 
   async getPresencesByUser(userId: string): Promise<Presence[]> {
-    const presenceDocs = await PresenceModel.find({ username: userId }).lean();
+    const presenceDocs = await PresenceModel.find({ userId }).lean();
 
     return presenceDocs.map((doc) =>
       PresenceMongoDTO.fromMongo(doc).toEntity()

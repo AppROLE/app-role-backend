@@ -52,8 +52,6 @@ export class GetMyProfileViewmodel {
   }
 
   toJSON() {
-    return {
-      profile: this.profile.toJSON(),
-    };
+    return this.profile.toJSON();
   }
 }
