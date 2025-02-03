@@ -13,8 +13,16 @@ export interface IAddress {
 }
 
 export const AddressSchema = new Schema<IAddress>({
-  latitude: { type: Number, required: true },
-  longitude: { type: Number, required: true },
+  latitude: {
+    type: Number,
+    required: true,
+    set: (v: number) => parseFloat(v.toFixed(6)),
+  },
+  longitude: {
+    type: Number,
+    required: true,
+    set: (v: number) => parseFloat(v.toFixed(6)),
+  },
   street: { type: String, required: true },
   number: { type: Number },
   district: { type: String, required: true },
