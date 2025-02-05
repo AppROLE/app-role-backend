@@ -44,16 +44,13 @@ export class CreateProfileController {
       let { username, nickname, acceptedTerms } = formData.fields;
 
       const profileImage = formData.files['profileImage'];
+      let photoImage: ParsedFile | undefined = undefined;
 
-      if (profileImage === undefined) {
-        throw new MissingParameters('profileImage');
+      if (profileImage !== undefined) {
+        photoImage = Array.isArray(profileImage)
+          ? profileImage[0]
+          : profileImage;
       }
-
-      let photoImage: ParsedFile;
-
-      !Array.isArray(profileImage)
-        ? (photoImage = profileImage)
-        : (photoImage = profileImage[0]);
 
       if (typeof username !== 'string') {
         throw new WrongTypeParameters('username', 'string', typeof username);
@@ -63,7 +60,7 @@ export class CreateProfileController {
         throw new WrongTypeParameters('nickname', 'string', typeof nickname);
       }
 
-      const boolAcceptedTerms = acceptedTerms === 'true' ? true : false;
+      const boolAcceptedTerms = acceptedTerms === 'true';
 
       if (typeof boolAcceptedTerms !== 'boolean') {
         throw new WrongTypeParameters(
