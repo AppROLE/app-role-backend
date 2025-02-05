@@ -14,7 +14,7 @@ export class EmailSESRepository implements IEmailRepository {
 
   async sendEmail(options: EmailOptions): Promise<void> {
     const params = {
-      Source: 'contato@theplaza.cc',
+      Source: 'contato@roleapp.com.br',
       Destination: {
         ToAddresses: [options.to],
       },
