@@ -55,7 +55,7 @@ export class GetOtherProfileUseCase {
       isPrivate: otherProfile.isPrivate,
     };
 
-    if (!otherProfile.isPrivate) {
+    if (followStatus === FOLLOW_STATUS.FRIENDS) {
       const confirmedEvents =
         await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
           userId,
@@ -64,7 +64,7 @@ export class GetOtherProfileUseCase {
       return [otherProfileInfo, confirmedEvents];
     }
 
-    if (followStatus === FOLLOW_STATUS.FRIENDS) {
+    if (!otherProfile.isPrivate) {
       const confirmedEvents =
         await this.profile_repo!.getConfirmedPresencesEventCardsForProfile(
           userId,
