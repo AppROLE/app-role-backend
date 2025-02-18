@@ -22,7 +22,7 @@ export class FollowUsecase {
       throw new Error('Expected to have an instance of the profile repository');
   }
 
-  async execute(myUserId: string, userId: string): Promise<void> {
+  async execute(myUserId: string, userId: string): Promise<FOLLOW_STATUS> {
     if (myUserId === userId) {
       throw new DuplicatedItem('Não pode seguir a si mesmo');
     }
@@ -39,6 +39,10 @@ export class FollowUsecase {
 
     if (followStatus === FOLLOW_STATUS.UNFOLLOWED) {
       await this.profile_repo!.followProfile(myUserId, userId);
+      myProfile.following.push(userId);
+      otherProfile.followers.push(myUserId);
+      const newfollowStatus = this.getFollowStatus(myProfile, otherProfile);
+      return newfollowStatus;
     }
 
     throw new DuplicatedItem('Você já segue esse perfil');

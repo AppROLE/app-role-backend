@@ -13,4 +13,5 @@ export type OtherProfileInfo = {
   backgroundPhoto?: string;
   profilePhoto?: string;
   followStatus: FOLLOW_STATUS;
+  isPrivate: boolean;
 };

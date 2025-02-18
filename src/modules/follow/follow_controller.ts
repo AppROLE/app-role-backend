@@ -31,9 +31,13 @@ export class FollowController {
 
       if (!otherUserId) throw new MissingParameters('otherUserId');
 
-      await this.usecase.execute(userApiGateway.userId, otherUserId);
+      const followStatus = await this.usecase.execute(
+        userApiGateway.userId,
+        otherUserId
+      );
 
       return new OK({
+        followStatus: followStatus,
         message: 'Seguidor adicionado com sucesso',
       });
     } catch (error: any) {

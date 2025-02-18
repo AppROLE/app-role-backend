@@ -52,6 +52,7 @@ export class GetOtherProfileUseCase {
       followersLength: otherProfile.followers.length,
       followingLength: otherProfile.following.length,
       followStatus,
+      isPrivate: otherProfile.isPrivate,
     };
 
     if (!otherProfile.isPrivate) {
