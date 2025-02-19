@@ -29,7 +29,7 @@ export interface ProfileFormDataFields {
   dateBirth?: number;
   gender?: GENDER_TYPE;
   phoneNumber?: string;
-  isPrivate: boolean;
+  isPrivate?: string;
   biography?: string;
   linkInstagram?: string;
   linkTiktok?: string;
@@ -83,6 +83,13 @@ export class UpdateProfileController {
           : (profilePhoto = profileImage[0]);
       }
 
+      let isPrivateBoolean: boolean | undefined;
+      if (isPrivate === undefined || isPrivate === null) {
+        isPrivateBoolean = undefined;
+      } else {
+        isPrivateBoolean = isPrivate === 'true';
+      }
+
       const eventUpdated = await this.usecase.execute({
         userId: userApiGateway.userId,
         username,
@@ -90,7 +97,7 @@ export class UpdateProfileController {
         dateBirth,
         gender,
         phoneNumber,
-        isPrivate,
+        isPrivate: isPrivateBoolean,
         biography,
         linkInstagram,
         linkTiktok,

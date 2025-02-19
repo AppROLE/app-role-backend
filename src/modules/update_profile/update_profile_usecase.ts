@@ -14,7 +14,7 @@ interface UpdateProfileParams {
   dateBirth?: number;
   gender?: GENDER_TYPE;
   phoneNumber?: string;
-  isPrivate: boolean;
+  isPrivate?: boolean;
   profileImage?: {
     image: Buffer;
     mimetype: string;
