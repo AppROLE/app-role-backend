@@ -39,10 +39,11 @@ export class FollowUsecase {
 
     if (followStatus === FOLLOW_STATUS.UNFOLLOWED) {
       await this.profile_repo!.followProfile(myUserId, userId);
-      myProfile.following.push(userId);
-      otherProfile.followers.push(myUserId);
-      const newfollowStatus = this.getFollowStatus(myProfile, otherProfile);
-      return newfollowStatus;
+      if (otherProfile.following.includes(userId)) {
+        return FOLLOW_STATUS.FRIENDS;
+      }
+
+      return FOLLOW_STATUS.FOLLOWING;
     }
 
     throw new DuplicatedItem('Você já segue esse perfil');
