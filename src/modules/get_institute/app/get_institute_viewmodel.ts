@@ -13,6 +13,7 @@ export class GetInstituteViewmodel {
   private phone?: string;
   private address: Address;
   private price?: number;
+  private rating?: number;
   private photosUrl?: string[];
   private eventsId?: string[];
   private reviewsId?: string[];
@@ -27,6 +28,7 @@ export class GetInstituteViewmodel {
     this.phone = institute.phone;
     this.address = institute.address;
     this.price = institute.price;
+    this.rating = institute.rating;
     this.eventsId = institute.eventsId;
     this.reviewsId = institute.reviewsId;
   }
@@ -43,6 +45,7 @@ export class GetInstituteViewmodel {
       address: this.address,
       price: this.price,
       photosUrl: this.photosUrl,
+      rating: this.rating,
       eventsId: this.eventsId,
       reviewsId: this.reviewsId,
     };
