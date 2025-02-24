@@ -13,6 +13,7 @@ interface InstituteProps {
   logo: string;
   address: Address;
   price?: number;
+  rating?: number;
   eventsId: string[];
   reviewsId: string[];
   createdAt: number;
@@ -29,6 +30,7 @@ export class Institute {
   phone?: string;
   address: Address;
   price?: number;
+  rating?: number;
   eventsId: string[];
   reviewsId: string[];
   createdAt: number;
@@ -76,6 +78,10 @@ export class Institute {
       throw new EntityError('O preço deve estar entre 1 e 5');
     }
 
+    if (props.rating !== undefined && (props.rating < 1 || props.rating > 5)) {
+      throw new EntityError('A avaliação deve estar entre 1 e 5');
+    }
+
     if (!props.address) {
       throw new EntityError('Endereço é obrigatório');
     }
@@ -114,6 +120,7 @@ export class Institute {
     this.phone = props.phone;
     this.address = props.address;
     this.price = props.price;
+    this.rating = props.rating;
     this.eventsId = props.eventsId;
     this.reviewsId = props.reviewsId || [];
     this.createdAt = props.createdAt;

@@ -5,7 +5,6 @@ import { ReviewDTO } from '../dtos/review_dto';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 
 export class ReviewRepositoryMongo implements IReviewRepository {
-
   async createReview(review: Review): Promise<Review> {
     const reviewDoc = ReviewDTO.fromEntity(review).toMongo();
     const result = await ReviewModel.create(reviewDoc);

@@ -17,6 +17,7 @@ export interface InstituteMongoDTOProps {
   phone?: string;
   address: Address;
   price?: number;
+  rating?: number;
   eventsId: string[];
   reviewsId: string[];
   createdAt: number;
@@ -33,6 +34,7 @@ export class InstituteMongoDTO {
   phone?: string;
   address: Address;
   price?: number;
+  rating?: number;
   eventsId: string[];
   reviewsId: string[];
   createdAt: number;
@@ -48,6 +50,7 @@ export class InstituteMongoDTO {
     this.phone = props.phone;
     this.address = props.address;
     this.price = props.price;
+    this.rating = props.rating;
     this.eventsId = props.eventsId;
     this.reviewsId = props.reviewsId || [];
     this.createdAt = props.createdAt;
@@ -65,6 +68,7 @@ export class InstituteMongoDTO {
       phone: this.phone,
       address: this.address,
       price: this.price,
+      rating: this.rating,
       eventsId: this.eventsId,
       reviewsId: this.reviewsId,
       createdAt: this.createdAt,
@@ -83,6 +87,7 @@ export class InstituteMongoDTO {
       phone: institute.phone,
       address: institute.address,
       price: institute.price,
+      rating: institute.rating,
       eventsId: institute.eventsId,
       reviewsId: institute.reviewsId,
       createdAt: institute.createdAt,
@@ -101,6 +106,7 @@ export class InstituteMongoDTO {
       phone: this.phone,
       address: this.address,
       price: this.price,
+      rating: this.rating,
       eventsId: this.eventsId,
       reviewsId: this.reviewsId,
       createdAt: this.createdAt,
@@ -119,6 +125,7 @@ export class InstituteMongoDTO {
       phone: institute.phone,
       address: institute.address,
       price: institute.price,
+      rating: institute.rating,
       eventsId: institute.eventsId,
       reviewsId: institute.reviewsId,
       createdAt: institute.createdAt.getTime(),

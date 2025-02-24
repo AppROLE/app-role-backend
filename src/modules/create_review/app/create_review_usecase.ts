@@ -84,9 +84,19 @@ export class CreateReviewUseCase {
       event.instituteId
     );
 
+    if (!institute) throw new EntityError('institute');
+
+    const instituteRating = institute.rating || 0;
+
+    const newRating =
+      (instituteRating * institute.reviewsId.length + rating) /
+      (institute.reviewsId.length + 1);
+
     await this.institute_repo!.updateInstitute(event.instituteId, {
       reviewsId: [...institute!.reviewsId, reviewCreated.reviewId],
+      rating: newRating,
     });
+
     await this.profile_repo!.updateProfile(userId, {
       reviewsId: [...institute!.reviewsId, reviewCreated.reviewId],
     });

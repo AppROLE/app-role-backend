@@ -14,6 +14,7 @@ export interface IInstitute extends Document {
   logo: string;
   address: IAddress;
   price?: number;
+  rating?: number;
   eventsId: string[];
   reviewsId: string[];
   createdAt: Date;
@@ -30,6 +31,7 @@ const InstituteSchema: Schema = new Schema<IInstitute>({
   logo: { type: String, required: true },
   address: { type: AddressSchema, required: true },
   price: { type: Number },
+  rating: { type: Number },
   eventsId: [{ type: String, ref: 'events' }],
   reviewsId: [{ type: String, ref: 'reviews' }],
   createdAt: { type: Date },

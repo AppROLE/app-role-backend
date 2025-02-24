@@ -28,13 +28,15 @@ export class GetMyProfileController {
 
       if (!userApiGateway) throw new ForbiddenAction('Usuário');
 
-      const [profile, ids] = await this.usecase.execute(userApiGateway.userId);
+      const [profile, eventsCard] = await this.usecase.execute(
+        userApiGateway.userId
+      );
 
       const viewmodel = new GetMyProfileViewmodel(profile);
 
       return new OK({
         profile: viewmodel.toJSON(),
-        ids: ids,
+        events: eventsCard,
       });
     } catch (error: any) {
       if (
