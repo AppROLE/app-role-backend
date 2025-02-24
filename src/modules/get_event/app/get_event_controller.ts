@@ -17,7 +17,6 @@ import {
   NoItemsFound,
   WrongTypeParameters,
 } from 'src/shared/helpers/errors/errors';
-import { UserAPIGatewayDTO } from 'src/shared/infra/database/dtos/user_api_gateway_dto';
 
 export class GetEventController {
   constructor(private readonly usecase: GetEventUseCase) {}
@@ -25,9 +24,12 @@ export class GetEventController {
   async handle(req: IRequest) {
     try {
       const { eventId } = req.data.query_params;
-      const event = await this.usecase.execute(eventId as string);
+      const [event, reviews] = await this.usecase.execute(eventId as string);
       const viewModel = new GetEventViewmodel(event);
-      return new OK(viewModel.toJSON());
+      return new OK({
+        event: viewModel.toJSON(),
+        reviews: reviews,
+      });
     } catch (error: any) {
       if (
         error instanceof EntityError ||

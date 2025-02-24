@@ -1,8 +1,10 @@
 import { Address } from 'src/shared/domain/entities/address';
 import { Profile } from 'src/shared/domain/entities/profile';
+import { Review } from 'src/shared/domain/entities/review';
 import { IEventRepository } from 'src/shared/domain/repositories/event_repository_interface';
 import { IPresenceRepository } from 'src/shared/domain/repositories/presence_repository_interface';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
+import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { Repository } from 'src/shared/infra/database/repositories/repository';
 
@@ -20,12 +22,14 @@ export class GetMyProfileUseCase {
   private profile_repo?: IProfileRepository;
   private presence_repo?: IPresenceRepository;
   private event_repo?: IEventRepository;
+  private review_repo?: IReviewRepository;
 
   constructor() {
     this.repository = new Repository({
       profile_repo: true,
       presence_repo: true,
       event_repo: true,
+      review_repo: true,
     });
   }
 
@@ -34,6 +38,7 @@ export class GetMyProfileUseCase {
     this.profile_repo = this.repository.profile_repo;
     this.presence_repo = this.repository.presence_repo;
     this.event_repo = this.repository.event_repo;
+    this.review_repo = this.repository.review_repo;
 
     if (!this.profile_repo)
       throw new Error('Expected to have an instance of the profile repository');
@@ -45,9 +50,14 @@ export class GetMyProfileUseCase {
 
     if (!this.event_repo)
       throw new Error('Expected to have an instance of the event repository');
+
+    if (!this.review_repo)
+      throw new Error('Expected to have an instance of the review repository');
   }
 
-  async execute(userId: string): Promise<[Profile, PresencesReturn[]]> {
+  async execute(
+    userId: string
+  ): Promise<[Profile, PresencesReturn[], Review[]]> {
     const profile = await this.profile_repo!.getByUserId(userId);
     if (!profile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
@@ -68,6 +78,8 @@ export class GetMyProfileUseCase {
       )!.presenceId,
     }));
 
-    return [profile, presencesReturn];
+    const reviews = await this.review_repo!.getReviewsByUserId(userId);
+
+    return [profile, presencesReturn, reviews];
   }
 }

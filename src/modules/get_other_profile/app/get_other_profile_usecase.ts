@@ -1,6 +1,8 @@
 import { Profile } from 'src/shared/domain/entities/profile';
+import { Review } from 'src/shared/domain/entities/review';
 import { FOLLOW_STATUS } from 'src/shared/domain/enums/follow_status';
 import { IProfileRepository } from 'src/shared/domain/repositories/profile_repository_interface';
+import { IReviewRepository } from 'src/shared/domain/repositories/review_repository_interface';
 import { NoItemsFound } from 'src/shared/helpers/errors/errors';
 import { EventCardReturn } from 'src/shared/helpers/types/event_card_return';
 import { PaginationReturn } from 'src/shared/helpers/types/event_pagination';
@@ -10,26 +12,32 @@ import { Repository } from 'src/shared/infra/database/repositories/repository';
 export class GetOtherProfileUseCase {
   repository: Repository;
   private profile_repo?: IProfileRepository;
+  private review_repo?: IReviewRepository;
 
   constructor() {
     this.repository = new Repository({
       profile_repo: true,
+      review_repo: true,
     });
   }
 
   async connect() {
     await this.repository.connectRepository();
     this.profile_repo = this.repository.profile_repo;
+    this.review_repo = this.repository.review_repo;
 
     if (!this.profile_repo)
       throw new Error('Expected to have an instance of the profile repository');
+
+    if (!this.review_repo)
+      throw new Error('Expected to have an instance of the review repository');
   }
 
   async execute(
     page: number,
     myUserId: string,
     userId: string
-  ): Promise<[OtherProfileInfo, PaginationReturn<EventCardReturn>]> {
+  ): Promise<[OtherProfileInfo, PaginationReturn<EventCardReturn>, Review[]?]> {
     const myProfile = await this.profile_repo!.getByUserId(myUserId);
     if (!myProfile) throw new NoItemsFound('Perfil do usuário não encontrado');
 
@@ -61,7 +69,8 @@ export class GetOtherProfileUseCase {
           userId,
           page
         );
-      return [otherProfileInfo, confirmedEvents];
+      const reviews = await this.review_repo!.getReviewsByUserId(userId);
+      return [otherProfileInfo, confirmedEvents, reviews];
     }
 
     if (!otherProfile.isPrivate) {

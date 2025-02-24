@@ -37,7 +37,7 @@ export class GetOtherProfileController {
         throw new MissingParameters('Número de página inválido');
       }
 
-      const [profile, confirmedEvents] = await this.usecase.execute(
+      const [profile, confirmedEvents, reviews] = await this.usecase.execute(
         pageNumber,
         userApiGateway.userId,
         otherUserId
@@ -46,6 +46,7 @@ export class GetOtherProfileController {
       return new OK({
         profile: profile,
         confirmedEvents: confirmedEvents,
+        reviews: reviews,
       });
     } catch (error: any) {
       if (
