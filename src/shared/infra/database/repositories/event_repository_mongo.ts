@@ -78,18 +78,18 @@ export class EventRepositoryMongo implements IEventRepository {
   ): Promise<PaginationReturn<Event>> {
     const limit = 30;
     const skip = (page - 1) * limit;
-
+  
     const [events, totalCount] = await Promise.all([
       EventModel.find(filter || {})
-        .sort({ eventDate: -1 }) // Ordena pelo campo eventDate em ordem decrescente
+        .sort({ eventDate: -1 })
         .skip(skip)
         .limit(limit)
         .lean(),
       EventModel.countDocuments(filter || {}),
     ]);
-
+  
     const totalPages = Math.ceil(totalCount / limit);
-
+  
     return {
       items: events.map((event) => EventMongoDTO.fromMongo(event).toEntity()),
       totalPages,
@@ -98,6 +98,7 @@ export class EventRepositoryMongo implements IEventRepository {
       nextPage: page < totalPages ? page + 1 : null,
     };
   }
+  
 
   async getEventsByIds(eventIds: string[]): Promise<Event[]> {
     const events = await EventModel.find({ _id: { $in: eventIds } }).lean();
