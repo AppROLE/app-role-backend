@@ -36,7 +36,8 @@ export class GetEventsByFilterUseCase {
     const sanitizedFilters: any = {};
 
     if (filters.name && typeof filters.name === 'string') {
-      sanitizedFilters.name = filters.name.replace(/\+/g, ' ');
+      const name = filters.name.replace(/\+/g, ' ');
+      sanitizedFilters.name = { $regex: name, $options: 'i' };
     }
 
     if (filters.price) {
@@ -51,9 +52,9 @@ export class GetEventsByFilterUseCase {
     }
 
     if (filters.startDate && !isNaN(new Date(filters.startDate).getTime())) {
-      sanitizedFilters.eventDate = {
-        $gte: new Date(filters.startDate),
-      };
+      sanitizedFilters.eventDate = sanitizedFilters.eventDate
+        ? { ...sanitizedFilters.eventDate, $gte: new Date(filters.startDate) }
+        : { $gte: new Date(filters.startDate) };
     }
 
     if (filters.instituteId) {
