@@ -15,6 +15,7 @@ export class GetTopEventsUseCase {
     });
   }
 
+  
   async connect() {
     await this.repository.connectRepository();
     this.event_repo = this.repository.event_repo;
